@@ -16,6 +16,7 @@
     "expo-constants": "~15.4.6",
     "expo-linking": "~6.2.2",
     "expo-router": "~3.4.9",
+    "expo-secure-store": "~12.8.1",
     "expo-status-bar": "~1.11.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
