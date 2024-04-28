@@ -2,6 +2,7 @@ export type ThemeType = {
   colors: {
     primary: string;
     dark: string;
+    lightDark: string;
     accent: string;
     background: string;
     highlight: string;
@@ -50,6 +51,7 @@ const Theme: ThemeType = {
   colors: {
     primary: "#8878F4",
     dark: "#191919",
+    lightDark: "#222222",
     accent: "#F97068",
     background: "#EDF2EF",
     highlight: "#D1D646",

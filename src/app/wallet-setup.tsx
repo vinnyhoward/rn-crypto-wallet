@@ -6,8 +6,9 @@ import { useSession } from "../providers/wallet-provider";
 import Button from "../components/Button/Button";
 import { createWallet } from "../utils/createWallet";
 import { ThemeType } from "../styles/theme";
+import { setStorageItemAsync } from "../hooks/use-storage-state";
 
-const SafeAreaContainer = styled(SafeAreaView)`
+const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
   background-color: ${(props) => props.theme.colors.primary};
   justify-content: flex-end;
@@ -75,7 +76,24 @@ export default function SignIn() {
   const { signIn } = useSession();
 
   const walletSetup = () => {
-    createWallet();
+    const wallet = createWallet();
+
+    if (Object.keys(wallet).length > 0) {
+      const address = wallet.address;
+      const mnemonicPhrase = wallet.mnemonic.phrase;
+      const publicKey = wallet.publicKey;
+      const privateKey = wallet.privateKey;
+
+      // TODO: This is temporary and should be done in a
+      // more secure way using the secure store
+
+      // setStorageItemAsync("address", address);
+      // setStorageItemAsync("mnemonicPhrase", mnemonicPhrase);
+      // setStorageItemAsync("publicKey", publicKey);
+      // setStorageItemAsync("privateKey", privateKey);
+
+      router.push("/seed-phrase");
+    }
   };
 
   return (

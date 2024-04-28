@@ -68,3 +68,19 @@ export function useStorageState(key: string): UseStateHook<string> {
 
   return [state, setValue];
 }
+
+// remove all local storage items
+export async function clearStorage() {
+  if (Platform.OS === "web") {
+    try {
+      localStorage.clear();
+    } catch (e) {
+      console.error("Local storage is unavailable:", e);
+    }
+  } else {
+    await SecureStore.deleteItemAsync("address");
+    await SecureStore.deleteItemAsync("mnemonicPhrase");
+    await SecureStore.deleteItemAsync("publicKey");
+    await SecureStore.deleteItemAsync("privateKey");
+  }
+}
