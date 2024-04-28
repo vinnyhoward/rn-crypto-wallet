@@ -24,18 +24,25 @@ const Theme = {
       normal: "400",
       bold: "700",
     },
+    colors: {
+      primary: "#FFFFFF",
+      dark: "#191919",
+      accent: "#F97068",
+      background: "#EDF2EF",
+      highlight: "#D1D646",
+    },
   },
   spacing: {
-    tiny: 4,
-    small: 8,
-    medium: 16,
-    large: 24,
-    huge: 32,
+    tiny: "4px",
+    small: "8px",
+    medium: "16px",
+    large: "24px",
+    huge: "32px",
   },
   borderRadius: {
-    small: 4,
-    default: 8,
-    large: 16,
+    small: "4px",
+    default: "8px",
+    large: "16px",
   },
 };
 
