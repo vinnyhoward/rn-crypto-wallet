@@ -1,3 +1,4 @@
+import { StatusBar } from "expo-status-bar";
 import { Stack, router } from "expo-router";
 import { WalletProvider } from "../providers/wallet-provider";
 import { ThemeProvider } from "styled-components/native";
@@ -34,6 +35,7 @@ export default function Root() {
   return (
     <ThemeProvider theme={Theme}>
       <WalletProvider>
+        <StatusBar style="light" />
         <Stack
           screenOptions={{
             headerShown: true,
@@ -46,10 +48,14 @@ export default function Root() {
             name="seed-phrase"
             options={{
               title: "Seed Phrase",
+              headerTransparent: true,
+              headerTitleStyle: {
+                color: "transparent",
+              },
               headerLeft: () => (
                 <LeftArrow
-                  width={25}
-                  height={25}
+                  width={35}
+                  height={35}
                   fill="#FFF"
                   onPress={goBack}
                 />

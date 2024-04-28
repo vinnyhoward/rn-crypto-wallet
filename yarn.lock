@@ -3905,6 +3905,11 @@ expo-asset@~9.0.2:
     invariant "^2.2.4"
     md5-file "^3.2.3"
 
+expo-clipboard@~5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/expo-clipboard/-/expo-clipboard-5.0.1.tgz#a62a021a9444740d180d60f915cca8242a323716"
+  integrity sha512-JH853QJPr5W3h87If3aDTnMK+ESSIrwzU2TdfZrqZttVDY2pMIf/w37mVHHNYodXM4ATHXadtOkjKbAa0DWwUg==
+
 expo-constants@~15.4.0, expo-constants@~15.4.3, expo-constants@~15.4.6:
   version "15.4.6"
   resolved "https://registry.yarnpkg.com/expo-constants/-/expo-constants-15.4.6.tgz#d4e9b21b70c5602457962700f2e90a75356b487b"

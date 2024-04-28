@@ -2,8 +2,19 @@ import React from "react";
 import styled from "styled-components/native";
 import { ThemeType } from "../../styles/theme";
 
-const ButtonContainer = styled.TouchableOpacity<{ theme: ThemeType }>`
-  background-color: ${(props) => props.theme.colors.dark};
+interface ButtonTextProps {
+  color?: string;
+  theme: ThemeType;
+}
+
+interface ButtonContainerProps {
+  backgroundColor?: string;
+  theme: ThemeType;
+}
+
+const ButtonContainer = styled.TouchableOpacity<ButtonContainerProps>`
+  background-color: ${({ theme, backgroundColor }) =>
+    backgroundColor ? backgroundColor : theme.colors.dark};
   padding: 10px 20px;
   border-radius: 5px;
   align-items: center;
@@ -13,21 +24,28 @@ const ButtonContainer = styled.TouchableOpacity<{ theme: ThemeType }>`
   border-radius: ${(props) => props.theme.borderRadius.large};
 `;
 
-const ButtonText = styled.Text<{ theme: ThemeType }>`
+const ButtonText = styled.Text<ButtonTextProps>`
   font-family: ${(props) => props.theme.fonts.families.openBold};
   font-size: ${(props) => props.theme.fonts.sizes.header};
-  color: ${(props) => props.theme.fonts.colors.primary};
+  color: ${({ theme, color }) => (color ? color : theme.fonts.colors.primary)};
 `;
 
 interface ButtonProps {
   onPress: () => void;
   title: string;
+  color?: string;
+  backgroundColor?: string;
 }
 
-const Button: React.FC<ButtonProps> = ({ onPress, title }) => {
+const Button: React.FC<ButtonProps> = ({
+  onPress,
+  title,
+  color,
+  backgroundColor,
+}) => {
   return (
-    <ButtonContainer onPress={onPress}>
-      <ButtonText>{title}</ButtonText>
+    <ButtonContainer backgroundColor={backgroundColor} onPress={onPress}>
+      <ButtonText color={color}>{title}</ButtonText>
     </ButtonContainer>
   );
 };

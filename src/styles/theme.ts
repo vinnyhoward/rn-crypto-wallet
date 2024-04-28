@@ -6,6 +6,8 @@ export type ThemeType = {
     accent: string;
     background: string;
     highlight: string;
+    white: string;
+    grey: string;
   };
   fonts: {
     families: {
@@ -44,17 +46,20 @@ export type ThemeType = {
     small: string;
     default: string;
     large: string;
+    extraLarge: string;
   };
 };
 
 const Theme: ThemeType = {
   colors: {
     primary: "#8878F4",
-    dark: "#191919",
+    dark: "#111111",
     lightDark: "#222222",
     accent: "#F97068",
     background: "#EDF2EF",
     highlight: "#D1D646",
+    white: "#FFFFFF",
+    grey: "#494949",
   },
   fonts: {
     families: {
@@ -93,6 +98,7 @@ const Theme: ThemeType = {
     small: "4px",
     default: "8px",
     large: "16px",
+    extraLarge: "24px",
   },
 };
 
