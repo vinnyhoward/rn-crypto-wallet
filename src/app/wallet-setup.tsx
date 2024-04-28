@@ -1,13 +1,24 @@
 import { router } from "expo-router";
-import { Text, View } from "react-native";
-
+import styled from "styled-components/native";
 import { useSession } from "../providers/wallet-provider";
+
+const Container = styled.View`
+  flex: 1;
+  background-color: white;
+  align-items: center;
+  justify-content: center;
+`;
+const Caption = styled.Text`
+  font-size: 18px;
+  color: blue;
+  font-weight: 500;
+`;
 
 export default function SignIn() {
   const { signIn } = useSession();
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text
+    <Container>
+      <Caption
         onPress={() => {
           signIn();
           // Navigate after signing in. You may want to tweak this to ensure sign-in is
@@ -16,7 +27,7 @@ export default function SignIn() {
         }}
       >
         Create Wallet
-      </Text>
-    </View>
+      </Caption>
+    </Container>
   );
 }
