@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { SafeAreaView } from "react-native";
 import styled from "styled-components/native";
 import * as Clipboard from "expo-clipboard";
 import { useTheme } from "styled-components";
-import { ThemeType } from "../styles/theme";
-import Button from "../components/Button/Button";
-import Copy from "../assets/svg/copy.svg";
+import { ThemeType } from "../../styles/theme";
+import Button from "../../components/Button/Button";
+import Copy from "../../assets/svg/copy.svg";
+import type { RootState } from "../../store";
+import { getPhrase } from "../../hooks/use-storage-state";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -76,21 +79,28 @@ export const SecondaryButtonText = styled.Text<{ theme: ThemeType }>`
 
 const LogoContainer = styled.View``;
 
-const mockSeedPhrase =
-  "client prize meat select during awkward idle install road situate have answer";
-
 export default function Page() {
   const theme = useTheme();
-  const seedPhrase = mockSeedPhrase.split(" ");
+  const dispatch = useDispatch();
   const [buttonText, setButtonText] = useState("Copy to clipboard");
+  const [seedPhrase, setSeedPhrase] = useState<string[]>([]);
 
   const handleCopy = async () => {
-    await Clipboard.setStringAsync(mockSeedPhrase);
+    await Clipboard.setStringAsync(seedPhrase.join(" "));
     setButtonText("Copied!");
     setTimeout(() => {
       setButtonText("Copy to clipboard");
     }, 4000);
   };
+
+  useEffect(() => {
+    const fetchSeedPhrase = async () => {
+      const storedSeedPhrase: string = await getPhrase();
+      setSeedPhrase(storedSeedPhrase.split(" "));
+    };
+
+    fetchSeedPhrase();
+  }, []);
 
   return (
     <SafeAreaContainer>

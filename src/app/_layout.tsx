@@ -47,11 +47,11 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen
-              name="wallet-setup"
+              name="(wallet)/wallet-setup"
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="seed-phrase"
+              name="(wallet)/seed-phrase"
               options={{
                 title: "Seed Phrase",
                 headerTransparent: true,

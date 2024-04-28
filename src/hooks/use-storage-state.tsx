@@ -16,7 +16,10 @@ function useAsyncState<T>(
   ) as UseStateHook<T>;
 }
 
-export async function setStorageItemAsync(key: string, value: string | null) {
+export async function setStorageItemAsync(
+  key: string,
+  value: string | null
+): Promise<void> {
   if (Platform.OS === "web") {
     try {
       if (value === null) {
@@ -37,10 +40,8 @@ export async function setStorageItemAsync(key: string, value: string | null) {
 }
 
 export function useStorageState(key: string): UseStateHook<string> {
-  // Public
   const [state, setState] = useAsyncState<string>();
 
-  // Get
   React.useEffect(() => {
     if (Platform.OS === "web") {
       try {
@@ -57,7 +58,6 @@ export function useStorageState(key: string): UseStateHook<string> {
     }
   }, [key]);
 
-  // Set
   const setValue = React.useCallback(
     (value: string | null) => {
       setState(value);
@@ -69,8 +69,49 @@ export function useStorageState(key: string): UseStateHook<string> {
   return [state, setValue];
 }
 
-// remove all local storage items
-export async function clearStorage() {
+export async function savePrivateKey(key: string): Promise<void> {
+  try {
+    await SecureStore.setItemAsync("privateKey", key);
+  } catch (error) {
+    console.error("Failed to save the private key securely.", error);
+  }
+}
+
+export async function getPrivateKey() {
+  try {
+    return await SecureStore.getItemAsync("privateKey");
+  } catch (error) {
+    console.error("Failed to retrieve the private key.", error);
+    return null;
+  }
+}
+
+export async function removePhrase(): Promise<void> {
+  try {
+    await SecureStore.deleteItemAsync("phrase");
+  } catch (error) {
+    console.error("Failed to remove the phrase securely.", error);
+  }
+}
+
+export async function savePhrase(phrase: string): Promise<void> {
+  try {
+    await SecureStore.setItemAsync("phrase", phrase);
+  } catch (error) {
+    console.error("Failed to save the phrase securely.", error);
+  }
+}
+
+export async function getPhrase(): Promise<string | null> {
+  try {
+    return await SecureStore.getItemAsync("phrase");
+  } catch (error) {
+    console.error("Failed to retrieve the phrase.", error);
+    return null;
+  }
+}
+
+export async function clearStorage(): Promise<void> {
   if (Platform.OS === "web") {
     try {
       localStorage.clear();

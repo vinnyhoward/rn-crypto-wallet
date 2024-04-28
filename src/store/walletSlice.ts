@@ -5,7 +5,7 @@ export interface WalletState {
   transactions: Transaction[];
   status: "idle" | "loading" | "failed";
   address: string;
-  seedPhrase: string;
+  publicKey: string;
 }
 
 export interface Transaction {
@@ -20,13 +20,19 @@ const initialState: WalletState = {
   transactions: [],
   status: "idle",
   address: "",
-  seedPhrase: "",
+  publicKey: "",
 };
 
 export const walletSlice = createSlice({
   name: "wallet",
   initialState,
   reducers: {
+    saveAddress: (state, action: PayloadAction<string>) => {
+      state.address = action.payload;
+    },
+    savePublicKey: (state, action: PayloadAction<string>) => {
+      state.publicKey = action.payload;
+    },
     deposit: (state, action: PayloadAction<number>) => {
       state.balance += action.payload;
     },
@@ -43,6 +49,7 @@ export const walletSlice = createSlice({
   },
 });
 
-export const { deposit, withdraw, addTransaction } = walletSlice.actions;
+export const { deposit, withdraw, addTransaction, saveAddress, savePublicKey } =
+  walletSlice.actions;
 
 export default walletSlice.reducer;

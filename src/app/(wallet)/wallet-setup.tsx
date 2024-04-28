@@ -3,12 +3,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import styled from "styled-components/native";
-import { useSession } from "../providers/wallet-provider";
-import { createWallet } from "../utils/createWallet";
-import { setStorageItemAsync } from "../hooks/use-storage-state";
-import Button from "../components/Button/Button";
-import { ThemeType } from "../styles/theme";
-import type { RootState } from "../store";
+import { createWallet } from "../../utils/createWallet";
+import { savePrivateKey, savePhrase } from "../../hooks/use-storage-state";
+import Button from "../../components/Button/Button";
+import { ThemeType } from "../../styles/theme";
+import type { RootState } from "../../store";
+import { saveAddress, savePublicKey } from "../../store/walletSlice";
 
 export const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -75,7 +75,6 @@ export const SecondaryButtonText = styled.Text<{ theme: ThemeType }>`
 `;
 
 export default function WalletSetup() {
-  const { signIn } = useSession();
   const balance = useSelector((state: RootState) => state.wallet.balance);
   const dispatch = useDispatch();
 
@@ -87,14 +86,11 @@ export default function WalletSetup() {
       const mnemonicPhrase = wallet.mnemonic.phrase;
       const publicKey = wallet.publicKey;
       const privateKey = wallet.privateKey;
-      console.log("mnemonicPhrase", mnemonicPhrase);
-      // TODO: This is temporary and should be done in a
-      // more secure way using the secure store
 
-      // setStorageItemAsync("address", address);
-      // setStorageItemAsync("mnemonicPhrase", mnemonicPhrase);
-      // setStorageItemAsync("publicKey", publicKey);
-      // setStorageItemAsync("privateKey", privateKey);
+      savePhrase(mnemonicPhrase);
+      savePrivateKey(privateKey);
+      dispatch(saveAddress(address));
+      dispatch(savePublicKey(publicKey));
 
       router.push("/seed-phrase");
     }
@@ -105,7 +101,7 @@ export default function WalletSetup() {
       <ContentContainer>
         <ImageContainer>
           <ExpoImage
-            source={require("../assets/images/wallet.png")}
+            source={require("../../assets/images/wallet.png")}
             contentFit="cover"
           />
         </ImageContainer>
