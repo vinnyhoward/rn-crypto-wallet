@@ -1,12 +1,14 @@
+import { SafeAreaView } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { Image } from "expo-image";
 import { router } from "expo-router";
+import styled from "styled-components/native";
 import { useSession } from "../providers/wallet-provider";
-import Button from "../components/Button/Button";
 import { createWallet } from "../utils/createWallet";
 import { setStorageItemAsync } from "../hooks/use-storage-state";
-import { SafeAreaView } from "react-native";
-import { Image } from "expo-image";
-import styled from "styled-components/native";
+import Button from "../components/Button/Button";
 import { ThemeType } from "../styles/theme";
+import type { RootState } from "../store";
 
 export const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -74,6 +76,8 @@ export const SecondaryButtonText = styled.Text<{ theme: ThemeType }>`
 
 export default function WalletSetup() {
   const { signIn } = useSession();
+  const balance = useSelector((state: RootState) => state.wallet.balance);
+  const dispatch = useDispatch();
 
   const walletSetup = () => {
     const wallet = createWallet();
@@ -95,7 +99,7 @@ export default function WalletSetup() {
       router.push("/seed-phrase");
     }
   };
-
+  console.log("balance", balance);
   return (
     <SafeAreaContainer>
       <ContentContainer>

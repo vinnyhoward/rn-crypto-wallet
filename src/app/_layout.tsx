@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { Stack, router } from "expo-router";
+import { Provider } from "react-redux";
 import { WalletProvider } from "../providers/wallet-provider";
 import { ThemeProvider } from "styled-components/native";
 import {
@@ -14,8 +15,9 @@ import {
 import LeftArrow from "../assets/svg/left-arrow.svg";
 import { clearStorage } from "../hooks/use-storage-state";
 import Theme from "../styles/theme";
+import { store } from "../store";
 
-export default function Root() {
+export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     OpenSans_400Regular,
     OpenSans_700Bold,
@@ -33,37 +35,42 @@ export default function Root() {
   };
 
   return (
-    <ThemeProvider theme={Theme}>
-      <WalletProvider>
-        <StatusBar style="light" />
-        <Stack
-          screenOptions={{
-            headerShown: true,
-            headerTransparent: true,
-            gestureEnabled: true,
-          }}
-        >
-          <Stack.Screen name="wallet-setup" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="seed-phrase"
-            options={{
-              title: "Seed Phrase",
+    <Provider store={store}>
+      <ThemeProvider theme={Theme}>
+        <WalletProvider>
+          <StatusBar style="light" />
+          <Stack
+            screenOptions={{
+              headerShown: true,
               headerTransparent: true,
-              headerTitleStyle: {
-                color: "transparent",
-              },
-              headerLeft: () => (
-                <LeftArrow
-                  width={35}
-                  height={35}
-                  fill="#FFF"
-                  onPress={goBack}
-                />
-              ),
+              gestureEnabled: true,
             }}
-          />
-        </Stack>
-      </WalletProvider>
-    </ThemeProvider>
+          >
+            <Stack.Screen
+              name="wallet-setup"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="seed-phrase"
+              options={{
+                title: "Seed Phrase",
+                headerTransparent: true,
+                headerTitleStyle: {
+                  color: "transparent",
+                },
+                headerLeft: () => (
+                  <LeftArrow
+                    width={35}
+                    height={35}
+                    fill="#FFF"
+                    onPress={goBack}
+                  />
+                ),
+              }}
+            />
+          </Stack>
+        </WalletProvider>
+      </ThemeProvider>
+    </Provider>
   );
 }
