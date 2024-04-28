@@ -1,4 +1,52 @@
-const Theme = {
+export type ThemeType = {
+  colors: {
+    primary: string;
+    dark: string;
+    accent: string;
+    background: string;
+    highlight: string;
+  };
+  fonts: {
+    families: {
+      openRegular: string;
+      openBold: string;
+      robotoRegular: string;
+      robotoBold: string;
+    };
+    sizes: {
+      small: string;
+      normal: string;
+      large: string;
+      header: string;
+      title: string;
+    };
+    weights: {
+      normal: string;
+      bold: string;
+    };
+    colors: {
+      primary: string;
+      dark: string;
+      accent: string;
+      background: string;
+      highlight: string;
+    };
+  };
+  spacing: {
+    tiny: string;
+    small: string;
+    medium: string;
+    large: string;
+    huge: string;
+  };
+  borderRadius: {
+    small: string;
+    default: string;
+    large: string;
+  };
+};
+
+const Theme: ThemeType = {
   colors: {
     primary: "#8878F4",
     dark: "#191919",
