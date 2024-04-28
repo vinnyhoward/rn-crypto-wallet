@@ -8,26 +8,37 @@ const Container = styled.View`
   align-items: center;
   justify-content: center;
 `;
-const Caption = styled.Text`
-  font-size: 18px;
-  color: blue;
-  font-weight: 500;
+
+const StyledText = styled.Text`
+  font-family: ${(props) => props.theme.fonts.families.robotoRegular};
+  font-size: ${(props) => props.theme.fonts.sizes.normal};
+`;
+
+const BoldText = styled.Text`
+  font-family: ${(props) => props.theme.fonts.families.openBold};
+  font-size: ${(props) => props.theme.fonts.sizes.normal};
 `;
 
 export default function SignIn() {
   const { signIn } = useSession();
   return (
     <Container>
-      <Caption
+      <BoldText
         onPress={() => {
           signIn();
-          // Navigate after signing in. You may want to tweak this to ensure sign-in is
-          // successful before navigating.
           router.replace("/");
         }}
       >
-        Create Wallet
-      </Caption>
+        Create New Wallet
+      </BoldText>
+      <StyledText
+        onPress={() => {
+          signIn();
+          router.replace("/");
+        }}
+      >
+        Import Wallet
+      </StyledText>
     </Container>
   );
 }

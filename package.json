@@ -9,11 +9,15 @@
     "web": "expo start --web -c"
   },
   "dependencies": {
+    "@expo-google-fonts/inter": "^0.2.3",
+    "@expo-google-fonts/open-sans": "^0.2.3",
+    "@expo-google-fonts/roboto": "^0.2.3",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
     "@types/react": "~18.2.45",
     "expo": "~50.0.14",
     "expo-constants": "~15.4.6",
+    "expo-font": "~11.10.3",
     "expo-linking": "~6.2.2",
     "expo-router": "~3.4.9",
     "expo-secure-store": "~12.8.1",
