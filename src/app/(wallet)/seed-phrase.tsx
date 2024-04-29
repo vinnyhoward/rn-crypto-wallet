@@ -10,6 +10,7 @@ import { ThemeType } from "../../styles/theme";
 import Copy from "../../assets/svg/copy.svg";
 import Button from "../../components/Button/Button";
 import Bubble from "../../components/Bubble/Bubble";
+import { ROUTES } from "../../constants/routes";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -130,7 +131,7 @@ export default function Page() {
         <Button
           color={theme.colors.white}
           backgroundColor={theme.colors.primary}
-          onPress={() => router.push("/(wallet)/confirm-seed-phrase")}
+          onPress={() => router.push(ROUTES.confirmSeedPhrase)}
           title="Ok, I saved it"
         />
       </ButtonContainer>

@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import styled from "styled-components/native";
 import Button from "../../components/Button/Button";
 import { ThemeType } from "../../styles/theme";
+import { ROUTES } from "../../constants/routes";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -73,7 +74,10 @@ export default function WalletCreationSuccessPage() {
         </TextContainer>
       </ContentContainer>
       <ButtonContainer>
-        <Button onPress={() => router.push("/")} title="Continue to wallet" />
+        <Button
+          onPress={() => router.push(ROUTES.home)}
+          title="Continue to wallet"
+        />
       </ButtonContainer>
     </SafeAreaContainer>
   );

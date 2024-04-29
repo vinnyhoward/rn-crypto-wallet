@@ -9,6 +9,7 @@ import Button from "../../components/Button/Button";
 import { ThemeType } from "../../styles/theme";
 import type { RootState } from "../../store";
 import { saveAddress, savePublicKey } from "../../store/walletSlice";
+import { ROUTES } from "../../constants/routes";
 
 export const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -92,10 +93,10 @@ export default function WalletSetup() {
       dispatch(saveAddress(address));
       dispatch(savePublicKey(publicKey));
 
-      router.push("/seed-phrase");
+      router.push(ROUTES.seedPhrase);
     }
   };
-  console.log("balance", balance);
+
   return (
     <SafeAreaContainer>
       <ContentContainer>
@@ -116,7 +117,7 @@ export default function WalletSetup() {
       </ContentContainer>
       <ButtonContainer>
         <Button onPress={walletSetup} title="Create Wallet" />
-        <SecondaryButtonContainer onPress={() => console.log("importing...")}>
+        <SecondaryButtonContainer onPress={() => ROUTES.walletImport}>
           <SecondaryButtonText>
             Got a wallet? Let's import it
           </SecondaryButtonText>

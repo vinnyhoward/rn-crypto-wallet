@@ -8,6 +8,7 @@ import { getPhrase } from "../../hooks/use-storage-state";
 import { ThemeType } from "../../styles/theme";
 import Button from "../../components/Button/Button";
 import Bubble from "../../components/Bubble/Bubble";
+import { ROUTES } from "../../constants/routes";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -94,7 +95,7 @@ export default function Page() {
     const originalSeedPhrase = await getPhrase();
 
     if (selectedWords.join(" ") === originalSeedPhrase) {
-      router.push("(wallet)/wallet-created-successfully");
+      router.push(ROUTES.walletCreatedSuccessfully);
     } else {
       console.log("no success");
     }
