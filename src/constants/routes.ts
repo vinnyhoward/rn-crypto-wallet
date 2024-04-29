@@ -1,8 +1,8 @@
 export default {
-  walletSetup: "/wallet-setup",
-  wallet: "/wallet",
-  saveSeedPhrase: "/save-seed-phrase",
-  confirmSeedPhrase: "/confirm-seed-phrase",
-  restoreSeedPhrase: "/restore-seed-phrase",
-  restoreWallet: "/restore-wallet",
+  walletSetup: "/(wallet)/wallet-setup",
+  wallet: "/(wallet)/wallet",
+  seedPhrase: "(wallet)/seed-phrase",
+  confirmSeedPhrase: "/(wallet)/confirm-seed-phrase",
+  restoreSeedPhrase: "/(wallet)/restore-seed-phrase",
+  restoreWallet: "/(wallet)/restore-wallet",
 };

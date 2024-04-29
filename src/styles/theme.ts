@@ -53,7 +53,7 @@ export type ThemeType = {
 const Theme: ThemeType = {
   colors: {
     primary: "#8878F4",
-    dark: "#111111",
+    dark: "#1A1A1A",
     lightDark: "#222222",
     accent: "#F97068",
     background: "#EDF2EF",

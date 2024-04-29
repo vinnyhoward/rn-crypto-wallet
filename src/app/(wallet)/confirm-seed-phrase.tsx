@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, ScrollView } from "react-native";
+import { Dimensions, ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
+import { SafeAreaView } from "react-native";
 import styled from "styled-components/native";
-import * as Clipboard from "expo-clipboard";
-import { router } from "expo-router";
 import { useTheme } from "styled-components";
 import { getPhrase } from "../../hooks/use-storage-state";
 import { ThemeType } from "../../styles/theme";
-import Copy from "../../assets/svg/copy.svg";
 import Button from "../../components/Button/Button";
 import Bubble from "../../components/Bubble/Bubble";
 
@@ -47,7 +45,8 @@ const Subtitle = styled.Text<{ theme: ThemeType }>`
 const ButtonContainer = styled.View<{ theme: ThemeType }>`
   padding-left: ${(props) => props.theme.spacing.large};
   padding-right: ${(props) => props.theme.spacing.large};
-  padding-bottom: ${(props) => props.theme.spacing.medium};
+  padding-bottom: ${(props) => props.theme.spacing.large};
+  padding-top: ${(props) => props.theme.spacing.small};
   width: 100%;
 `;
 
@@ -58,39 +57,49 @@ const SeedPhraseContainer = styled.View<{ theme: ThemeType }>`
   align-items: center;
   margin-right: ${(props) => props.theme.spacing.medium};
   margin-left: ${(props) => props.theme.spacing.medium};
+  height: 220px;
 `;
 
-export const SecondaryButtonContainer = styled.TouchableOpacity`
+const ConfirmSeedContainer = styled.View<{ theme: ThemeType }>`
   display: flex;
   flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 20px;
-  height: 60px;
-  margin-top: ${(props) => props.theme.spacing.medium};
+  flex-wrap: wrap;
+  padding: ${(props) => props.theme.spacing.small};
+  margin: ${(props) => props.theme.spacing.large};
+  background-color: ${(props) => props.theme.colors.dark};
+  border-radius: ${(props) => props.theme.borderRadius.extraLarge};
+  height: 220px;
+  width: ${(Dimensions.get("window").width - 80).toFixed(0)}px;
 `;
-
-export const SecondaryButtonText = styled.Text<{ theme: ThemeType }>`
-  margin-left: ${(props) => props.theme.spacing.small};
-  font-family: ${(props) => props.theme.fonts.families.openBold};
-  font-size: ${(props) => props.theme.fonts.sizes.header};
-  color: ${(props) => props.theme.fonts.colors.primary};
-`;
-
-const LogoContainer = styled.View``;
 
 export default function Page() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [buttonText, setButtonText] = useState("Copy to clipboard");
   const [seedPhrase, setSeedPhrase] = useState<string[]>([]);
+  const [selectedWords, setSelectedWords] = useState<string[]>([]);
 
-  const handleCopy = async () => {
-    await Clipboard.setStringAsync(seedPhrase.join(" "));
-    setButtonText("Copied!");
-    setTimeout(() => {
-      setButtonText("Copy to clipboard");
-    }, 4000);
+  const handleSelectedWord = (word: string) => {
+    if (selectedWords.length === 12) return;
+
+    setSelectedWords([...selectedWords, word]);
+    setSeedPhrase(seedPhrase.filter((w) => w !== word));
+  };
+
+  const handleRemoveSelectedWord = (word: string) => {
+    setSelectedWords(selectedWords.filter((w) => w !== word));
+    setSeedPhrase([...seedPhrase, word]);
+  };
+
+  const handleVerifySeedPhrase = async () => {
+    if (selectedWords.length !== 12) return;
+    const originalSeedPhrase = await getPhrase();
+
+    if (selectedWords.join(" ") === originalSeedPhrase) {
+      console.log("success");
+    } else {
+      console.log("no success");
+    }
   };
 
   useEffect(() => {
@@ -104,34 +113,47 @@ export default function Page() {
 
   return (
     <SafeAreaContainer>
-      <ScrollView contentContainerStyle={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ paddingVertical: 50 }}>
         <ContentContainer>
           <TextContainer>
-            <Title>Secret Recovery Phrase</Title>
+            <Title>Verify you saved it correctly</Title>
             <Subtitle>
-              This is the only way you will be able to recover your account.
-              Please store it somewhere safe!
+              Tap the words in the correct numerical order to verify you saved
+              your secret recovery phrase.
             </Subtitle>
           </TextContainer>
+          <ConfirmSeedContainer>
+            {selectedWords.map((word, index) => (
+              <Bubble
+                smallBubble
+                hideDetails
+                key={index}
+                word={word}
+                number={index + 1}
+                onPress={() => handleRemoveSelectedWord(word)}
+              />
+            ))}
+          </ConfirmSeedContainer>
           <SeedPhraseContainer>
             {seedPhrase.map((word, index) => (
-              <Bubble key={index} word={word} number={index + 1} />
+              <Bubble
+                onPress={() => handleSelectedWord(word)}
+                smallBubble
+                hideDetails
+                key={index}
+                word={word}
+                number={index + 1}
+              />
             ))}
           </SeedPhraseContainer>
-          <SecondaryButtonContainer onPress={handleCopy}>
-            <LogoContainer>
-              <Copy fill={theme.colors.white} />
-            </LogoContainer>
-            <SecondaryButtonText>{buttonText}</SecondaryButtonText>
-          </SecondaryButtonContainer>
         </ContentContainer>
       </ScrollView>
       <ButtonContainer>
         <Button
           color={theme.colors.white}
           backgroundColor={theme.colors.primary}
-          onPress={() => router.push("/(wallet)/confirm-seed-phrase")}
-          title="Ok, I saved it"
+          onPress={handleVerifySeedPhrase}
+          title="Verify seed phrase"
         />
       </ButtonContainer>
     </SafeAreaContainer>
