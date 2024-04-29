@@ -11,7 +11,11 @@ export default function AppLayout() {
   //   return <Text>Loading...</Text>;
   // }
 
-  if (!address) {
+  // if (!address) {
+  //   return <Redirect href={ROUTES.walletSetup} />;
+  // }
+
+  if (true) {
     return <Redirect href={ROUTES.walletSetup} />;
   }
 

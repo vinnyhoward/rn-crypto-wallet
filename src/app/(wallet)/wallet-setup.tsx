@@ -41,6 +41,7 @@ export const Subtitle = styled.Text<{ theme: ThemeType }>`
 `;
 
 export const ButtonContainer = styled.View<{ theme: ThemeType }>`
+  background-color: ${(props) => props.theme.colors.primary};
   padding-left: ${(props) => props.theme.spacing.large};
   padding-right: ${(props) => props.theme.spacing.large};
   padding-bottom: ${(props) => props.theme.spacing.large};
@@ -117,7 +118,9 @@ export default function WalletSetup() {
       </ContentContainer>
       <ButtonContainer>
         <Button onPress={walletSetup} title="Create Wallet" />
-        <SecondaryButtonContainer onPress={() => ROUTES.walletImport}>
+        <SecondaryButtonContainer
+          onPress={() => router.push(ROUTES.walletImport)}
+        >
           <SecondaryButtonText>
             Got a wallet? Let's import it
           </SecondaryButtonText>

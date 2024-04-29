@@ -54,7 +54,7 @@ const Theme: ThemeType = {
   colors: {
     primary: "#8878F4",
     dark: "#1A1A1A",
-    lightDark: "#222222",
+    lightDark: "#262626",
     accent: "#F97068",
     background: "#EDF2EF",
     highlight: "#D1D646",

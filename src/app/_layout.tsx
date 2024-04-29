@@ -52,7 +52,7 @@ export default function RootLayout() {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name={ROUTES.seedPhrase}
+              name="(wallet)/seed-phrase"
               options={{
                 title: "Seed Phrase",
                 headerTransparent: true,
@@ -70,7 +70,7 @@ export default function RootLayout() {
               }}
             />
             <Stack.Screen
-              name={ROUTES.confirmSeedPhrase}
+              name="(wallet)/confirm-seed-phrase"
               options={{
                 title: "Confirm Seed Phrase",
                 headerTransparent: true,
@@ -88,7 +88,25 @@ export default function RootLayout() {
               }}
             />
             <Stack.Screen
-              name={ROUTES.confirmSeedPhrase}
+              name="(wallet)/wallet-created-successfully"
+              options={{
+                title: "Confirm Seed Phrase",
+                headerTransparent: true,
+                headerTitleStyle: {
+                  color: "transparent",
+                },
+                headerLeft: () => (
+                  <LeftArrow
+                    width={35}
+                    height={35}
+                    fill="#FFF"
+                    onPress={goBack}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name="(wallet)/wallet-import"
               options={{
                 title: "Confirm Seed Phrase",
                 headerTransparent: true,
