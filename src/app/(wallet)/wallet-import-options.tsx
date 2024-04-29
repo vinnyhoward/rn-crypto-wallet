@@ -1,5 +1,6 @@
 import { SafeAreaView } from "react-native";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
 import { ThemeType } from "../../styles/theme";
@@ -96,13 +97,14 @@ const Circle = styled.View<{ theme: ThemeType }>`
   border-radius: 100px;
   background-color: ${({ theme }) => theme.colors.grey};
   margin-right: ${(props) => props.theme.spacing.large};
-  /* border: 2px solid ${({ theme }) => theme.colors.white}; */
 `;
 
 const InfoButton = () => {
   const theme = useTheme();
   return (
-    <InfoButtonContainer>
+    <InfoButtonContainer
+      onPress={() => router.push(ROUTES.walletImportSeedPhrase)}
+    >
       <Circle>
         <ImportWalletIcon width={25} height={25} fill={theme.colors.white} />
       </Circle>

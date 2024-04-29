@@ -7,7 +7,8 @@ export interface Routes {
   restoreSeedPhrase: string;
   restoreWallet: string;
   walletCreatedSuccessfully: string;
-  walletImport: string;
+  walletImportOptions: string;
+  walletImportSeedPhrase: string;
 }
 
 export const ROUTES: Routes = {
@@ -19,5 +20,6 @@ export const ROUTES: Routes = {
   restoreSeedPhrase: "(wallet)/restore-seed-phrase",
   restoreWallet: "(wallet)/restore-wallet",
   walletCreatedSuccessfully: "(wallet)/wallet-created-successfully",
-  walletImport: "(wallet)/wallet-import",
+  walletImportOptions: "(wallet)/wallet-import-options",
+  walletImportSeedPhrase: "(wallet)/wallet-import-seed-phrase",
 };

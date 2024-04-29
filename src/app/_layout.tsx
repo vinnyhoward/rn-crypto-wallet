@@ -106,7 +106,25 @@ export default function RootLayout() {
               }}
             />
             <Stack.Screen
-              name="(wallet)/wallet-import"
+              name="(wallet)/wallet-import-options"
+              options={{
+                title: "Confirm Seed Phrase",
+                headerTransparent: true,
+                headerTitleStyle: {
+                  color: "transparent",
+                },
+                headerLeft: () => (
+                  <LeftArrow
+                    width={35}
+                    height={35}
+                    fill="#FFF"
+                    onPress={goBack}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name="(wallet)/wallet-import-seed-phrase"
               options={{
                 title: "Confirm Seed Phrase",
                 headerTransparent: true,

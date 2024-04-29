@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native";
 import { router } from "expo-router";
+import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
-import { getPhrase } from "../../hooks/use-storage-state";
+import { restoreWalletFromPhrase } from "../../utils/restoreWalletFromPhrase";
 import { ThemeType } from "../../styles/theme";
+import { saveAddress, savePublicKey } from "../../store/walletSlice";
 import Button from "../../components/Button/Button";
-import Bubble from "../../components/Bubble/Bubble";
+// import Bubble from "../../components/Bubble/Bubble";
 import { ROUTES } from "../../constants/routes";
+import { savePrivateKey } from "../../hooks/use-storage-state";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -61,96 +64,62 @@ const SeedPhraseContainer = styled.View<{ theme: ThemeType }>`
   height: 220px;
 `;
 
-const ConfirmSeedContainer = styled.View<{ theme: ThemeType }>`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  padding: ${(props) => props.theme.spacing.small};
+const SeedTextInput = styled.TextInput<{ theme: ThemeType }>`
+  justify-content: flex-start;
+  padding: ${(props) => props.theme.spacing.large};
   margin: ${(props) => props.theme.spacing.large};
   background-color: ${(props) => props.theme.colors.dark};
   border-radius: ${(props) => props.theme.borderRadius.extraLarge};
-  height: 220px;
+  min-height: 220px;
   width: ${(Dimensions.get("window").width - 80).toFixed(0)}px;
+  color: ${(props) => props.theme.colors.white};
+  font-size: ${(props) => props.theme.fonts.sizes.large};
+  border: 1px solid ${(props) => props.theme.colors.grey};
 `;
 
 export default function Page() {
   const theme = useTheme();
-  const [seedPhrase, setSeedPhrase] = useState<string[]>([]);
-  const [selectedWords, setSelectedWords] = useState<string[]>([]);
-
-  const handleSelectedWord = (word: string) => {
-    if (selectedWords.length === 12) return;
-
-    setSelectedWords([...selectedWords, word]);
-    setSeedPhrase(seedPhrase.filter((w) => w !== word));
-  };
-
-  const handleRemoveSelectedWord = (word: string) => {
-    setSelectedWords(selectedWords.filter((w) => w !== word));
-    setSeedPhrase([...seedPhrase, word]);
-  };
+  const [textValue, setTextValue] = useState<string>("");
+  const dispatch = useDispatch();
 
   const handleVerifySeedPhrase = async () => {
-    if (selectedWords.length !== 12) return;
-    const originalSeedPhrase = await getPhrase();
+    if (textValue.split(" ").length !== 12) return;
 
-    if (selectedWords.join(" ") === originalSeedPhrase) {
-      router.push({
-        pathname: ROUTES.walletCreatedSuccessfully,
-        params: { successState: "CREATED_WALLET" },
-      });
-    } else {
-      console.log("no success");
+    const importedWallet = restoreWalletFromPhrase(textValue);
+    if (Object.keys(importedWallet).length > 0) {
+      const address = importedWallet.address;
+      const publicKey = importedWallet.publicKey;
+      const privateKey = importedWallet.privateKey;
+
+      savePrivateKey(privateKey);
+      dispatch(saveAddress(address));
+      dispatch(savePublicKey(publicKey));
     }
+
+    router.push({
+      pathname: ROUTES.walletCreatedSuccessfully,
+      params: { successState: "IMPORTED_WALLET" },
+    });
   };
-
-  useEffect(() => {
-    const fetchSeedPhrase = async () => {
-      const storedSeedPhrase: string = await getPhrase();
-      const randomizedSeedPhrase = storedSeedPhrase
-        .split(" ")
-        .sort(() => 0.5 - Math.random());
-      setSeedPhrase(randomizedSeedPhrase);
-    };
-
-    fetchSeedPhrase();
-  }, []);
 
   return (
     <SafeAreaContainer>
       <ScrollView contentContainerStyle={{ paddingVertical: 50 }}>
         <ContentContainer>
           <TextContainer>
-            <Title>Verify you saved it correctly</Title>
+            <Title>Secret Recovery Phrase</Title>
             <Subtitle>
-              Tap the words in the correct numerical order to verify you saved
-              your secret recovery phrase.
+              Start the process to restore your wallet by entering your 12 or
+              24-word recovery phrase below.
             </Subtitle>
           </TextContainer>
-          <ConfirmSeedContainer>
-            {selectedWords.map((word, index) => (
-              <Bubble
-                smallBubble
-                hideDetails
-                key={index}
-                word={word}
-                number={index + 1}
-                onPress={() => handleRemoveSelectedWord(word)}
-              />
-            ))}
-          </ConfirmSeedContainer>
-          <SeedPhraseContainer>
-            {seedPhrase.map((word, index) => (
-              <Bubble
-                onPress={() => handleSelectedWord(word)}
-                smallBubble
-                hideDetails
-                key={index}
-                word={word}
-                number={index + 1}
-              />
-            ))}
-          </SeedPhraseContainer>
+          <SeedTextInput
+            autoCapitalize="none"
+            secureTextEntry={true}
+            multiline
+            value={textValue}
+            onChangeText={setTextValue}
+          />
         </ContentContainer>
       </ScrollView>
       <ButtonContainer>

@@ -1,6 +1,7 @@
+import { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native";
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import styled from "styled-components/native";
 import Button from "../../components/Button/Button";
 import { ThemeType } from "../../styles/theme";
@@ -55,6 +56,21 @@ const ImageContainer = styled.View<{ theme: ThemeType }>`
 `;
 
 export default function WalletCreationSuccessPage() {
+  const { successState } = useLocalSearchParams();
+  const [title, setTitle] = useState("Welcome Aboard!");
+  const [subtitle, setSubtitle] = useState(
+    "Your new digital wallet is ready! Dive into securing and exploring your financial future. Your crypto journey starts now."
+  );
+
+  useEffect(() => {
+    if (successState === "import") {
+      setTitle("Wallet Imported Successfully");
+      setSubtitle(
+        "Your imported wallet is ready! Dive into securing and exploring your financial future. Your crypto journey starts now."
+      );
+    }
+  }, [successState]);
+
   return (
     <SafeAreaContainer>
       <ContentContainer>
@@ -66,11 +82,8 @@ export default function WalletCreationSuccessPage() {
         </ImageContainer>
 
         <TextContainer>
-          <Title>Welcome Aboard!</Title>
-          <Subtitle>
-            Your new digital wallet is ready! Dive into securing and exploring
-            your financial future. Your crypto journey starts now.
-          </Subtitle>
+          <Title>{title}</Title>
+          <Subtitle>{subtitle}</Subtitle>
         </TextContainer>
       </ContentContainer>
       <ButtonContainer>
