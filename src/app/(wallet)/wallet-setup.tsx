@@ -101,7 +101,7 @@ export default function WalletSetup() {
       <ContentContainer>
         <ImageContainer>
           <ExpoImage
-            source={require("../../assets/images/wallet.png")}
+            source={require("../../assets/images/wallet_alt.png")}
             contentFit="cover"
           />
         </ImageContainer>

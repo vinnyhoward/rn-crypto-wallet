@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Dimensions, ScrollView } from "react-native";
-import { useDispatch } from "react-redux";
 import { SafeAreaView } from "react-native";
+import { router } from "expo-router";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
 import { getPhrase } from "../../hooks/use-storage-state";
@@ -74,8 +74,6 @@ const ConfirmSeedContainer = styled.View<{ theme: ThemeType }>`
 
 export default function Page() {
   const theme = useTheme();
-  const dispatch = useDispatch();
-  const [buttonText, setButtonText] = useState("Copy to clipboard");
   const [seedPhrase, setSeedPhrase] = useState<string[]>([]);
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
 
@@ -96,7 +94,7 @@ export default function Page() {
     const originalSeedPhrase = await getPhrase();
 
     if (selectedWords.join(" ") === originalSeedPhrase) {
-      console.log("success");
+      router.push("(wallet)/wallet-created-successfully");
     } else {
       console.log("no success");
     }
@@ -105,7 +103,10 @@ export default function Page() {
   useEffect(() => {
     const fetchSeedPhrase = async () => {
       const storedSeedPhrase: string = await getPhrase();
-      setSeedPhrase(storedSeedPhrase.split(" "));
+      const randomizedSeedPhrase = storedSeedPhrase
+        .split(" ")
+        .sort(() => 0.5 - Math.random());
+      setSeedPhrase(randomizedSeedPhrase);
     };
 
     fetchSeedPhrase();

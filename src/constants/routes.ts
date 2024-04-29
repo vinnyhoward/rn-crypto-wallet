@@ -5,4 +5,5 @@ export default {
   confirmSeedPhrase: "/(wallet)/confirm-seed-phrase",
   restoreSeedPhrase: "/(wallet)/restore-seed-phrase",
   restoreWallet: "/(wallet)/restore-wallet",
+  walletCreatedSuccessfully: "/(wallet)/wallet-created-successfully",
 };
