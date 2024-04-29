@@ -1,20 +1,29 @@
 import "react-native-get-random-values";
 import "@ethersproject/shims";
-import { Wallet, HDNodeWallet } from "ethers";
+import * as ethers from "ethers";
+import { mnemonicToSeedSync } from "bip39";
+import { Keypair } from "@solana/web3.js";
 
-/**
- * Restores an Ethereum wallet from a given mnemonic phrase.
- * @param mnemonicPhrase The 12 or 24-word mnemonic phrase.
- * @returns The wallet object if the mnemonic is valid, otherwise throws an error.
- */
-export function restoreWalletFromPhrase(mnemonicPhrase: string): HDNodeWallet {
+export function restoreWalletFromPhrase(mnemonicPhrase: string) {
   if (!mnemonicPhrase) {
     throw new Error("Mnemonic phrase cannot be empty.");
   }
 
   try {
-    const wallet = Wallet.fromPhrase(mnemonicPhrase);
-    return wallet;
+    const ethWallet = ethers.Wallet.fromPhrase(mnemonicPhrase);
+
+    const seedBuffer = mnemonicToSeedSync(mnemonicPhrase);
+    const seed = new Uint8Array(
+      seedBuffer.buffer,
+      seedBuffer.byteOffset,
+      seedBuffer.byteLength
+    ).slice(0, 32);
+    const solWallet = Keypair.fromSeed(seed);
+
+    return {
+      ethereumWallet: ethWallet,
+      solanaWallet: solWallet,
+    };
   } catch (error) {
     throw new Error(
       "Failed to restore wallet from mnemonic: " + (error as Error).message

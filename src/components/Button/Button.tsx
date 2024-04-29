@@ -5,6 +5,7 @@ import { ThemeType } from "../../styles/theme";
 interface ButtonTextProps {
   color?: string;
   theme: ThemeType;
+  disabled?: boolean;
 }
 
 interface ButtonContainerProps {
@@ -33,6 +34,7 @@ const ButtonText = styled.Text<ButtonTextProps>`
 interface ButtonProps {
   onPress: () => void;
   title: string;
+  disabled?: boolean;
   color?: string;
   backgroundColor?: string;
 }
@@ -42,9 +44,14 @@ const Button: React.FC<ButtonProps> = ({
   title,
   color,
   backgroundColor,
+  disabled = false,
 }) => {
   return (
-    <ButtonContainer backgroundColor={backgroundColor} onPress={onPress}>
+    <ButtonContainer
+      disabled={disabled}
+      backgroundColor={backgroundColor}
+      onPress={disabled ? null : onPress}
+    >
       <ButtonText color={color}>{title}</ButtonText>
     </ButtonContainer>
   );

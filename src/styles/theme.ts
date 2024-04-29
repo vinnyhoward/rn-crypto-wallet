@@ -8,6 +8,7 @@ export type ThemeType = {
     highlight: string;
     white: string;
     grey: string;
+    error: string;
   };
   fonts: {
     families: {
@@ -60,6 +61,7 @@ const Theme: ThemeType = {
     highlight: "#D1D646",
     white: "#FFFFFF",
     grey: "#494949",
+    error: "#FF0000",
   },
   fonts: {
     families: {

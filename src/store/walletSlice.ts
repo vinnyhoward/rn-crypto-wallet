@@ -1,11 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export interface WalletState {
+interface CryptoWallet {
   balance: number;
   transactions: Transaction[];
   status: "idle" | "loading" | "failed";
   address: string;
   publicKey: string;
+}
+
+export interface WalletState {
+  ethereum: CryptoWallet;
+  solana: CryptoWallet;
 }
 
 export interface Transaction {
@@ -16,40 +21,78 @@ export interface Transaction {
 }
 
 const initialState: WalletState = {
-  balance: 0,
-  transactions: [],
-  status: "idle",
-  address: "",
-  publicKey: "",
+  ethereum: {
+    balance: 0,
+    transactions: [],
+    status: "idle",
+    address: "",
+    publicKey: "",
+  },
+  solana: {
+    balance: 0,
+    transactions: [],
+    status: "idle",
+    address: "",
+    publicKey: "",
+  },
 };
 
 export const walletSlice = createSlice({
   name: "wallet",
   initialState,
   reducers: {
-    saveAddress: (state, action: PayloadAction<string>) => {
-      state.address = action.payload;
+    saveEthereumAddress: (state, action: PayloadAction<string>) => {
+      state.ethereum.address = action.payload;
     },
-    savePublicKey: (state, action: PayloadAction<string>) => {
-      state.publicKey = action.payload;
+    saveSolanaAddress: (state, action: PayloadAction<string>) => {
+      state.solana.address = action.payload;
     },
-    deposit: (state, action: PayloadAction<number>) => {
-      state.balance += action.payload;
+    saveEthereumPublicKey: (state, action: PayloadAction<string>) => {
+      state.ethereum.publicKey = action.payload;
     },
-    withdraw: (state, action: PayloadAction<number>) => {
-      if (state.balance >= action.payload) {
-        state.balance -= action.payload;
+    saveSolanaPublicKey: (state, action: PayloadAction<string>) => {
+      state.solana.publicKey = action.payload;
+    },
+    depositEthereum: (state, action: PayloadAction<number>) => {
+      state.ethereum.balance += action.payload;
+    },
+    withdrawEthereum: (state, action: PayloadAction<number>) => {
+      if (state.ethereum.balance >= action.payload) {
+        state.ethereum.balance -= action.payload;
       } else {
-        console.warn("Not enough balance");
+        console.warn("Not enough Ethereum balance");
       }
     },
-    addTransaction: (state, action: PayloadAction<Transaction>) => {
-      state.transactions.push(action.payload);
+    depositSolana: (state, action: PayloadAction<number>) => {
+      state.solana.balance += action.payload;
+    },
+    withdrawSolana: (state, action: PayloadAction<number>) => {
+      if (state.solana.balance >= action.payload) {
+        state.solana.balance -= action.payload;
+      } else {
+        console.warn("Not enough Solana balance");
+      }
+    },
+    addEthereumTransaction: (state, action: PayloadAction<Transaction>) => {
+      state.ethereum.transactions.push(action.payload);
+    },
+    addSolanaTransaction: (state, action: PayloadAction<Transaction>) => {
+      state.solana.transactions.push(action.payload);
     },
   },
 });
 
-export const { deposit, withdraw, addTransaction, saveAddress, savePublicKey } =
-  walletSlice.actions;
+export const {
+  depositEthereum,
+  withdrawEthereum,
+  addEthereumTransaction,
+  saveEthereumAddress,
+  saveEthereumPublicKey,
+  depositSolana,
+  withdrawSolana,
+  addSolanaTransaction,
+  saveSolanaAddress,
+  saveSolanaPublicKey,
+} = walletSlice.actions;
 
 export default walletSlice.reducer;

@@ -73,10 +73,22 @@ const ConfirmSeedContainer = styled.View<{ theme: ThemeType }>`
   width: ${(Dimensions.get("window").width - 80).toFixed(0)}px;
 `;
 
+const ErrorTextContainer = styled.View<{ theme: ThemeType }>`
+  padding: ${(props) => props.theme.spacing.medium};
+`;
+
+const ErrorText = styled.Text<{ theme: ThemeType }>`
+  font-family: ${(props) => props.theme.fonts.families.openRegular};
+  font-size: ${(props) => props.theme.fonts.sizes.large};
+  color: ${(props) => props.theme.colors.error};
+  text-align: center;
+`;
+
 export default function Page() {
   const theme = useTheme();
   const [seedPhrase, setSeedPhrase] = useState<string[]>([]);
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
+  const [error, setError] = useState<string>("");
 
   const handleSelectedWord = (word: string) => {
     if (selectedWords.length === 12) return;
@@ -91,7 +103,10 @@ export default function Page() {
   };
 
   const handleVerifySeedPhrase = async () => {
-    if (selectedWords.length !== 12) return;
+    if (selectedWords.length !== 12) {
+      setError("Please select all the words to verify your seed phrase");
+      return;
+    }
     const originalSeedPhrase = await getPhrase();
 
     if (selectedWords.join(" ") === originalSeedPhrase) {
@@ -100,7 +115,7 @@ export default function Page() {
         params: { successState: "CREATED_WALLET" },
       });
     } else {
-      console.log("no success");
+      setError("Looks like the seed phrase is incorrect. Please try again.");
     }
   };
 
@@ -153,6 +168,11 @@ export default function Page() {
           </SeedPhraseContainer>
         </ContentContainer>
       </ScrollView>
+      {error && (
+        <ErrorTextContainer>
+          <ErrorText>{error}</ErrorText>
+        </ErrorTextContainer>
+      )}
       <ButtonContainer>
         <Button
           color={theme.colors.white}

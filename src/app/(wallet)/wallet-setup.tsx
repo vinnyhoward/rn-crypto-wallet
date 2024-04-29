@@ -1,5 +1,5 @@
 import { SafeAreaView } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import styled from "styled-components/native";
@@ -7,8 +7,12 @@ import { createWallet } from "../../utils/createWallet";
 import { savePrivateKey, savePhrase } from "../../hooks/use-storage-state";
 import Button from "../../components/Button/Button";
 import { ThemeType } from "../../styles/theme";
-import type { RootState } from "../../store";
-import { saveAddress, savePublicKey } from "../../store/walletSlice";
+import {
+  saveEthereumAddress,
+  saveEthereumPublicKey,
+  saveSolanaAddress,
+  saveSolanaPublicKey,
+} from "../../store/walletSlice";
 import { ROUTES } from "../../constants/routes";
 
 export const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
@@ -76,22 +80,31 @@ export const SecondaryButtonText = styled.Text<{ theme: ThemeType }>`
 `;
 
 export default function WalletSetup() {
-  const balance = useSelector((state: RootState) => state.wallet.balance);
   const dispatch = useDispatch();
 
   const walletSetup = () => {
-    const wallet = createWallet();
+    const wallets = createWallet();
 
-    if (Object.keys(wallet).length > 0) {
-      const address = wallet.address;
-      const mnemonicPhrase = wallet.mnemonic.phrase;
-      const publicKey = wallet.publicKey;
-      const privateKey = wallet.privateKey;
+    if (Object.keys(wallets).length > 0) {
+      const etherAddress = wallets.ethereumWallet.address;
+      const masterMnemonicPhrase = wallets.ethereumWallet.mnemonic.phrase;
+      const masterPrivateKey = wallets.ethereumWallet.privateKey;
 
-      savePhrase(mnemonicPhrase);
-      savePrivateKey(privateKey);
-      dispatch(saveAddress(address));
-      dispatch(savePublicKey(publicKey));
+      const etherPublicKey = wallets.ethereumWallet.publicKey;
+
+      const solanaAddress = wallets.solanaWallet.publicKey.toBase58();
+      const solanaPublicKey = wallets.solanaWallet.publicKey.toBase58();
+
+      console.log("solana data", solanaAddress, solanaPublicKey);
+
+      savePhrase(masterMnemonicPhrase);
+      savePrivateKey(masterPrivateKey);
+
+      dispatch(saveEthereumAddress(etherAddress));
+      dispatch(saveEthereumPublicKey(etherPublicKey));
+
+      dispatch(saveSolanaAddress(solanaAddress));
+      dispatch(saveSolanaPublicKey(solanaPublicKey));
 
       router.push(ROUTES.seedPhrase);
     }
