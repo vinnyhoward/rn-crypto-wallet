@@ -1,8 +1,7 @@
 import { SafeAreaView } from "react-native";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import styled from "styled-components/native";
-import { useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components/native";
 import { ThemeType } from "../../styles/theme";
 import { ROUTES } from "../../constants/routes";
 import ImportWalletIcon from "../../assets/svg/import-wallet.svg";
@@ -52,6 +51,14 @@ const ImageContainer = styled.View<{ theme: ThemeType }>`
   height: 300px;
 `;
 
+const ButtonContainer = styled.View<{ theme: ThemeType }>`
+  padding-left: ${(props) => props.theme.spacing.large};
+  padding-right: ${(props) => props.theme.spacing.large};
+  padding-bottom: ${(props) => props.theme.spacing.large};
+  padding-top: ${(props) => props.theme.spacing.small};
+  width: 100%;
+`;
+
 const InfoButtonContainer = styled.TouchableOpacity<{ theme: ThemeType }>`
   flex-direction: row;
   justify-content: flex-start;
@@ -75,14 +82,6 @@ const InfoText = styled.Text<{ theme: ThemeType }>`
   font-family: ${(props) => props.theme.fonts.families.openRegular};
   font-size: ${(props) => props.theme.fonts.sizes.normal};
   color: ${({ theme }) => theme.colors.white};
-`;
-
-const ButtonContainer = styled.View<{ theme: ThemeType }>`
-  padding-left: ${(props) => props.theme.spacing.large};
-  padding-right: ${(props) => props.theme.spacing.large};
-  padding-bottom: ${(props) => props.theme.spacing.large};
-  padding-top: ${(props) => props.theme.spacing.small};
-  width: 100%;
 `;
 
 const InfoTextContainer = styled.View<{ theme: ThemeType }>`

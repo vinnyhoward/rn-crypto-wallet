@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Text, SafeAreaView } from "react-native";
+import { View, SafeAreaView, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { router } from "expo-router";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { clearPersistedState } from "../../store";
 import { ROUTES } from "../../constants/routes";
 import { ThemeType } from "../../styles/theme";
@@ -14,21 +14,44 @@ import {
 import type { AppDispatch } from "../../store";
 import { fetchCryptoPrices } from "../../utils/fetchCryptoPrices";
 import { getSolanaBalance } from "../../utils/getSolanaBalance";
+import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
+import SendIcon from "../../assets/svg/send.svg";
+import ReceiveIcon from "../../assets/svg/receive.svg";
 
-export const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
+const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
   background-color: ${(props) => props.theme.colors.dark};
   justify-content: flex-end;
 `;
 
-export const ContentContainer = styled.View<{ theme: ThemeType }>`
+const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
+const BalanceContainer = styled.View<{ theme: ThemeType }>`
+  padding: ${(props) => props.theme.spacing.large};
+  margin-top: 25px;
+`;
+
+const BalanceText = styled.Text<{ theme: ThemeType }>`
+  font-family: ${(props) => props.theme.fonts.families.openBold};
+  font-size: ${(props) => props.theme.fonts.sizes.uberHuge};
+  color: ${(props) => props.theme.fonts.colors.primary};
+`;
+
+const ActionContainer = styled.View<{ theme: ThemeType }>`
+  flex-direction: row;
   justify-content: center;
   align-items: center;
+  padding: ${(props) => props.theme.spacing.large};
+  width: 100%;
 `;
 
 export default function Index() {
   const dispatch = useDispatch<AppDispatch>();
+  const theme = useTheme();
   const ethWalletAddress = useSelector(
     (state: RootState) => state.wallet.ethereum.address
   );
@@ -81,8 +104,35 @@ export default function Index() {
   console.log("usd balance", usdBalance);
   return (
     <SafeAreaContainer>
-      <ContentContainer></ContentContainer>
-      {/* <Text onPress={() => logout()}>logout</Text> */}
+      <ScrollView>
+        <ContentContainer>
+          <BalanceContainer>
+            <BalanceText>${usdBalance.toFixed(2)}</BalanceText>
+          </BalanceContainer>
+          <ActionContainer>
+            <PrimaryButton
+              icon={
+                <SendIcon width={25} height={25} fill={theme.colors.primary} />
+              }
+              onPress={() => router.push(ROUTES.sendCrypto)}
+              btnText="Send"
+            />
+            <View style={{ width: 15 }} />
+            <PrimaryButton
+              icon={
+                <ReceiveIcon
+                  width={25}
+                  height={25}
+                  fill={theme.colors.primary}
+                />
+              }
+              onPress={() => router.push(ROUTES.receiveCrypto)}
+              btnText="Receive"
+            />
+          </ActionContainer>
+        </ContentContainer>
+        {/* <Text onPress={() => logout()}>logout</Text> */}
+      </ScrollView>
     </SafeAreaContainer>
   );
 }

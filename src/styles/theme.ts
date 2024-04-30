@@ -23,6 +23,8 @@ export type ThemeType = {
       large: string;
       header: string;
       title: string;
+      huge: string;
+      uberHuge: string;
     };
     weights: {
       normal: string;
@@ -76,6 +78,8 @@ const Theme: ThemeType = {
       large: "16px",
       header: "18px",
       title: "24px",
+      huge: "32px",
+      uberHuge: "48px",
     },
     weights: {
       normal: "400",
