@@ -1,4 +1,11 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import * as ethers from "ethers";
+import { RootState } from "./index";
+
+const { EXPO_PUBLIC_ALCHEMY_KEY, EXPO_PUBLIC_ALCHEMY_URL } = process.env;
+const ethereumUrl = EXPO_PUBLIC_ALCHEMY_URL + EXPO_PUBLIC_ALCHEMY_KEY;
+
+const provider = new ethers.JsonRpcProvider(ethereumUrl);
 
 interface CryptoWallet {
   balance: number;
@@ -36,6 +43,25 @@ const initialState: WalletState = {
     publicKey: "",
   },
 };
+
+export const fetchEthereumBalance = createAsyncThunk<
+  string,
+  string,
+  {
+    state: RootState;
+    rejectValue: string;
+  }
+>(
+  "wallet/fetchEthereumBalance",
+  async (address: ethers.AddressLike, { rejectWithValue }) => {
+    try {
+      const balance = await provider.getBalance(address);
+      return ethers.formatEther(balance);
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 export const walletSlice = createSlice({
   name: "wallet",
@@ -79,6 +105,23 @@ export const walletSlice = createSlice({
     addSolanaTransaction: (state, action: PayloadAction<Transaction>) => {
       state.solana.transactions.push(action.payload);
     },
+    updateEthereumBalance: (state, action: PayloadAction<string>) => {
+      state.ethereum.balance = parseFloat(action.payload);
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchEthereumBalance.pending, (state) => {
+        state.ethereum.status = "loading";
+      })
+      .addCase(fetchEthereumBalance.fulfilled, (state, action) => {
+        state.ethereum.balance = parseFloat(action.payload);
+        state.ethereum.status = "idle";
+      })
+      .addCase(fetchEthereumBalance.rejected, (state, action) => {
+        state.ethereum.status = "failed";
+        console.error("Failed to fetch balance:", action.payload);
+      });
   },
 });
 
@@ -93,6 +136,7 @@ export const {
   addSolanaTransaction,
   saveSolanaAddress,
   saveSolanaPublicKey,
+  updateEthereumBalance,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;
