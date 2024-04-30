@@ -3,6 +3,7 @@
         "blurhash",
         "ethersproject",
         "Keypair",
+        "persistor",
         "reduxjs",
         "roboto",
         "solana"

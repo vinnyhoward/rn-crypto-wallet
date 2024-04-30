@@ -95,8 +95,6 @@ export default function WalletSetup() {
       const solanaAddress = wallets.solanaWallet.publicKey.toBase58();
       const solanaPublicKey = wallets.solanaWallet.publicKey.toBase58();
 
-      console.log("solana data", solanaAddress, solanaPublicKey);
-
       savePhrase(masterMnemonicPhrase);
       savePrivateKey(masterPrivateKey);
 

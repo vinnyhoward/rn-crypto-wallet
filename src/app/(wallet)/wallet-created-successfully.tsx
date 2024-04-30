@@ -88,7 +88,7 @@ export default function WalletCreationSuccessPage() {
       </ContentContainer>
       <ButtonContainer>
         <Button
-          onPress={() => router.push(ROUTES.home)}
+          onPress={() => router.replace(ROUTES.home)}
           title="Continue to wallet"
         />
       </ButtonContainer>
