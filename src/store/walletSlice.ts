@@ -108,6 +108,9 @@ export const walletSlice = createSlice({
     updateEthereumBalance: (state, action: PayloadAction<string>) => {
       state.ethereum.balance = parseFloat(action.payload);
     },
+    updateSolanaBalance: (state, action: PayloadAction<number>) => {
+      state.solana.balance = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -137,6 +140,7 @@ export const {
   saveSolanaAddress,
   saveSolanaPublicKey,
   updateEthereumBalance,
+  updateSolanaBalance,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Text, SafeAreaView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { router } from "expo-router";
@@ -7,8 +7,13 @@ import { clearPersistedState } from "../../store";
 import { ROUTES } from "../../constants/routes";
 import { ThemeType } from "../../styles/theme";
 import type { RootState } from "../../store";
-import { fetchEthereumBalance } from "../../store/walletSlice";
+import {
+  fetchEthereumBalance,
+  updateSolanaBalance,
+} from "../../store/walletSlice";
 import type { AppDispatch } from "../../store";
+import { fetchCryptoPrices } from "../../utils/fetchCryptoPrices";
+import { getSolanaBalance } from "../../utils/getSolanaBalance";
 
 export const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -30,23 +35,54 @@ export default function Index() {
   const ethBalance = useSelector(
     (state: RootState) => state.wallet.ethereum.balance
   );
+  const solWalletAddress = useSelector(
+    (state: RootState) => state.wallet.solana.address
+  );
+  const solBalance = useSelector(
+    (state: RootState) => state.wallet.solana.balance
+  );
+  const [usdBalance, setUsdBalance] = useState(0);
+
   const logout = () => {
     clearPersistedState();
     router.replace("/(wallet)/wallet-setup");
   };
 
   useEffect(() => {
+    const fetchSolanaBalance = async () => {
+      const currentSolBalance = await getSolanaBalance(solWalletAddress);
+      dispatch(updateSolanaBalance(currentSolBalance));
+    };
+
     if (ethWalletAddress) {
       dispatch(fetchEthereumBalance(ethWalletAddress));
     }
+
+    if (solWalletAddress) {
+      fetchSolanaBalance();
+    }
   }, [ethWalletAddress, dispatch]);
 
-  console.log(ethWalletAddress);
-  console.log(ethBalance);
+  useEffect(() => {
+    const fetchPrices = async () => {
+      // const prices = await fetchCryptoPrices();
+      // setUsdBalance(prices.ethereum.usd * ethBalance);
+      const mockUsd = 3199.99;
+      const ethUsd = mockUsd * ethBalance;
+      const solUsd = mockUsd * solBalance;
+      setUsdBalance(ethUsd + solUsd);
+    };
+
+    fetchPrices();
+  }, [ethBalance, solBalance]);
+
+  console.log("eth address", ethWalletAddress);
+  console.log("eth balance", ethBalance);
+  console.log("usd balance", usdBalance);
   return (
     <SafeAreaContainer>
       <ContentContainer></ContentContainer>
-      <Text onPress={() => logout()}>logout</Text>
+      {/* <Text onPress={() => logout()}>logout</Text> */}
     </SafeAreaContainer>
   );
 }
