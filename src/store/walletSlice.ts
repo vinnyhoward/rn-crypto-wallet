@@ -1,3 +1,6 @@
+import "react-native-get-random-values";
+import "@ethersproject/shims";
+
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import * as ethers from "ethers";
 import { RootState } from "./index";

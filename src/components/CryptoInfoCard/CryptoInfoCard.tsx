@@ -20,7 +20,6 @@ interface CircleProps {
 
 const CryptoInfoCardContainer = styled.TouchableOpacity<ButtonContainerProps>`
   flex-direction: row;
-  /* align-items: center; */
   justify-content: space-between;
   background-color: ${({ theme }) => theme.colors.lightDark};
   border-radius: ${(props) => props.theme.borderRadius.large};

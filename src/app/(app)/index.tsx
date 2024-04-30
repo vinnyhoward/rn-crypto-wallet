@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, SafeAreaView, ScrollView } from "react-native";
+import { View, SafeAreaView, ScrollView, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
@@ -50,7 +50,6 @@ const ActionContainer = styled.View<{ theme: ThemeType }>`
   align-items: center;
   padding: ${(props) => props.theme.spacing.large};
   width: 100%;
-  /* margin-bottom: 10px; */
 `;
 
 const CryptoInfoCardContainer = styled.View<{ theme: ThemeType }>`
@@ -188,7 +187,7 @@ export default function Index() {
             </CardView>
           </CryptoInfoCardContainer>
         </ContentContainer>
-        {/* <Text onPress={() => logout()}>logout</Text> */}
+        <Text onPress={() => logout()}>logout</Text>
       </ScrollView>
     </SafeAreaContainer>
   );
