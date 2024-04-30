@@ -7,6 +7,7 @@ export type ThemeType = {
     background: string;
     highlight: string;
     white: string;
+    lightGrey: string;
     grey: string;
     error: string;
   };
@@ -62,6 +63,7 @@ const Theme: ThemeType = {
     background: "#EDF2EF",
     highlight: "#D1D646",
     white: "#FFFFFF",
+    lightGrey: "#D3D3D3",
     grey: "#494949",
     error: "#FF0000",
   },

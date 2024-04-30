@@ -18,18 +18,19 @@ interface CircleProps {
   theme: ThemeType;
 }
 
-const PrimaryButtonContainer = styled.TouchableOpacity<ButtonContainerProps>`
-  flex: 1;
+const CryptoInfoCardContainer = styled.TouchableOpacity<ButtonContainerProps>`
   flex-direction: row;
-  align-items: center;
+  /* align-items: center; */
+  justify-content: space-between;
   background-color: ${({ theme }) => theme.colors.lightDark};
   border-radius: ${(props) => props.theme.borderRadius.large};
   height: 65px;
   padding: ${(props) => props.theme.spacing.medium};
   padding-left: 15px;
+  width: 100%;
 `;
 
-const PrimaryButtonText = styled.Text<ButtonTextProps>`
+const CryptoInfoCardText = styled.Text<ButtonTextProps>`
   font-family: ${(props) => props.theme.fonts.families.openBold};
   font-size: ${(props) => props.theme.fonts.sizes.large};
   color: ${({ theme }) => theme.colors.white};
@@ -48,6 +49,17 @@ const Circle = styled.View<CircleProps>`
   margin-right: 5px;
 `;
 
+const ChainContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const CryptoBalanceText = styled.Text<ButtonTextProps>`
+  font-family: ${(props) => props.theme.fonts.families.openBold};
+  font-size: ${(props) => props.theme.fonts.sizes.normal};
+  color: ${({ theme }) => theme.colors.lightGrey};
+`;
+
 interface ButtonProps {
   onPress: () => void;
   btnText: string;
@@ -56,28 +68,38 @@ interface ButtonProps {
   backgroundColor?: string;
   icon: React.ReactNode;
   iconBackgroundColor?: string;
+  cryptoBalanceAmount: string;
+  usdCryptoPrice: string;
 }
 
-const PrimaryButton: React.FC<ButtonProps> = ({
+const CryptoInfoCard: React.FC<ButtonProps> = ({
   onPress,
   btnText,
   backgroundColor,
   disabled = false,
   icon,
   iconBackgroundColor,
+  cryptoBalanceAmount,
+  usdCryptoPrice,
 }) => {
   return (
-    <PrimaryButtonContainer
+    <CryptoInfoCardContainer
       disabled={disabled}
       backgroundColor={backgroundColor}
       onPress={disabled ? null : onPress}
     >
-      <Circle iconBackgroundColor={iconBackgroundColor}>{icon}</Circle>
+      <ChainContainer>
+        <Circle iconBackgroundColor={iconBackgroundColor}>{icon}</Circle>
+        <PrimaryTextContainer>
+          <CryptoInfoCardText>{btnText}</CryptoInfoCardText>
+          <CryptoBalanceText>{cryptoBalanceAmount}</CryptoBalanceText>
+        </PrimaryTextContainer>
+      </ChainContainer>
       <PrimaryTextContainer>
-        <PrimaryButtonText>{btnText}</PrimaryButtonText>
+        <CryptoInfoCardText>{usdCryptoPrice}</CryptoInfoCardText>
       </PrimaryTextContainer>
-    </PrimaryButtonContainer>
+    </CryptoInfoCardContainer>
   );
 };
 
-export default PrimaryButton;
+export default CryptoInfoCard;

@@ -17,6 +17,9 @@ import { getSolanaBalance } from "../../utils/getSolanaBalance";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import SendIcon from "../../assets/svg/send.svg";
 import ReceiveIcon from "../../assets/svg/receive.svg";
+import CryptoInfoCard from "../../components/CryptoInfoCard/CryptoInfoCard";
+import SolanaIcon from "../../assets/svg/solana.svg";
+import EthereumIcon from "../../assets/svg/ethereum.svg";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -27,18 +30,18 @@ const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
   justify-content: flex-start;
-  align-items: center;
 `;
 
 const BalanceContainer = styled.View<{ theme: ThemeType }>`
   padding: ${(props) => props.theme.spacing.large};
-  margin-top: 25px;
+  margin-top: 10px;
 `;
 
 const BalanceText = styled.Text<{ theme: ThemeType }>`
   font-family: ${(props) => props.theme.fonts.families.openBold};
   font-size: ${(props) => props.theme.fonts.sizes.uberHuge};
   color: ${(props) => props.theme.fonts.colors.primary};
+  text-align: center;
 `;
 
 const ActionContainer = styled.View<{ theme: ThemeType }>`
@@ -47,6 +50,29 @@ const ActionContainer = styled.View<{ theme: ThemeType }>`
   align-items: center;
   padding: ${(props) => props.theme.spacing.large};
   width: 100%;
+  /* margin-bottom: 10px; */
+`;
+
+const CryptoInfoCardContainer = styled.View<{ theme: ThemeType }>`
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+`;
+
+const CardView = styled.View<{ theme: ThemeType }>`
+  padding-left: ${(props) => props.theme.spacing.large};
+  padding-right: ${(props) => props.theme.spacing.large};
+  padding-bottom: ${(props) => props.theme.spacing.medium};
+  width: 100%;
+`;
+
+const SectionTitle = styled.Text<{ theme: ThemeType }>`
+  font-family: ${(props) => props.theme.fonts.families.openBold};
+  font-size: ${(props) => props.theme.fonts.sizes.title};
+  color: ${(props) => props.theme.fonts.colors.primary};
+  margin-bottom: ${(props) => props.theme.spacing.medium};
+  margin-left: ${(props) => props.theme.spacing.huge};
 `;
 
 export default function Index() {
@@ -65,6 +91,8 @@ export default function Index() {
     (state: RootState) => state.wallet.solana.balance
   );
   const [usdBalance, setUsdBalance] = useState(0);
+  const [solUsd, setSolUsd] = useState(0);
+  const [ethUsd, setEthUsd] = useState(0);
 
   const logout = () => {
     clearPersistedState();
@@ -94,6 +122,8 @@ export default function Index() {
       const ethUsd = mockUsd * ethBalance;
       const solUsd = mockUsd * solBalance;
       setUsdBalance(ethUsd + solUsd);
+      setEthUsd(ethUsd);
+      setSolUsd(solUsd);
     };
 
     fetchPrices();
@@ -130,6 +160,33 @@ export default function Index() {
               btnText="Receive"
             />
           </ActionContainer>
+          <SectionTitle>Assets</SectionTitle>
+          <CryptoInfoCardContainer>
+            <CardView>
+              <CryptoInfoCard
+                usdCryptoPrice={`$${ethUsd.toFixed(2)}`}
+                cryptoBalanceAmount={`${ethBalance} ETH`}
+                icon={
+                  <EthereumIcon
+                    width={35}
+                    height={35}
+                    fill={theme.colors.white}
+                  />
+                }
+                onPress={() => router.push(ROUTES.sendCrypto)}
+                btnText="Ethereum"
+              />
+            </CardView>
+            <CardView>
+              <CryptoInfoCard
+                usdCryptoPrice={`$${solUsd.toFixed(2)}`}
+                cryptoBalanceAmount={`${solBalance} SOL`}
+                icon={<SolanaIcon width={25} height={25} fill="#14F195" />}
+                onPress={() => router.push(ROUTES.receiveCrypto)}
+                btnText="Solana"
+              />
+            </CardView>
+          </CryptoInfoCardContainer>
         </ContentContainer>
         {/* <Text onPress={() => logout()}>logout</Text> */}
       </ScrollView>
