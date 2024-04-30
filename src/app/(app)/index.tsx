@@ -30,11 +30,12 @@ const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
   justify-content: flex-start;
+  padding: ${(props) => props.theme.spacing.large};
 `;
 
 const BalanceContainer = styled.View<{ theme: ThemeType }>`
-  padding: ${(props) => props.theme.spacing.large};
   margin-top: 10px;
+  margin-bottom: ${(props) => props.theme.spacing.huge};
 `;
 
 const BalanceText = styled.Text<{ theme: ThemeType }>`
@@ -48,8 +49,8 @@ const ActionContainer = styled.View<{ theme: ThemeType }>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: ${(props) => props.theme.spacing.large};
   width: 100%;
+  margin-bottom: ${(props) => props.theme.spacing.medium};
 `;
 
 const CryptoInfoCardContainer = styled.View<{ theme: ThemeType }>`
@@ -60,9 +61,7 @@ const CryptoInfoCardContainer = styled.View<{ theme: ThemeType }>`
 `;
 
 const CardView = styled.View<{ theme: ThemeType }>`
-  padding-left: ${(props) => props.theme.spacing.large};
-  padding-right: ${(props) => props.theme.spacing.large};
-  padding-bottom: ${(props) => props.theme.spacing.medium};
+  margin-bottom: ${(props) => props.theme.spacing.medium};
   width: 100%;
 `;
 
@@ -71,7 +70,7 @@ const SectionTitle = styled.Text<{ theme: ThemeType }>`
   font-size: ${(props) => props.theme.fonts.sizes.title};
   color: ${(props) => props.theme.fonts.colors.primary};
   margin-bottom: ${(props) => props.theme.spacing.medium};
-  margin-left: ${(props) => props.theme.spacing.huge};
+  margin-left: ${(props) => props.theme.spacing.small};
 `;
 
 export default function Index() {
@@ -175,12 +174,14 @@ export default function Index() {
               </Link>
             </CardView>
             <CardView>
-              <CryptoInfoCard
-                usdCryptoPrice={formatDollar(solUsd)}
-                cryptoBalanceAmount={`${solBalance} SOL`}
-                icon={<SolanaIcon width={25} height={25} fill="#14F195" />}
-                btnText="Solana"
-              />
+              <Link href="/token/solana">
+                <CryptoInfoCard
+                  usdCryptoPrice={formatDollar(solUsd)}
+                  cryptoBalanceAmount={`${solBalance} SOL`}
+                  icon={<SolanaIcon width={25} height={25} fill="#14F195" />}
+                  btnText="Solana"
+                />
+              </Link>
             </CardView>
           </CryptoInfoCardContainer>
         </ContentContainer>

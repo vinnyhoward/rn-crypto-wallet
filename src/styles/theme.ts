@@ -63,7 +63,7 @@ const Theme: ThemeType = {
     background: "#EDF2EF",
     highlight: "#D1D646",
     white: "#FFFFFF",
-    lightGrey: "#D3D3D3",
+    lightGrey: "#A0A0A0",
     grey: "#494949",
     error: "#FF0000",
   },
