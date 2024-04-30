@@ -1,25 +1,26 @@
 import { useEffect, useState } from "react";
-import { View, SafeAreaView, ScrollView } from "react-native";
+import { View, SafeAreaView, ScrollView, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { router, Link } from "expo-router";
+import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
-import { ROUTES } from "../../constants/routes";
-import { ThemeType } from "../../styles/theme";
-import type { RootState } from "../../store";
+import { ThemeType } from "../../../styles/theme";
+
+import { clearPersistedState } from "../../../store";
+import { ROUTES } from "../../../constants/routes";
+import type { RootState } from "../../../store";
 import {
   fetchEthereumBalance,
   updateSolanaBalance,
-} from "../../store/walletSlice";
-import type { AppDispatch } from "../../store";
-// import { fetchCryptoPrices } from "../../utils/fetchCryptoPrices";
-import { formatDollar } from "../../utils/formatDollars";
-import { getSolanaBalance } from "../../utils/getSolanaBalance";
-import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
-import SendIcon from "../../assets/svg/send.svg";
-import ReceiveIcon from "../../assets/svg/receive.svg";
-import CryptoInfoCard from "../../components/CryptoInfoCard/CryptoInfoCard";
-import SolanaIcon from "../../assets/svg/solana.svg";
-import EthereumIcon from "../../assets/svg/ethereum.svg";
+} from "../../../store/walletSlice";
+import type { AppDispatch } from "../../../store";
+import { fetchCryptoPrices } from "../../../utils/fetchCryptoPrices";
+import { getSolanaBalance } from "../../../utils/getSolanaBalance";
+import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
+import CryptoInfoCard from "../../../components/CryptoInfoCard/CryptoInfoCard";
+import SendIcon from "../../../assets/svg/send.svg";
+import ReceiveIcon from "../../../assets/svg/receive.svg";
+import SolanaIcon from "../../../assets/svg/solana.svg";
+import EthereumIcon from "../../../assets/svg/ethereum.svg";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -93,6 +94,11 @@ export default function Index() {
   const [solUsd, setSolUsd] = useState(0);
   const [ethUsd, setEthUsd] = useState(0);
 
+  const logout = () => {
+    clearPersistedState();
+    router.replace("/(wallet)/wallet-setup");
+  };
+
   useEffect(() => {
     const fetchSolanaBalance = async () => {
       const currentSolBalance = await getSolanaBalance(solWalletAddress);
@@ -133,7 +139,7 @@ export default function Index() {
       <ScrollView>
         <ContentContainer>
           <BalanceContainer>
-            <BalanceText>{formatDollar(usdBalance)}</BalanceText>
+            <BalanceText>${usdBalance.toFixed(2)}</BalanceText>
           </BalanceContainer>
           <ActionContainer>
             <PrimaryButton
@@ -159,24 +165,22 @@ export default function Index() {
           <SectionTitle>Assets</SectionTitle>
           <CryptoInfoCardContainer>
             <CardView>
-              <Link href="/token/ethereum">
-                <CryptoInfoCard
-                  usdCryptoPrice={formatDollar(ethUsd)}
-                  cryptoBalanceAmount={`${ethBalance} ETH`}
-                  icon={
-                    <EthereumIcon
-                      width={35}
-                      height={35}
-                      fill={theme.colors.white}
-                    />
-                  }
-                  btnText="Ethereum"
-                />
-              </Link>
+              <CryptoInfoCard
+                usdCryptoPrice={`$${ethUsd.toFixed(2)}`}
+                cryptoBalanceAmount={`${ethBalance} ETH`}
+                icon={
+                  <EthereumIcon
+                    width={35}
+                    height={35}
+                    fill={theme.colors.white}
+                  />
+                }
+                btnText="Ethereum"
+              />
             </CardView>
             <CardView>
               <CryptoInfoCard
-                usdCryptoPrice={formatDollar(solUsd)}
+                usdCryptoPrice={`$${solUsd.toFixed(2)}`}
                 cryptoBalanceAmount={`${solBalance} SOL`}
                 icon={<SolanaIcon width={25} height={25} fill="#14F195" />}
                 btnText="Solana"

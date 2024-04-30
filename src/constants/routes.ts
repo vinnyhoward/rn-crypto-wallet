@@ -11,6 +11,8 @@ export interface Routes {
   walletImportSeedPhrase: string;
   sendCrypto: string;
   receiveCrypto: string;
+  tokenDetails: string;
+  settings: string;
 }
 
 export const ROUTES: Routes = {
@@ -26,4 +28,6 @@ export const ROUTES: Routes = {
   walletImportSeedPhrase: "(wallet)/wallet-import-seed-phrase",
   sendCrypto: "(wallet)/send-crypto",
   receiveCrypto: "(wallet)/receive-crypto",
+  tokenDetails: "token/ethereum",
+  settings: "(app)/settings/settings-modal",
 };
