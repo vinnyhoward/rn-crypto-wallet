@@ -139,7 +139,7 @@ export default function Index() {
               icon={
                 <SendIcon width={25} height={25} fill={theme.colors.primary} />
               }
-              onPress={() => router.push(ROUTES.sendCrypto)}
+              onPress={() => router.push(ROUTES.send)}
               btnText="Send"
             />
             <View style={{ width: 15 }} />
@@ -151,7 +151,7 @@ export default function Index() {
                   fill={theme.colors.primary}
                 />
               }
-              onPress={() => router.push(ROUTES.receiveCrypto)}
+              onPress={() => router.push(ROUTES.receive)}
               btnText="Receive"
             />
           </ActionContainer>

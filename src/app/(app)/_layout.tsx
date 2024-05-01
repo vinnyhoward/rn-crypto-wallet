@@ -48,6 +48,26 @@ export default function AppLayout() {
         }}
       />
       <Stack.Screen
+        name="token/send"
+        options={{
+          headerShown: false,
+          headerTransparent: true,
+          gestureEnabled: true,
+          presentation: "modal",
+          headerLeft: null,
+        }}
+      />
+      <Stack.Screen
+        name="token/receive"
+        options={{
+          headerShown: true,
+          headerTransparent: true,
+          gestureEnabled: true,
+          presentation: "modal",
+          headerLeft: null,
+        }}
+      />
+      <Stack.Screen
         name="settings/settings-modal"
         options={{
           headerShown: false,

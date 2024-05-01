@@ -26,7 +26,7 @@ const CryptoInfoCardContainer = styled.View<ButtonContainerProps>`
   height: 75px;
   padding: ${(props) => props.theme.spacing.medium};
   padding-left: 20px;
-  padding-right: 20px;
+  padding-right: 27.5px;
   width: 100%;
 `;
 
