@@ -61,35 +61,33 @@ const CryptoBalanceText = styled.Text<ButtonTextProps>`
 `;
 
 interface ButtonProps {
-  btnText: string;
-  color?: string;
+  title: string;
+  caption: string;
+  details: string;
   backgroundColor?: string;
   icon: React.ReactNode;
   iconBackgroundColor?: string;
-  cryptoBalanceAmount: string;
-  usdCryptoPrice: string;
 }
 
 const CryptoInfoCard: React.FC<ButtonProps> = ({
-  btnText,
-  color,
+  title,
+  caption,
+  details,
   backgroundColor,
   icon,
   iconBackgroundColor,
-  cryptoBalanceAmount,
-  usdCryptoPrice,
 }) => {
   return (
     <CryptoInfoCardContainer backgroundColor={backgroundColor}>
       <ChainContainer>
         <Circle iconBackgroundColor={iconBackgroundColor}>{icon}</Circle>
         <PrimaryTextContainer>
-          <CryptoInfoCardText>{btnText}</CryptoInfoCardText>
-          <CryptoBalanceText>{cryptoBalanceAmount}</CryptoBalanceText>
+          <CryptoInfoCardText>{title}</CryptoInfoCardText>
+          <CryptoBalanceText>{caption}</CryptoBalanceText>
         </PrimaryTextContainer>
       </ChainContainer>
       <PrimaryTextContainer>
-        <CryptoInfoCardText>{usdCryptoPrice}</CryptoInfoCardText>
+        <CryptoInfoCardText>{details}</CryptoInfoCardText>
       </PrimaryTextContainer>
     </CryptoInfoCardContainer>
   );

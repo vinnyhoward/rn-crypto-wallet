@@ -160,8 +160,9 @@ export default function Index() {
             <CardView>
               <Link href="/token/ethereum">
                 <CryptoInfoCard
-                  usdCryptoPrice={formatDollar(ethUsd)}
-                  cryptoBalanceAmount={`${ethBalance} ETH`}
+                  title="Ethereum"
+                  caption={`${ethBalance} ETH`}
+                  details={formatDollar(ethUsd)}
                   icon={
                     <EthereumIcon
                       width={35}
@@ -169,17 +170,16 @@ export default function Index() {
                       fill={theme.colors.white}
                     />
                   }
-                  btnText="Ethereum"
                 />
               </Link>
             </CardView>
             <CardView>
               <Link href="/token/solana">
                 <CryptoInfoCard
-                  usdCryptoPrice={formatDollar(solUsd)}
-                  cryptoBalanceAmount={`${solBalance} SOL`}
+                  title="Solana"
+                  caption={`${solBalance} SOL`}
+                  details={formatDollar(solUsd)}
                   icon={<SolanaIcon width={25} height={25} fill="#14F195" />}
-                  btnText="Solana"
                 />
               </Link>
             </CardView>

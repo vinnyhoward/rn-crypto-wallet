@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, SafeAreaView, ScrollView } from "react-native";
+import { View, SafeAreaView, ScrollView, FlatList } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { router, useLocalSearchParams } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
@@ -20,8 +20,10 @@ import SendIcon from "../../../assets/svg/send.svg";
 import ReceiveIcon from "../../../assets/svg/receive.svg";
 import TokenInfoCard from "../../../components/TokenInfoCard/TokenInfoCard";
 import SolanaIcon from "../../../assets/svg/solana.svg";
-import EthereumIcon from "../../../assets/svg/ethereum.svg";
+import EthereumIcon from "../../../assets/svg/ethereum_plain.svg";
 import { AssetTransfer } from "../../../types";
+import CryptoInfoCard from "../../../components/CryptoInfoCard/CryptoInfoCard";
+import { truncateWalletAddress } from "../../../utils/truncateWalletAddress";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -67,13 +69,35 @@ const CryptoInfoCardContainer = styled.View<{ theme: ThemeType }>`
   flex-direction: column;
   align-items: center;
   width: 100%;
+  margin-bottom: ${(props) => props.theme.spacing.medium};
 `;
 
 const SectionTitle = styled.Text<{ theme: ThemeType }>`
   font-family: ${(props) => props.theme.fonts.families.openBold};
   font-size: ${(props) => props.theme.fonts.sizes.header};
   color: ${(props) => props.theme.fonts.colors.primary};
-  margin: ${(props) => props.theme.spacing.medium};
+  margin-left: ${(props) => props.theme.spacing.small};
+  margin-bottom: ${(props) => props.theme.spacing.medium};
+`;
+
+const TransactionTitle = styled.Text<{ theme: ThemeType }>`
+  font-family: ${(props) => props.theme.fonts.families.openBold};
+  font-size: ${(props) => props.theme.fonts.sizes.header};
+  color: ${(props) => props.theme.fonts.colors.primary};
+  margin-bottom: ${(props) => props.theme.spacing.small};
+`;
+
+const ComingSoonView = styled.View<{ theme: ThemeType }>`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ComingSoonText = styled.Text<{ theme: ThemeType }>`
+  font-family: ${(props) => props.theme.fonts.families.openBold};
+  font-size: ${(props) => props.theme.fonts.sizes.header};
+  color: ${(props) => props.theme.colors.lightGrey};
+  margin-top: ${(props) => props.theme.spacing.medium};
 `;
 
 enum Chain {
@@ -109,6 +133,37 @@ export default function Index() {
   const ticker = tickers[id.toString()];
   const isSolana = id.toString() === Chain.Solana;
   const isEthereum = id.toString() === Chain.Ethereum;
+  const Icon = isSolana ? SolanaIcon : EthereumIcon;
+
+  const renderItem = ({ item }) => {
+    if (
+      item.category === "external" &&
+      item.from.toLowerCase() === tokenAddress.toLowerCase()
+    ) {
+      return (
+        <CryptoInfoCard
+          title="Sent"
+          caption={`To ${truncateWalletAddress(item.to)}`}
+          details={`- ${item.value} ${item.asset}`}
+          icon={<Icon width={35} height={35} fill={theme.colors.white} />}
+        />
+      );
+    }
+
+    if (
+      item.category === "external" &&
+      item.to.toLowerCase() === tokenAddress.toLowerCase()
+    ) {
+      return (
+        <CryptoInfoCard
+          title="Received"
+          caption={`From ${truncateWalletAddress(item.from)}`}
+          details={`+ ${item.value} ${item.asset}`}
+          icon={<Icon width={35} height={35} fill={theme.colors.white} />}
+        />
+      );
+    }
+  };
 
   useEffect(() => {
     if (isSolana && tokenAddress) {
@@ -127,6 +182,7 @@ export default function Index() {
   useEffect(() => {
     const fetchPrices = async () => {
       if (id.toString() === Chain.Ethereum) {
+        dispatch(fetchEthereumTransactions(tokenAddress));
         const usd = ethPriceMock * tokenBalance;
         setUsdBalance(usd);
       }
@@ -138,7 +194,6 @@ export default function Index() {
     };
 
     fetchPrices();
-    dispatch(fetchEthereumTransactions(tokenAddress));
   }, [tokenBalance]);
 
   useEffect(() => {
@@ -155,68 +210,84 @@ export default function Index() {
   console.log("transactions", transactions);
   return (
     <SafeAreaContainer>
-      <ScrollView>
-        <ContentContainer>
-          <BalanceContainer>
-            <BalanceTokenText>
-              {tokenBalance} {ticker}
-            </BalanceTokenText>
-            <BalanceUsdText>{formatDollar(usdBalance)}</BalanceUsdText>
-          </BalanceContainer>
-          <ActionContainer>
-            <PrimaryButton
-              icon={
-                <SendIcon width={25} height={25} fill={theme.colors.primary} />
-              }
-              onPress={() => router.push(ROUTES.sendCrypto)}
-              btnText="Send"
-            />
-            <View style={{ width: 15 }} />
-            <PrimaryButton
-              icon={
-                <ReceiveIcon
-                  width={25}
-                  height={25}
-                  fill={theme.colors.primary}
+      <ContentContainer>
+        <FlatList
+          ListHeaderComponent={
+            <>
+              <BalanceContainer>
+                <BalanceTokenText>
+                  {tokenBalance} {ticker}
+                </BalanceTokenText>
+                <BalanceUsdText>{formatDollar(usdBalance)}</BalanceUsdText>
+              </BalanceContainer>
+              <ActionContainer>
+                <PrimaryButton
+                  icon={
+                    <SendIcon
+                      width={25}
+                      height={25}
+                      fill={theme.colors.primary}
+                    />
+                  }
+                  onPress={() => router.push(ROUTES.sendCrypto)}
+                  btnText="Send"
                 />
-              }
-              onPress={() => router.push(ROUTES.receiveCrypto)}
-              btnText="Receive"
-            />
-          </ActionContainer>
-          <SectionTitle>
-            About {capitalizeFirstLetter(id.toString())}
-          </SectionTitle>
-          <CryptoInfoCardContainer>
-            <TokenInfoCard
-              tokenName={capitalizeFirstLetter(id.toString())}
-              tokenSymbol={ticker}
-              network={capitalizeFirstLetter(id.toString())}
-            />
-          </CryptoInfoCardContainer>
-          <SectionTitle>Transaction History</SectionTitle>
-        </ContentContainer>
-      </ScrollView>
+                <View style={{ width: 15 }} />
+                <PrimaryButton
+                  icon={
+                    <ReceiveIcon
+                      width={25}
+                      height={25}
+                      fill={theme.colors.primary}
+                    />
+                  }
+                  onPress={() => router.push(ROUTES.receiveCrypto)}
+                  btnText="Receive"
+                />
+              </ActionContainer>
+              <SectionTitle>
+                About {capitalizeFirstLetter(id.toString())}
+              </SectionTitle>
+              <CryptoInfoCardContainer>
+                <TokenInfoCard
+                  tokenName={capitalizeFirstLetter(id.toString())}
+                  tokenSymbol={ticker}
+                  network={capitalizeFirstLetter(id.toString())}
+                />
+              </CryptoInfoCardContainer>
+
+              <TransactionTitle>Transaction History</TransactionTitle>
+            </>
+          }
+          data={transactions}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.uniqueId}
+          contentContainerStyle={{ gap: 10 }}
+          ListEmptyComponent={
+            <ComingSoonView>
+              <ComingSoonText>Coming Soon</ComingSoonText>
+            </ComingSoonView>
+          }
+        />
+      </ContentContainer>
     </SafeAreaContainer>
   );
 }
 
-const trans = {
-  transfers: [
-    {
-      asset: "ETH",
-      blockNum: "0x58ae76",
-      category: "external",
-      erc1155Metadata: null,
-      erc721TokenId: null,
-      from: "0x97a5b2d76f5d776e0441c45eeccc42bab19f0576",
-      hash: "0x2a6a9b0e396c4c0d2a4f7ff4cd9efae50371db34ea85edf3ba3754213437e103",
-      rawContract: [Object],
-      to: "0x5550c7149dc54659e59ddcf3da14eb08f25694c7",
-      tokenId: null,
-      uniqueId:
-        "0x2a6a9b0e396c4c0d2a4f7ff4cd9efae50371db34ea85edf3ba3754213437e103:external",
-      value: 0.015,
-    },
-  ],
-};
+const trans = [
+  {
+    asset: "ETH",
+    blockNum: "0x58ae76",
+    category: "external",
+    erc1155Metadata: null,
+    erc721TokenId: null,
+    from: "0x97a5b2d76f5d776e0441c45eeccc42bab19f0576",
+    hash: "0x2a6a9b0e396c4c0d2a4f7ff4cd9efae50371db34ea85edf3ba3754213437e103",
+    rawContract: { address: null, decimal: "0x12", value: "0x354a6ba7a18000" },
+    to: "0x5550c7149dc54659e59ddcf3da14eb08f25694c7",
+    tokenId: null,
+    uniqueId:
+      "0x2a6a9b0e396c4c0d2a4f7ff4cd9efae50371db34ea85edf3ba3754213437e103:external",
+    value: 0.015,
+  },
+];
