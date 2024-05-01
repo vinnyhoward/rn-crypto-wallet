@@ -69,8 +69,8 @@ yarn install
 
 ```bash
 EXPO_PUBLIC_ALCHEMY_KEY=your_alchemy_key
-EXPO_PUBLIC_ALCHEMY_URL=https://eth-mainnet.alchemyapi.io/v2/
-EXPO_PUBLIC_ALCHEMY_SOCKET_URL=wss://eth-mainnet.ws.alchemyapi.io/v2/
+EXPO_PUBLIC_ALCHEMY_URL=https://eth-sepolia.g.alchemy.com/v2/
+EXPO_PUBLIC_ALCHEMY_SOCKET_URL=wss://eth-sepolia.g.alchemy.com/v2/
 EXPO_PUBLIC_ENVIRONMENT=development 
 ```
 
