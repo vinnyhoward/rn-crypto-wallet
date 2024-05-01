@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
-import styled from "styled-components/native";
 import * as Clipboard from "expo-clipboard";
 import { router } from "expo-router";
+import styled from "styled-components/native";
 import { useTheme } from "styled-components";
 import { getPhrase } from "../../hooks/use-storage-state";
 import { ThemeType } from "../../styles/theme";

@@ -19,6 +19,10 @@ export function restoreWalletFromPhrase(mnemonicPhrase: string) {
       seedBuffer.byteLength
     ).slice(0, 32);
     const solWallet = Keypair.fromSeed(seed);
+    console.log("wallets", {
+      ethWallet,
+      solWallet,
+    });
     return {
       ethereumWallet: ethWallet,
       solanaWallet: solWallet,

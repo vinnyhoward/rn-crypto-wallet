@@ -1,0 +1,93 @@
+import { useEffect, useState } from "react";
+import { SafeAreaView, Platform } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "expo-router";
+import styled, { useTheme } from "styled-components/native";
+import { ThemeType } from "../../../styles/theme";
+import type { AppDispatch, RootState } from "../../../store";
+import { formatDollar } from "../../../utils/formatDollars";
+import { getSolanaBalance } from "../../../utils/getSolanaBalance";
+import CryptoInfoCard from "../../../components/CryptoInfoCard/CryptoInfoCard";
+import SolanaIcon from "../../../assets/svg/solana.svg";
+import EthereumIcon from "../../../assets/svg/ethereum.svg";
+
+const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
+  flex: 1;
+  background-color: ${(props) => props.theme.colors.dark};
+  justify-content: flex-end;
+`;
+
+const ContentContainer = styled.View<{ theme: ThemeType }>`
+  flex: 1;
+  justify-content: flex-start;
+  padding: ${(props) => props.theme.spacing.large};
+  margin-top: ${Platform.OS === "android" ? "75px" : "0"};
+`;
+
+const CardView = styled.View<{ theme: ThemeType }>`
+  margin-bottom: ${(props) => props.theme.spacing.medium};
+  width: 100%;
+`;
+
+export default function SendOptions() {
+  const dispatch = useDispatch<AppDispatch>();
+  const theme = useTheme();
+  const ethBalance = useSelector(
+    (state: RootState) => state.wallet.ethereum.balance
+  );
+  const solBalance = useSelector(
+    (state: RootState) => state.wallet.solana.balance
+  );
+  const [solUsd, setSolUsd] = useState(0);
+  const [ethUsd, setEthUsd] = useState(0);
+
+  const ethPriceMock = 3006.94;
+  const solPriceMock = 127.22;
+
+  useEffect(() => {
+    const fetchPrices = async () => {
+      // const prices = await fetchCryptoPrices();
+      // setUsdBalance(prices.ethereum.usd * ethBalance);
+      const ethUsd = ethPriceMock * ethBalance;
+      const solUsd = solPriceMock * solBalance;
+
+      setEthUsd(ethUsd);
+      setSolUsd(solUsd);
+    };
+
+    fetchPrices();
+  }, [ethBalance, solBalance]);
+
+  return (
+    <SafeAreaContainer>
+      <ContentContainer>
+        <CardView>
+          <Link href="/token/send">
+            <CryptoInfoCard
+              title="Ethereum"
+              caption={`${ethBalance} ETH`}
+              details={formatDollar(ethUsd)}
+              icon={
+                <EthereumIcon
+                  width={35}
+                  height={35}
+                  fill={theme.colors.white}
+                />
+              }
+            />
+          </Link>
+        </CardView>
+        <CardView>
+          <Link href="/token/send">
+            <CryptoInfoCard
+              title="Solana"
+              caption={`${solBalance} SOL`}
+              details={formatDollar(solUsd)}
+              icon={<SolanaIcon width={25} height={25} fill="#14F195" />}
+            />
+          </Link>
+        </CardView>
+      </ContentContainer>
+    </SafeAreaContainer>
+  );
+}

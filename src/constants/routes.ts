@@ -9,6 +9,7 @@ export interface Routes {
   walletCreatedSuccessfully: string;
   walletImportOptions: string;
   walletImportSeedPhrase: string;
+  sendOptions: string;
   send: string;
   receive: string;
   tokenDetails: string;
@@ -26,6 +27,7 @@ export const ROUTES: Routes = {
   walletCreatedSuccessfully: "(wallet)/wallet-created-successfully",
   walletImportOptions: "(wallet)/wallet-import-options",
   walletImportSeedPhrase: "(wallet)/wallet-import-seed-phrase",
+  sendOptions: "token/send-options",
   send: "token/send",
   receive: "token/receive",
   tokenDetails: "token/ethereum",

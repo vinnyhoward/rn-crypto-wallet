@@ -24,68 +24,88 @@ export default function AppLayout() {
   }
 
   return (
-    <Stack
-      screenOptions={{
-        headerTransparent: true,
-        gestureEnabled: true,
-        headerLeft: () => (
-          <Link href={ROUTES.settings}>
-            <SettingsIcon width={25} height={25} fill={theme.colors.primary} />
-          </Link>
-        ),
-      }}
-    >
-      <Stack.Screen
-        name="token/[id]"
-        options={{
-          headerShown: true,
+    <>
+      <Stack
+        screenOptions={{
           headerTransparent: true,
           gestureEnabled: true,
           headerLeft: () => (
-            <IconTouchContainer onPress={() => router.back()}>
-              <LeftIcon width={25} height={25} fill={theme.colors.primary} />
-            </IconTouchContainer>
+            <Link href={ROUTES.settings}>
+              <SettingsIcon
+                width={25}
+                height={25}
+                fill={theme.colors.primary}
+              />
+            </Link>
           ),
         }}
-      />
-      <Stack.Screen
-        name="token/send"
-        options={{
-          headerShown: true,
-          headerTransparent: true,
-          gestureEnabled: true,
-          presentation: "modal",
-          headerLeft: () => (
-            <IconTouchContainer onPress={() => router.back()}>
-              <CloseIcon width={25} height={25} fill={theme.colors.primary} />
-            </IconTouchContainer>
-          ),
-        }}
-      />
-      <Stack.Screen
-        name="token/receive"
-        options={{
-          headerShown: true,
-          headerTransparent: true,
-          gestureEnabled: true,
-          presentation: "modal",
-          headerLeft: () => (
-            <IconTouchContainer onPress={() => router.back()}>
-              <CloseIcon width={25} height={25} fill={theme.colors.primary} />
-            </IconTouchContainer>
-          ),
-        }}
-      />
-      <Stack.Screen
-        name="settings/settings-modal"
-        options={{
-          headerShown: false,
-          headerTransparent: true,
-          gestureEnabled: true,
-          presentation: "modal",
-          headerLeft: null,
-        }}
-      />
-    </Stack>
+      >
+        <Stack.Screen
+          name="token/[id]"
+          options={{
+            headerShown: true,
+            headerTransparent: true,
+            gestureEnabled: true,
+            headerLeft: () => (
+              <IconTouchContainer onPress={() => router.back()}>
+                <LeftIcon width={25} height={25} fill={theme.colors.primary} />
+              </IconTouchContainer>
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="token/send-options"
+          options={{
+            headerShown: true,
+            headerTransparent: true,
+            gestureEnabled: true,
+            presentation: "modal",
+            headerLeft: () => (
+              <IconTouchContainer onPress={() => router.back()}>
+                <CloseIcon width={25} height={25} fill={theme.colors.primary} />
+              </IconTouchContainer>
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="token/send"
+          options={{
+            headerShown: true,
+            headerTransparent: true,
+            gestureEnabled: true,
+            presentation: "modal",
+            headerLeft: () => (
+              <IconTouchContainer onPress={() => router.back()}>
+                <CloseIcon width={25} height={25} fill={theme.colors.primary} />
+              </IconTouchContainer>
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="token/receive"
+          options={{
+            headerShown: true,
+            headerTransparent: true,
+            gestureEnabled: true,
+            presentation: "modal",
+            headerLeft: () => (
+              <IconTouchContainer onPress={() => router.back()}>
+                <CloseIcon width={25} height={25} fill={theme.colors.primary} />
+              </IconTouchContainer>
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="settings/settings-modal"
+          options={{
+            headerShown: false,
+            headerTransparent: true,
+            gestureEnabled: true,
+            presentation: "modal",
+            headerLeft: null,
+          }}
+        />
+      </Stack>
+    </>
   );
 }

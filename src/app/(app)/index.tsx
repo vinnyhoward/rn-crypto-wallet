@@ -4,13 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { router, Link } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import { ROUTES } from "../../constants/routes";
-import { ThemeType } from "../../styles/theme";
-import type { RootState } from "../../store";
+import type { ThemeType } from "../../styles/theme";
+import type { RootState, AppDispatch } from "../../store";
 import {
   fetchEthereumBalance,
   updateSolanaBalance,
 } from "../../store/walletSlice";
-import type { AppDispatch } from "../../store";
 // import { fetchCryptoPrices } from "../../utils/fetchCryptoPrices";
 import { formatDollar } from "../../utils/formatDollars";
 import { getSolanaBalance } from "../../utils/getSolanaBalance";
@@ -92,6 +91,9 @@ export default function Index() {
   const [solUsd, setSolUsd] = useState(0);
   const [ethUsd, setEthUsd] = useState(0);
 
+  const ethPriceMock = 3006.94;
+  const solPriceMock = 127.22;
+
   useEffect(() => {
     const fetchSolanaBalance = async () => {
       const currentSolBalance = await getSolanaBalance(solWalletAddress);
@@ -111,9 +113,9 @@ export default function Index() {
     const fetchPrices = async () => {
       // const prices = await fetchCryptoPrices();
       // setUsdBalance(prices.ethereum.usd * ethBalance);
-      const mockUsd = 3199.99;
-      const ethUsd = mockUsd * ethBalance;
-      const solUsd = mockUsd * solBalance;
+      const ethUsd = ethPriceMock * ethBalance;
+      const solUsd = solPriceMock * solBalance;
+
       setUsdBalance(ethUsd + solUsd);
       setEthUsd(ethUsd);
       setSolUsd(solUsd);
@@ -139,7 +141,7 @@ export default function Index() {
               icon={
                 <SendIcon width={25} height={25} fill={theme.colors.primary} />
               }
-              onPress={() => router.push(ROUTES.send)}
+              onPress={() => router.push(ROUTES.sendOptions)}
               btnText="Send"
             />
             <View style={{ width: 15 }} />

@@ -197,7 +197,7 @@ export default function Index() {
   }, [tokenBalance]);
 
   useEffect(() => {
-    if (transactionHistory && isEthereum) {
+    if (transactionHistory.length !== 0 && isEthereum) {
       const walletTransactions = transactionHistory.transfers.filter(
         (tx: AssetTransfer) => {
           return tx.asset === ticker;
@@ -264,9 +264,17 @@ export default function Index() {
           keyExtractor={(item) => item.uniqueId}
           contentContainerStyle={{ gap: 10 }}
           ListEmptyComponent={
-            <ComingSoonView>
-              <ComingSoonText>Coming Soon</ComingSoonText>
-            </ComingSoonView>
+            isSolana ? (
+              <ComingSoonView>
+                <ComingSoonText>Coming Soon</ComingSoonText>
+              </ComingSoonView>
+            ) : (
+              <ComingSoonView>
+                <ComingSoonText>
+                  Add some {ticker} to your wallet
+                </ComingSoonText>
+              </ComingSoonView>
+            )
           }
         />
       </ContentContainer>
