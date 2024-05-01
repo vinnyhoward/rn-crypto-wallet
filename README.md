@@ -35,8 +35,11 @@ This project is a React Native application for managing cryptocurrency transacti
 - [x] List transactions on Ethereum
 - [ ] Send Solana
 - [ ] List transactions transactions on Solana
+
+### Nice to haves
 - [ ] UI improvements - android ui bugs, loaders, animation, etc
 - [ ] Refactor repeating styled components and some logic
+- [ ] Improve security (its never going to be in production but it'd be fun to add)
 
 ## Prerequisites
 
