@@ -69,6 +69,31 @@ export function useStorageState(key: string): UseStateHook<string> {
   return [state, setValue];
 }
 
+export async function saveWallet(key: string): Promise<void> {
+  try {
+    await SecureStore.setItemAsync("wallet", key);
+  } catch (error) {
+    console.error("Failed to save the wallet securely.", error);
+  }
+}
+
+export async function getWallet() {
+  try {
+    return await SecureStore.getItemAsync("wallet");
+  } catch (error) {
+    console.error("Failed to retrieve the wallet.", error);
+    return null;
+  }
+}
+
+export async function removeWallet(): Promise<void> {
+  try {
+    await SecureStore.deleteItemAsync("wallet");
+  } catch (error) {
+    console.error("Failed to remove the wallet securely.", error);
+  }
+}
+
 export async function savePrivateKey(key: string): Promise<void> {
   try {
     await SecureStore.setItemAsync("privateKey", key);
@@ -123,5 +148,27 @@ export async function clearStorage(): Promise<void> {
     await SecureStore.deleteItemAsync("mnemonicPhrase");
     await SecureStore.deleteItemAsync("publicKey");
     await SecureStore.deleteItemAsync("privateKey");
+  }
+}
+
+export async function setSeedPhraseConfirmation(
+  confirmed: boolean
+): Promise<boolean> {
+  try {
+    await SecureStore.setItemAsync("seed_phrase_confirmed", String(confirmed));
+    return true;
+  } catch (error) {
+    console.error("Failed to save the seed phrase confirmation:", error);
+    return false;
+  }
+}
+
+export async function getSeedPhraseConfirmation(): Promise<boolean> {
+  try {
+    const confirmed = await SecureStore.getItemAsync("seed_phrase_confirmed");
+    return confirmed === "true";
+  } catch (error) {
+    console.error("Failed to retrieve the seed phrase confirmation:", error);
+    return false;
   }
 }

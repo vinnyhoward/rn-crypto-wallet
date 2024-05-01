@@ -3,8 +3,8 @@ import { SafeAreaView } from "react-native";
 import { useDispatch } from "react-redux";
 import { useLocalSearchParams } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
-import { ThemeType } from "../../../styles/theme";
-import type { AppDispatch } from "../../../store";
+import { ThemeType } from "../../../../styles/theme";
+import type { AppDispatch } from "../../../../store";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -20,7 +20,7 @@ const ContentContainer = styled.View<{ theme: ThemeType }>`
 
 export default function SendPage() {
   const dispatch = useDispatch<AppDispatch>();
-  const { id } = useLocalSearchParams();
+  const { send } = useLocalSearchParams();
   const theme = useTheme();
 
   return (

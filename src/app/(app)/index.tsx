@@ -160,7 +160,7 @@ export default function Index() {
           <SectionTitle>Assets</SectionTitle>
           <CryptoInfoCardContainer>
             <CardView>
-              <Link href="/token/ethereum">
+              <Link href={ROUTES.ethDetails}>
                 <CryptoInfoCard
                   title="Ethereum"
                   caption={`${ethBalance} ETH`}
@@ -176,7 +176,7 @@ export default function Index() {
               </Link>
             </CardView>
             <CardView>
-              <Link href="/token/solana">
+              <Link href={ROUTES.solDetails}>
                 <CryptoInfoCard
                   title="Solana"
                   caption={`${solBalance} SOL`}

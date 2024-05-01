@@ -1,5 +1,6 @@
 global.Buffer = require("buffer").Buffer;
 
+import { useState, useEffect } from "react";
 import { Redirect, Stack, router } from "expo-router";
 import { useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
@@ -9,6 +10,7 @@ import { ROUTES } from "../../constants/routes";
 import SettingsIcon from "../../assets/svg/settings.svg";
 import LeftIcon from "../../assets/svg/left-arrow.svg";
 import CloseIcon from "../../assets/svg/close.svg";
+import { getSeedPhraseConfirmation } from "../../hooks/use-storage-state";
 
 const IconTouchContainer = styled.TouchableOpacity`
   padding: 10px;
@@ -18,6 +20,26 @@ export default function AppLayout() {
   const theme = useTheme();
   const ethWallet = useSelector((state: RootState) => state.wallet.ethereum);
   const solWallet = useSelector((state: RootState) => state.wallet.solana);
+  const [seedPhraseConfirmed, setSeedPhraseConfirmed] = useState<
+    boolean | null
+  >(null);
+
+  useEffect(() => {
+    const loadSeedPhraseConfirmation = async () => {
+      const confirmation = await getSeedPhraseConfirmation();
+      setSeedPhraseConfirmed(confirmation);
+    };
+
+    loadSeedPhraseConfirmation();
+  }, []);
+
+  if (seedPhraseConfirmed === null) {
+    return null;
+  }
+
+  if (!seedPhraseConfirmed) {
+    return <Redirect href={ROUTES.seedPhrase} />;
+  }
 
   if (!ethWallet.address || !solWallet.address) {
     return <Redirect href={ROUTES.walletSetup} />;
@@ -68,7 +90,7 @@ export default function AppLayout() {
           }}
         />
         <Stack.Screen
-          name="token/send"
+          name="token/send/[send]"
           options={{
             headerShown: true,
             headerTransparent: true,

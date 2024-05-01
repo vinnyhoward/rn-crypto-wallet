@@ -14,9 +14,9 @@ import {
   saveSolanaPublicKey,
 } from "../../store/walletSlice";
 import Button from "../../components/Button/Button";
-// import Bubble from "../../components/Bubble/Bubble";
 import { ROUTES } from "../../constants/routes";
 import { savePrivateKey } from "../../hooks/use-storage-state";
+import { setSeedPhraseConfirmation } from "../../hooks/use-storage-state";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -114,6 +114,8 @@ export default function Page() {
 
       dispatch(saveSolanaAddress(solanaAddress));
       dispatch(saveSolanaPublicKey(solanaPublicKey));
+
+      setSeedPhraseConfirmation(true);
 
       router.push({
         pathname: ROUTES.walletCreatedSuccessfully,

@@ -62,7 +62,7 @@ export default function SendOptions() {
     <SafeAreaContainer>
       <ContentContainer>
         <CardView>
-          <Link href="/token/send">
+          <Link href="/token/send/ethereum">
             <CryptoInfoCard
               title="Ethereum"
               caption={`${ethBalance} ETH`}
@@ -78,7 +78,7 @@ export default function SendOptions() {
           </Link>
         </CardView>
         <CardView>
-          <Link href="/token/send">
+          <Link href="/token/send/solana">
             <CryptoInfoCard
               title="Solana"
               caption={`${solBalance} SOL`}

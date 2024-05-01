@@ -4,7 +4,12 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import styled from "styled-components/native";
 import { createWallet } from "../../utils/createWallet";
-import { savePrivateKey, savePhrase } from "../../hooks/use-storage-state";
+import {
+  savePrivateKey,
+  savePhrase,
+  saveWallet,
+  setSeedPhraseConfirmation,
+} from "../../hooks/use-storage-state";
 import Button from "../../components/Button/Button";
 import { ThemeType } from "../../styles/theme";
 import {
@@ -86,6 +91,7 @@ export default function WalletSetup() {
     const wallets = createWallet();
 
     if (Object.keys(wallets).length > 0) {
+      saveWallet(JSON.stringify(wallets));
       const etherAddress = wallets.ethereumWallet.address;
       const masterMnemonicPhrase = wallets.ethereumWallet.mnemonic.phrase;
       const masterPrivateKey = wallets.ethereumWallet.privateKey;
@@ -97,6 +103,7 @@ export default function WalletSetup() {
 
       savePhrase(masterMnemonicPhrase);
       savePrivateKey(masterPrivateKey);
+      setSeedPhraseConfirmation(false);
 
       dispatch(saveEthereumAddress(etherAddress));
       dispatch(saveEthereumPublicKey(etherPublicKey));

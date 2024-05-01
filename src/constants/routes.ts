@@ -12,7 +12,10 @@ export interface Routes {
   sendOptions: string;
   send: string;
   receive: string;
-  tokenDetails: string;
+  ethDetails: string;
+  solDetails: string;
+  sendEth: string;
+  sendSol: string;
   settings: string;
 }
 
@@ -30,6 +33,9 @@ export const ROUTES: Routes = {
   sendOptions: "token/send-options",
   send: "token/send",
   receive: "token/receive",
-  tokenDetails: "token/ethereum",
+  ethDetails: "/token/ethereum",
+  solDetails: "/token/solana",
+  sendEth: "token/send/ethereum",
+  sendSol: "token/send/solana",
   settings: "(app)/settings/settings-modal",
 };
