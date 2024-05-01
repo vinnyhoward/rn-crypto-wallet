@@ -9,6 +9,7 @@ import type { RootState } from "../../../store";
 import {
   fetchEthereumBalance,
   updateSolanaBalance,
+  fetchEthereumTransactions,
 } from "../../../store/walletSlice";
 import type { AppDispatch } from "../../../store";
 import { getSolanaBalance } from "../../../utils/getSolanaBalance";
@@ -20,6 +21,7 @@ import ReceiveIcon from "../../../assets/svg/receive.svg";
 import TokenInfoCard from "../../../components/TokenInfoCard/TokenInfoCard";
 import SolanaIcon from "../../../assets/svg/solana.svg";
 import EthereumIcon from "../../../assets/svg/ethereum.svg";
+import { AssetTransfer } from "../../../types";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -40,7 +42,7 @@ const BalanceContainer = styled.View<{ theme: ThemeType }>`
 
 const BalanceTokenText = styled.Text<{ theme: ThemeType }>`
   font-family: ${(props) => props.theme.fonts.families.openBold};
-  font-size: ${(props) => props.theme.fonts.sizes.uberHuge};
+  font-size: ${(props) => props.theme.fonts.sizes.huge};
   color: ${(props) => props.theme.fonts.colors.primary};
   text-align: center;
 `;
@@ -67,19 +69,11 @@ const CryptoInfoCardContainer = styled.View<{ theme: ThemeType }>`
   width: 100%;
 `;
 
-// const CardView = styled.View<{ theme: ThemeType }>`
-//   padding-left: ${(props) => props.theme.spacing.large};
-//   padding-right: ${(props) => props.theme.spacing.large};
-//   padding-bottom: ${(props) => props.theme.spacing.medium};
-//   width: 100%;
-// `;
-
 const SectionTitle = styled.Text<{ theme: ThemeType }>`
   font-family: ${(props) => props.theme.fonts.families.openBold};
-  font-size: ${(props) => props.theme.fonts.sizes.title};
+  font-size: ${(props) => props.theme.fonts.sizes.header};
   color: ${(props) => props.theme.fonts.colors.primary};
-  margin-bottom: ${(props) => props.theme.spacing.medium};
-  margin-left: ${(props) => props.theme.spacing.small};
+  margin: ${(props) => props.theme.spacing.medium};
 `;
 
 enum Chain {
@@ -102,15 +96,22 @@ export default function Index() {
   const tokenBalance = useSelector(
     (state: RootState) => state.wallet[id.toString()].balance
   );
+  const transactionHistory = useSelector(
+    (state: RootState) => state.wallet[id.toString()].transactions
+  );
+
   const [usdBalance, setUsdBalance] = useState(0);
+  const [transactions, setTransactions] = useState<AssetTransfer[]>([]);
 
   // TODO: Find cheap api to find real prices of tokens
   const ethPriceMock = 3006.94;
   const solPriceMock = 127.22;
   const ticker = tickers[id.toString()];
+  const isSolana = id.toString() === Chain.Solana;
+  const isEthereum = id.toString() === Chain.Ethereum;
 
   useEffect(() => {
-    if (Chain[id.toString()] === Chain.Solana && tokenAddress) {
+    if (isSolana && tokenAddress) {
       const fetchSolanaBalance = async () => {
         const currentSolBalance = await getSolanaBalance(tokenAddress);
         dispatch(updateSolanaBalance(currentSolBalance));
@@ -118,7 +119,7 @@ export default function Index() {
       fetchSolanaBalance();
     }
 
-    if (Chain[id.toString()] === Chain.Ethereum && tokenAddress) {
+    if (isEthereum && tokenAddress) {
       dispatch(fetchEthereumBalance(tokenAddress));
     }
   }, [tokenAddress, dispatch]);
@@ -137,11 +138,21 @@ export default function Index() {
     };
 
     fetchPrices();
+    dispatch(fetchEthereumTransactions(tokenAddress));
   }, [tokenBalance]);
 
-  console.log("address", tokenAddress);
-  console.log("balance", tokenBalance);
-  console.log("usd balance", usdBalance);
+  useEffect(() => {
+    if (transactionHistory && isEthereum) {
+      const walletTransactions = transactionHistory.transfers.filter(
+        (tx: AssetTransfer) => {
+          return tx.asset === ticker;
+        }
+      );
+      setTransactions(walletTransactions);
+    }
+  }, [transactionHistory]);
+
+  console.log("transactions", transactions);
   return (
     <SafeAreaContainer>
       <ScrollView>
@@ -177,36 +188,35 @@ export default function Index() {
             About {capitalizeFirstLetter(id.toString())}
           </SectionTitle>
           <CryptoInfoCardContainer>
-            {/* <CardView>
-              <CryptoInfoCard
-                usdCryptoPrice={`$${ethUsd.toFixed(2)}`}
-                cryptoBalanceAmount={`${tokenBalance} ETH`}
-                icon={
-                  <EthereumIcon
-                    width={35}
-                    height={35}
-                    fill={theme.colors.white}
-                  />
-                }
-                btnText="Ethereum"
-              />
-            </CardView>
-            <CardView>
-              <CryptoInfoCard
-                usdCryptoPrice={`$${solUsd.toFixed(2)}`}
-                cryptoBalanceAmount={`${solBalance} SOL`}
-                icon={<SolanaIcon width={25} height={25} fill="#14F195" />}
-                btnText="Solana"
-              />
-            </CardView> */}
             <TokenInfoCard
               tokenName={capitalizeFirstLetter(id.toString())}
               tokenSymbol={ticker}
               network={capitalizeFirstLetter(id.toString())}
             />
           </CryptoInfoCardContainer>
+          <SectionTitle>Transaction History</SectionTitle>
         </ContentContainer>
       </ScrollView>
     </SafeAreaContainer>
   );
 }
+
+const trans = {
+  transfers: [
+    {
+      asset: "ETH",
+      blockNum: "0x58ae76",
+      category: "external",
+      erc1155Metadata: null,
+      erc721TokenId: null,
+      from: "0x97a5b2d76f5d776e0441c45eeccc42bab19f0576",
+      hash: "0x2a6a9b0e396c4c0d2a4f7ff4cd9efae50371db34ea85edf3ba3754213437e103",
+      rawContract: [Object],
+      to: "0x5550c7149dc54659e59ddcf3da14eb08f25694c7",
+      tokenId: null,
+      uniqueId:
+        "0x2a6a9b0e396c4c0d2a4f7ff4cd9efae50371db34ea85edf3ba3754213437e103:external",
+      value: 0.015,
+    },
+  ],
+};

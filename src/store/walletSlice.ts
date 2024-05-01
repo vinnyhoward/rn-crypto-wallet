@@ -4,6 +4,7 @@ import "@ethersproject/shims";
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import * as ethers from "ethers";
 import { RootState } from "./index";
+import { fetchTransactions } from "../utils/fetchTransactions";
 
 const { EXPO_PUBLIC_ALCHEMY_KEY, EXPO_PUBLIC_ALCHEMY_URL } = process.env;
 const ethereumUrl = EXPO_PUBLIC_ALCHEMY_URL + EXPO_PUBLIC_ALCHEMY_KEY;
@@ -60,6 +61,18 @@ export const fetchEthereumBalance = createAsyncThunk<
     try {
       const balance = await provider.getBalance(address);
       return ethers.formatEther(balance);
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchEthereumTransactions = createAsyncThunk(
+  "wallet/fetchEthereumTransactions",
+  async (address: string, { rejectWithValue }): Promise<any> => {
+    try {
+      const transactions = await fetchTransactions(address);
+      return transactions;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -127,6 +140,17 @@ export const walletSlice = createSlice({
       .addCase(fetchEthereumBalance.rejected, (state, action) => {
         state.ethereum.status = "failed";
         console.error("Failed to fetch balance:", action.payload);
+      })
+      .addCase(fetchEthereumTransactions.pending, (state) => {
+        state.ethereum.status = "loading";
+      })
+      .addCase(fetchEthereumTransactions.fulfilled, (state, action) => {
+        state.ethereum.transactions = action.payload;
+        state.ethereum.status = "idle";
+      })
+      .addCase(fetchEthereumTransactions.rejected, (state, action) => {
+        state.ethereum.status = "failed";
+        console.error("Failed to fetch transactions:", action.payload);
       });
   },
 });

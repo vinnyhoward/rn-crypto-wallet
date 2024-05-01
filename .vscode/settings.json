@@ -7,6 +7,8 @@
         "persistor",
         "reduxjs",
         "roboto",
-        "solana"
+        "SEPOLIA",
+        "solana",
+        "specialnft"
     ]
 }

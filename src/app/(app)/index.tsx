@@ -122,11 +122,11 @@ export default function Index() {
     fetchPrices();
   }, [ethBalance, solBalance]);
 
-  console.log("eth address", ethWalletAddress);
-  console.log("eth balance", ethBalance);
-  console.log("sol address", solWalletAddress);
-  console.log("sol balance", solBalance);
-  console.log("usd balance", usdBalance);
+  // console.log("eth address", ethWalletAddress);
+  // console.log("eth balance", ethBalance);
+  // console.log("sol address", solWalletAddress);
+  // console.log("sol balance", solBalance);
+  // console.log("usd balance", usdBalance);
   return (
     <SafeAreaContainer>
       <ScrollView>

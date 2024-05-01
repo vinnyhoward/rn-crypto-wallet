@@ -103,7 +103,7 @@ const TokenInfoCard: React.FC<TokenInfoCardProps> = ({
       <TokenSectionViewTop>
         <TokenNameLabel>Token Name</TokenNameLabel>
         <TokenNameText>
-          {tokenName} {tokenSymbol}
+          {tokenName} ({tokenSymbol})
         </TokenNameText>
       </TokenSectionViewTop>
       <TokenSectionViewMid>
