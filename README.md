@@ -55,7 +55,7 @@ To get the project up and running on your local machine, follow these steps:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/react-native-crypto-wallet.git
+git clone https://github.com/vinnyhoward/react-native-crypto-wallet.git
 cd react-native-crypto-wallet
 ```
 
