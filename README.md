@@ -1,6 +1,42 @@
-# React Native Crypto Wallet
+<a name="readme-top"></a>
+
+[![LinkedIn][linkedin-shield]][linkedin-url]
+
+<br />
+<div align="center">
+  <a>
+    <img src="assets/readme_banner.png" alt="Logo" width="100%">
+  </a>
+
+  <h3 align="center">React Native Crypto Wallet</h3>
+
+  <p align="center">
+    A simple react native crypto wallet
+    <br />
+    <a>Demo coming soon</a>
+    ·
+    <a href="https://github.com/vinnyhoward/rn-crypto-wallet/issues">Report Bug</a>
+  </p>
+</div>
 
 This project is a React Native application for managing cryptocurrency transactions and balances. It utilizes the Expo framework, the Alchemy API for blockchain interaction, and is built with a focus on Ethereum and Solana cryptocurrencies.
+
+
+## Roadmap
+- [x] Create wallet
+- [x] View seed phrase
+- [x] Confirm seed phrase
+- [x] Import wallet
+- [x] View all asset net worth
+- [x] View Ethereum balance
+- [x] View Solana balance
+- [ ] Switch accounts
+- [ ] Send Ethereum
+- [x] List transactions on Ethereum
+- [ ] Send Solana
+- [ ] List transactions transactions on Solana
+- [ ] UI improvements - android ui bugs, loaders, animation, etc
+- [ ] Refactor repeating styled components and some logic
 
 ## Prerequisites
 
@@ -59,14 +95,6 @@ expo start
 
 `EXPO_PUBLIC_ENVIRONMENT`: Environment setting, e.g., development or production.
 
-## Roadmap
-- [x] View all asset net worth
-- [x] View Ethereum balance
-- [x] View Solana balance
-- [ ] Switch accounts
-- [ ] Send Ethereum
-- [x] List transactions on Ethereum
-- [ ] List NFTs transactions on Ethereum
-- [ ] Send Solana
-- [ ] List transactions transactions on Solana
-- [ ] List NFTs transactions on Solana
+
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://www.linkedin.com/in/vinnyhoward/
