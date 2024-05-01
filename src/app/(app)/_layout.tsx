@@ -8,8 +8,9 @@ import type { RootState } from "../../store";
 import { ROUTES } from "../../constants/routes";
 import SettingsIcon from "../../assets/svg/settings.svg";
 import LeftIcon from "../../assets/svg/left-arrow.svg";
+import CloseIcon from "../../assets/svg/close.svg";
 
-const IconTouchContainer = styled.TouchableHighlight`
+const IconTouchContainer = styled.TouchableOpacity`
   padding: 10px;
 `;
 
@@ -50,11 +51,15 @@ export default function AppLayout() {
       <Stack.Screen
         name="token/send"
         options={{
-          headerShown: false,
+          headerShown: true,
           headerTransparent: true,
           gestureEnabled: true,
           presentation: "modal",
-          headerLeft: null,
+          headerLeft: () => (
+            <IconTouchContainer onPress={() => router.back()}>
+              <CloseIcon width={25} height={25} fill={theme.colors.primary} />
+            </IconTouchContainer>
+          ),
         }}
       />
       <Stack.Screen
@@ -64,7 +69,11 @@ export default function AppLayout() {
           headerTransparent: true,
           gestureEnabled: true,
           presentation: "modal",
-          headerLeft: null,
+          headerLeft: () => (
+            <IconTouchContainer onPress={() => router.back()}>
+              <CloseIcon width={25} height={25} fill={theme.colors.primary} />
+            </IconTouchContainer>
+          ),
         }}
       />
       <Stack.Screen
