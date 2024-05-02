@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import styled from "styled-components/native";
-import { createWallet } from "../../utils/createWallet";
+import { createWallet } from "../../utils/etherHelpers";
 import {
   savePrivateKey,
   savePhrase,

@@ -5,7 +5,7 @@ import { router } from "expo-router";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
-import { restoreWalletFromPhrase } from "../../utils/restoreWalletFromPhrase";
+import { restoreWalletFromPhrase } from "../../utils/etherHelpers";
 import { ThemeType } from "../../styles/theme";
 import {
   saveEthereumAddress,

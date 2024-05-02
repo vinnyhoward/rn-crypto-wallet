@@ -5,11 +5,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import * as ethers from "ethers";
 import { RootState } from "./index";
 import { fetchTransactions } from "../utils/fetchTransactions";
-
-const { EXPO_PUBLIC_ALCHEMY_KEY, EXPO_PUBLIC_ALCHEMY_URL } = process.env;
-const ethereumUrl = EXPO_PUBLIC_ALCHEMY_URL + EXPO_PUBLIC_ALCHEMY_KEY;
-
-const provider = new ethers.JsonRpcProvider(ethereumUrl);
+import { ethProvider } from "../utils/etherHelpers";
 
 interface CryptoWallet {
   balance: number;
@@ -59,7 +55,7 @@ export const fetchEthereumBalance = createAsyncThunk<
   "wallet/fetchEthereumBalance",
   async (address: ethers.AddressLike, { rejectWithValue }) => {
     try {
-      const balance = await provider.getBalance(address);
+      const balance = await ethProvider.getBalance(address);
       return ethers.formatEther(balance);
     } catch (error) {
       return rejectWithValue(error.message);

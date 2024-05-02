@@ -16,7 +16,7 @@ import SolanaIcon from "../../../../assets/svg/solana.svg";
 import EthereumIcon from "../../../../assets/svg/ethereum_plain.svg";
 import { capitalizeFirstLetter } from "../../../../utils/capitalizeFirstLetter";
 import { formatDollar } from "../../../../utils/formatDollars";
-import { isAddressValid } from "../../../../utils/isAddressValid";
+import { isAddressValid } from "../../../../utils/etherHelpers";
 import Button from "../../../../components/Button/Button";
 
 const { EXPO_PUBLIC_ALCHEMY_KEY, EXPO_PUBLIC_ALCHEMY_URL } = process.env;

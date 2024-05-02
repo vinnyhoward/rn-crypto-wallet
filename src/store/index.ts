@@ -12,7 +12,8 @@ import {
 import { persistStore, persistReducer } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import walletReducer from "./walletSlice";
-import * as ethers from "ethers";
+import { webSocketProvider } from "../utils/etherHelpers";
+import { formatEther } from "ethers";
 
 const persistConfig = {
   key: "root",
@@ -27,10 +28,6 @@ const rootReducer = combineReducers({
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-const { EXPO_PUBLIC_ALCHEMY_KEY, EXPO_PUBLIC_ALCHEMY_SOCKET_URL } = process.env;
-const ethWebSocketUrl =
-  EXPO_PUBLIC_ALCHEMY_SOCKET_URL + EXPO_PUBLIC_ALCHEMY_KEY;
-
 export const webSocketMiddleware: Middleware =
   (store) =>
   (next) =>
@@ -41,17 +38,15 @@ export const webSocketMiddleware: Middleware =
       const state = store.getState();
       const { ethereum } = state.wallet;
 
-      const provider = new ethers.WebSocketProvider(ethWebSocketUrl);
-
-      provider.on("block", async () => {
-        const balance = await provider.getBalance(ethereum.address);
+      webSocketProvider.on("block", async () => {
+        const balance = await webSocketProvider.getBalance(ethereum.address);
         store.dispatch({
           type: "wallet/updateEthereumBalance",
-          payload: ethers.formatEther(balance),
+          payload: formatEther(balance),
         });
       });
 
-      return () => provider.removeAllListeners();
+      return () => webSocketProvider.removeAllListeners();
     }
   };
 
