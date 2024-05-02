@@ -106,7 +106,11 @@ export default function AppLayout() {
             headerTransparent: true,
             gestureEnabled: true,
             presentation: "modal",
-            headerLeft: null,
+            headerLeft: () => (
+              <IconTouchContainer onPress={() => router.back()}>
+                <LeftIcon width={25} height={25} fill={theme.colors.primary} />
+              </IconTouchContainer>
+            ),
           }}
         />
         <Stack.Screen

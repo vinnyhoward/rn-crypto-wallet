@@ -221,7 +221,7 @@ export default function Index() {
                       fill={theme.colors.primary}
                     />
                   }
-                  onPress={() => router.push(ROUTES.send)}
+                  onPress={() => router.push(`token/send/${chainName}`)}
                   btnText="Send"
                 />
                 <View style={{ width: 15 }} />

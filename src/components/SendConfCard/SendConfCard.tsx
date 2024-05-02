@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components/native";
 import { ThemeType } from "../../styles/theme";
 import { formatDollar } from "../../utils/formatDollars";
@@ -8,7 +8,7 @@ interface ButtonContainerProps {
   theme: ThemeType;
 }
 
-const TokenInfoCardContainer = styled.View<ButtonContainerProps>`
+const SendConfCardContainer = styled.View<ButtonContainerProps>`
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
@@ -69,54 +69,33 @@ const TokenNameText = styled.Text<{ theme: ThemeType }>`
   color: ${({ theme }) => theme.colors.white};
 `;
 
-function findTokenPrice(tokenSymbol: string) {
-  const ethPriceMock = 3006.94;
-  const solPriceMock = 127.22;
-
-  if (tokenSymbol === "ETH") {
-    return ethPriceMock;
-  } else if (tokenSymbol === "SOL") {
-    return solPriceMock;
-  } else {
-    return 0;
-  }
-}
-
-interface TokenInfoCardProps {
-  tokenName: string;
-  tokenSymbol: string;
+interface SendConfCardProps {
+  toAddress: string;
   network: string;
-  price?: number;
+  networkFee: number;
 }
 
-const TokenInfoCard: React.FC<TokenInfoCardProps> = ({
-  tokenName,
-  tokenSymbol,
+const SendConfCard: React.FC<SendConfCardProps> = ({
+  toAddress,
   network,
+  networkFee = 0,
 }) => {
-  // TODO: Find cheap api to find real prices of tokens
-  const [currentTokenPrice, setCurrentTokenPrice] = useState<number>(
-    findTokenPrice(tokenSymbol)
-  );
-
   return (
-    <TokenInfoCardContainer>
+    <SendConfCardContainer>
       <TokenSectionViewTop>
         <TokenNameLabel>Token Name</TokenNameLabel>
-        <TokenNameText>
-          {tokenName} ({tokenSymbol})
-        </TokenNameText>
+        <TokenNameText>{toAddress}</TokenNameText>
       </TokenSectionViewTop>
       <TokenSectionViewMid>
         <TokenNameLabel>Network</TokenNameLabel>
         <TokenNameText>{network}</TokenNameText>
       </TokenSectionViewMid>
       <TokenSectionViewBot>
-        <TokenNameLabel>Price</TokenNameLabel>
-        <TokenNameText>{formatDollar(currentTokenPrice)}</TokenNameText>
+        <TokenNameLabel>Network Fee</TokenNameLabel>
+        <TokenNameText>{formatDollar(networkFee)}</TokenNameText>
       </TokenSectionViewBot>
-    </TokenInfoCardContainer>
+    </SendConfCardContainer>
   );
 };
 
-export default TokenInfoCard;
+export default SendConfCard;
