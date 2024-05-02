@@ -3,6 +3,7 @@
         "blurhash",
         "devnet",
         "ethersproject",
+        "formik",
         "Keypair",
         "persistor",
         "reduxjs",

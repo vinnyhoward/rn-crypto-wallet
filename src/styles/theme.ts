@@ -10,6 +10,8 @@ export type ThemeType = {
     lightGrey: string;
     grey: string;
     error: string;
+    ethereum: string;
+    solana: string;
   };
   fonts: {
     families: {
@@ -66,6 +68,8 @@ const Theme: ThemeType = {
     lightGrey: "#A0A0A0",
     grey: "#494949",
     error: "#FF0000",
+    ethereum: "#C8B3F4",
+    solana: "#00DCFA",
   },
   fonts: {
     families: {

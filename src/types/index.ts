@@ -26,3 +26,8 @@ export interface AssetTransfersWithMetadataResponse {
 export interface ErrorResponse {
   errorMessage: string;
 }
+
+export enum Chains {
+  Ethereum = "ethereum",
+  Solana = "solana",
+}

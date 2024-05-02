@@ -68,7 +68,8 @@ const SeedTextInput = styled.TextInput<{ theme: ThemeType }>`
   min-height: 220px;
   width: ${(Dimensions.get("window").width - 80).toFixed(0)}px;
   color: ${(props) => props.theme.colors.white};
-  font-size: ${(props) => props.theme.fonts.sizes.large};
+  font-size: ${(props) => props.theme.fonts.sizes.large};\
+  font-family: ${(props) => props.theme.fonts.families.openRegular};
   border: 1px solid ${(props) => props.theme.colors.grey};
 `;
 
