@@ -250,7 +250,7 @@ export default function SendPage() {
     try {
       const { totalCostMinusGas } = await calculateGasAndAmounts(
         address,
-        tokenBalance.toString()
+        tokenBalance
       );
 
       setFieldValue("amount", totalCostMinusGas);
