@@ -6,17 +6,18 @@ import { SafeAreaView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { router, useLocalSearchParams } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
+import { JsonRpcProvider, formatEther, parseEther } from "ethers";
 import { Formik } from "formik";
 import { ThemeType } from "../../../../styles/theme";
+import { TICKERS } from "../../../../constants/tickers";
+import { ROUTES } from "../../../../constants/routes";
 import type { AppDispatch, RootState } from "../../../../store";
 import SolanaIcon from "../../../../assets/svg/solana.svg";
 import EthereumIcon from "../../../../assets/svg/ethereum_plain.svg";
-import { TICKERS } from "../../../../constants/tickers";
 import { capitalizeFirstLetter } from "../../../../utils/capitalizeFirstLetter";
 import { formatDollar } from "../../../../utils/formatDollars";
 import { isAddressValid } from "../../../../utils/isAddressValid";
-import { parseEther } from "ethers";
-import { JsonRpcProvider, formatEther } from "ethers";
+import Button from "../../../../components/Button/Button";
 
 const { EXPO_PUBLIC_ALCHEMY_KEY, EXPO_PUBLIC_ALCHEMY_URL } = process.env;
 const ethereumUrl = EXPO_PUBLIC_ALCHEMY_URL + EXPO_PUBLIC_ALCHEMY_KEY;
@@ -152,6 +153,17 @@ const AmountDetailsView = styled.View<{ theme: ThemeType }>`
   align-items: center;
 `;
 
+const ButtonContainer = styled.View<{ theme: ThemeType }>`
+  margin-bottom: ${(props) => props.theme.spacing.small};
+`;
+
+const ButtonView = styled.View<{ theme: ThemeType }>``;
+
+const FormWrapper = styled.View<{ theme: ThemeType }>`
+  flex: 1;
+  justify-content: space-between;
+`;
+
 export default function SendPage() {
   const dispatch = useDispatch<AppDispatch>();
   const { send } = useLocalSearchParams();
@@ -276,6 +288,17 @@ export default function SendPage() {
     }
   };
 
+  const handleSubmit = async (values: { address: string; amount: string }) => {
+    router.push({
+      pathname: ROUTES.sendConfirmation,
+      params: {
+        address: values.address,
+        amount: values.amount,
+        chainName: chainName,
+      },
+    });
+  };
+
   return (
     <SafeAreaContainer>
       <ContentContainer>
@@ -285,9 +308,7 @@ export default function SendPage() {
         <Formik
           initialValues={{ address: "", amount: "" }}
           validate={validateFields}
-          onSubmit={(values) => {
-            console.log(values);
-          }}
+          onSubmit={handleSubmit}
         >
           {({
             handleChange,
@@ -297,61 +318,80 @@ export default function SendPage() {
             errors,
             setFieldValue,
           }) => (
-            <TextContainer>
-              <TextView>
-                <AddressTextInput
-                  isAddressInputFocused={isAddressInputFocused}
-                  placeholder={`Recipient's ${capitalizeFirstLetter(
-                    chainName
-                  )} address`}
-                  value={values.address}
-                  onChangeText={handleChange("address")}
-                  onFocus={() => setIsAddressInputFocused(true)}
-                  onBlur={handleBlur("email")}
-                  onEndEditing={() => setIsAddressInputFocused(false)}
-                  placeholderTextColor={theme.colors.lightGrey}
-                />
-              </TextView>
-              {errors.address && <ErrorText>{errors.address}</ErrorText>}
-              <TextView>
-                <AmountTextInputContainer>
-                  <AmountTextInput
-                    isAmountInputFocused={isAmountInputFocused}
-                    placeholder="Amount"
-                    value={values.amount}
-                    onChangeText={handleNumericChange(handleChange)("amount")}
-                    onFocus={() => setIsAmountInputFocused(true)}
+            <FormWrapper>
+              <TextContainer>
+                <TextView>
+                  <AddressTextInput
+                    isAddressInputFocused={isAddressInputFocused}
+                    placeholder={`Recipient's ${capitalizeFirstLetter(
+                      chainName
+                    )} address`}
+                    value={values.address}
+                    onChangeText={handleChange("address")}
+                    onFocus={() => setIsAddressInputFocused(true)}
                     onBlur={handleBlur("email")}
-                    onEndEditing={() => setIsAmountInputFocused(false)}
+                    onEndEditing={() => setIsAddressInputFocused(false)}
                     placeholderTextColor={theme.colors.lightGrey}
-                    keyboardType="numeric"
                   />
-                  <AmountDetailsView>
-                    <TickerText>{ticker}</TickerText>
-                    <MaxButton
-                      onPress={() =>
-                        calculateMaxAmount(
-                          setFieldValue,
-                          tokenBalance,
-                          values.address
-                        )
-                      }
-                    >
-                      <MaxText>Max</MaxText>
-                    </MaxButton>
-                  </AmountDetailsView>
-                </AmountTextInputContainer>
-              </TextView>
-              {errors.amount && <ErrorText>{errors.amount}</ErrorText>}
-              <TransactionDetailsContainer>
-                <TransactionDetailsText>
-                  {renderDollarAmount(values.amount)}
-                </TransactionDetailsText>
-                <TransactionDetailsText>
-                  Available {tokenBalance} {ticker}
-                </TransactionDetailsText>
-              </TransactionDetailsContainer>
-            </TextContainer>
+                </TextView>
+                {errors.address && <ErrorText>{errors.address}</ErrorText>}
+                <TextView>
+                  <AmountTextInputContainer>
+                    <AmountTextInput
+                      isAmountInputFocused={isAmountInputFocused}
+                      placeholder="Amount"
+                      value={values.amount}
+                      onChangeText={handleNumericChange(handleChange)("amount")}
+                      onFocus={() => setIsAmountInputFocused(true)}
+                      onBlur={handleBlur("email")}
+                      onEndEditing={() => setIsAmountInputFocused(false)}
+                      placeholderTextColor={theme.colors.lightGrey}
+                      keyboardType="numeric"
+                    />
+                    <AmountDetailsView>
+                      <TickerText>{ticker}</TickerText>
+                      <MaxButton
+                        onPress={() =>
+                          calculateMaxAmount(
+                            setFieldValue,
+                            tokenBalance,
+                            values.address
+                          )
+                        }
+                      >
+                        <MaxText>Max</MaxText>
+                      </MaxButton>
+                    </AmountDetailsView>
+                  </AmountTextInputContainer>
+                </TextView>
+                {errors.amount && <ErrorText>{errors.amount}</ErrorText>}
+                <TransactionDetailsContainer>
+                  <TransactionDetailsText>
+                    {renderDollarAmount(values.amount)}
+                  </TransactionDetailsText>
+                  <TransactionDetailsText>
+                    Available {tokenBalance} {ticker}
+                  </TransactionDetailsText>
+                </TransactionDetailsContainer>
+              </TextContainer>
+              <ButtonView>
+                <ButtonContainer>
+                  <Button
+                    backgroundColor={theme.colors.lightDark}
+                    color={theme.colors.white}
+                    onPress={() => router.back()}
+                    title="Cancel"
+                  />
+                </ButtonContainer>
+                <ButtonContainer>
+                  <Button
+                    backgroundColor={theme.colors.primary}
+                    onPress={handleSubmit}
+                    title="Next"
+                  />
+                </ButtonContainer>
+              </ButtonView>
+            </FormWrapper>
           )}
         </Formik>
       </ContentContainer>

@@ -16,6 +16,7 @@ export interface Routes {
   solDetails: string;
   sendEth: string;
   sendSol: string;
+  sendConfirmation: string;
   settings: string;
 }
 
@@ -37,5 +38,6 @@ export const ROUTES: Routes = {
   solDetails: "/token/solana",
   sendEth: "token/send/ethereum",
   sendSol: "token/send/solana",
+  sendConfirmation: "token/send/send-confirmation",
   settings: "(app)/settings/settings-modal",
 };
