@@ -96,11 +96,8 @@ export async function calculateGasAndAmounts(
     const gasFee = (await ethProvider.getFeeData()).maxFeePerGas;
     const gasPrice = BigInt(gasEstimate) * BigInt(gasFee);
 
-    // Calculate gas cost
-    const gasCost = gasEstimate * gasPrice;
-
     // Calculate total cost
-    const totalCost = amountInWei + gasCost;
+    const totalCost = amountInWei + gasPrice;
     const totalCostMinusGas = amountInWei - gasPrice;
 
     return {

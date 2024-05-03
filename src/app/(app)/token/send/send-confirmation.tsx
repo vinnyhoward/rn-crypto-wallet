@@ -113,7 +113,7 @@ export default function SendConfirmationPage() {
     chainName: chain,
   } = useLocalSearchParams();
   const [gasEstimate, setGasEstimate] = useState("0.00");
-  const [totalCostMinusGas, setTotalCostMinusGas] = useState("0.00");
+  const [totalCost, setTotalCost] = useState("0.00");
   const [error, setError] = useState<string | null>(null);
   const [isBtnDisabled, setIsBtnDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -159,11 +159,12 @@ export default function SendConfirmationPage() {
       const gasEstimateUsd = formatDollar(
         parseFloat(gasEstimate) * chainPriceMock
       );
+
       const totalCostPlusGasUsd = formatDollar(
         parseFloat(totalCost) * chainPriceMock
       );
       setGasEstimate(gasEstimateUsd);
-      setTotalCostMinusGas(totalCostPlusGasUsd);
+      setTotalCost(totalCostPlusGasUsd);
 
       if (totalCostMinusGas > amount) {
         setError("Not enough funds to send transaction.");
@@ -202,7 +203,7 @@ export default function SendConfirmationPage() {
         </IconView>
         <BalanceContainer>
           <CryptoBalanceText>{chainBalance}</CryptoBalanceText>
-          <UsdBalanceText>{totalCostMinusGas}</UsdBalanceText>
+          <UsdBalanceText>{totalCost}</UsdBalanceText>
         </BalanceContainer>
         <CryptoInfoCardContainer>
           <SendConfCard
