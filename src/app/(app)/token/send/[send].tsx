@@ -261,18 +261,12 @@ export default function SendPage() {
   };
 
   const handleSubmit = async (values: { address: string; amount: string }) => {
-    const { gasEstimate } = await calculateGasAndAmounts(
-      values.address,
-      values.amount
-    );
-
     router.push({
       pathname: ROUTES.sendConfirmation,
       params: {
         address: values.address,
         amount: values.amount,
         chainName: chainName,
-        gasEstimate: gasEstimate,
       },
     });
   };

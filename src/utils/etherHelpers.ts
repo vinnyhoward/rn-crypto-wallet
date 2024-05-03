@@ -83,6 +83,8 @@ interface SendTransactionResponse {
   totalCostMinusGas: string;
 }
 
+// TODO: Decouple gas calculation from this function
+// into its own function and then compose it with this function
 export async function calculateGasAndAmounts(
   toAddress: string,
   amount: string
@@ -95,7 +97,7 @@ export async function calculateGasAndAmounts(
   try {
     // Estimate gas
     const gasEstimate = await ethProvider.estimateGas(transaction);
-    const gasFee = (await ethProvider.getFeeData()).gasPrice;
+    const gasFee = (await ethProvider.getFeeData()).maxFeePerGas;
     const gasPrice = BigInt(gasEstimate) * BigInt(gasFee);
 
     // Calculate gas cost
@@ -106,7 +108,7 @@ export async function calculateGasAndAmounts(
     const totalCostMinusGas = amountInWei - gasPrice;
 
     return {
-      gasEstimate: formatEther(gasCost),
+      gasEstimate: formatEther(gasPrice),
       totalCost: formatEther(totalCost),
       totalCostMinusGas: formatEther(totalCostMinusGas),
     };

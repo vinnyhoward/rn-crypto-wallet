@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { useLocalSearchParams } from "expo-router";
@@ -9,6 +10,7 @@ import { truncateWalletAddress } from "../../../../utils/truncateWalletAddress";
 import SendConfCard from "../../../../components/SendConfCard/SendConfCard";
 import { capitalizeFirstLetter } from "../../../../utils/capitalizeFirstLetter";
 import Button from "../../../../components/Button/Button";
+import { calculateGasAndAmounts } from "../../../../utils/etherHelpers";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -89,6 +91,9 @@ export default function SendConfirmationPage() {
     amount: tokenAmount,
     chainName: chain,
   } = useLocalSearchParams();
+  const [gasEstimate, setGasEstimate] = useState("0.00");
+  const [totalCostMinusGas, setTotalCostMinusGas] = useState("0.00");
+
   const chainName = chain as string;
   const ticker = TICKERS[chainName];
   const amount = tokenAmount as string;
@@ -96,10 +101,47 @@ export default function SendConfirmationPage() {
 
   const chainBalance = `${amount} ${ticker}`;
   const usdBalance = findChainPrice(chainName, amount);
+  const ethPriceMock = 3006.94;
+  const solPriceMock = 127.22;
 
   const handleSubmit = () => {
     console.log("submit");
   };
+
+  const calculateTransactionCosts = async () => {
+    const chainPriceMock =
+      chainName === "ethereum" ? ethPriceMock : solPriceMock;
+    try {
+      const { gasEstimate, totalCost, totalCostMinusGas } =
+        await calculateGasAndAmounts(address, amount);
+
+      const gasEstimateUsd = formatDollar(
+        parseFloat(gasEstimate) * chainPriceMock
+      );
+      const totalCostMinusGasUsd = formatDollar(
+        parseFloat(totalCostMinusGas) * chainPriceMock
+      );
+      setGasEstimate(gasEstimateUsd);
+      setTotalCostMinusGas(totalCostMinusGasUsd);
+    } catch (error) {
+      console.error("Failed to fetch transaction costs:", error);
+    }
+  };
+
+  useEffect(() => {
+    calculateTransactionCosts();
+
+    const intervalId = setInterval(async () => {
+      await calculateTransactionCosts();
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [address, amount]);
+
+  const networkName =
+    process.env.EXPO_PUBLIC_ENVIRONMENT === "production"
+      ? "Mainnet"
+      : "Sepolia";
 
   return (
     <SafeAreaContainer>
@@ -111,13 +153,13 @@ export default function SendConfirmationPage() {
         </IconView>
         <BalanceContainer>
           <CryptoBalanceText>{chainBalance}</CryptoBalanceText>
-          <UsdBalanceText>{formatDollar(usdBalance)}</UsdBalanceText>
+          <UsdBalanceText>{totalCostMinusGas}</UsdBalanceText>
         </BalanceContainer>
         <CryptoInfoCardContainer>
           <SendConfCard
             toAddress={truncateWalletAddress(address)}
-            network={capitalizeFirstLetter(chainName)}
-            networkFee={0}
+            network={`${capitalizeFirstLetter(chainName)} ${networkName}`}
+            networkFee={`Up to ${gasEstimate}`}
           />
         </CryptoInfoCardContainer>
         <ButtonView>

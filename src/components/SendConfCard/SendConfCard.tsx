@@ -72,13 +72,13 @@ const TokenNameText = styled.Text<{ theme: ThemeType }>`
 interface SendConfCardProps {
   toAddress: string;
   network: string;
-  networkFee: number;
+  networkFee: string;
 }
 
 const SendConfCard: React.FC<SendConfCardProps> = ({
   toAddress,
   network,
-  networkFee = 0,
+  networkFee = "0.00",
 }) => {
   return (
     <SendConfCardContainer>
@@ -92,7 +92,7 @@ const SendConfCard: React.FC<SendConfCardProps> = ({
       </TokenSectionViewMid>
       <TokenSectionViewBot>
         <TokenNameLabel>Network Fee</TokenNameLabel>
-        <TokenNameText>{formatDollar(networkFee)}</TokenNameText>
+        <TokenNameText>{networkFee}</TokenNameText>
       </TokenSectionViewBot>
     </SendConfCardContainer>
   );
