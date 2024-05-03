@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { SafeAreaView, Platform } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import { ThemeType } from "../../../styles/theme";
-import type { AppDispatch, RootState } from "../../../store";
+import type { RootState } from "../../../store";
 import { formatDollar } from "../../../utils/formatDollars";
 import { getSolanaBalance } from "../../../utils/solanaHelpers";
 import CryptoInfoCard from "../../../components/CryptoInfoCard/CryptoInfoCard";
@@ -30,7 +30,6 @@ const CardView = styled.View<{ theme: ThemeType }>`
 `;
 
 export default function SendOptions() {
-  const dispatch = useDispatch<AppDispatch>();
   const theme = useTheme();
   const ethBalance = useSelector(
     (state: RootState) => state.wallet.ethereum.balance
@@ -38,18 +37,17 @@ export default function SendOptions() {
   const solBalance = useSelector(
     (state: RootState) => state.wallet.solana.balance
   );
+  const prices = useSelector((state: RootState) => state.price.data);
+  const solPrice = prices.solana.usd;
+  const ethPrice = prices.ethereum.usd;
+
   const [solUsd, setSolUsd] = useState(0);
   const [ethUsd, setEthUsd] = useState(0);
 
-  const ethPriceMock = 3006.94;
-  const solPriceMock = 127.22;
-
   useEffect(() => {
     const fetchPrices = async () => {
-      // const prices = await fetchCryptoPrices();
-      // setUsdBalance(prices.ethereum.usd * ethBalance);
-      const ethUsd = ethPriceMock * ethBalance;
-      const solUsd = solPriceMock * solBalance;
+      const ethUsd = solPrice * ethBalance;
+      const solUsd = ethPrice * solBalance;
 
       setEthUsd(ethUsd);
       setSolUsd(solUsd);

@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components/native";
 import { ThemeType } from "../../styles/theme";
 import { formatDollar } from "../../utils/formatDollars";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store";
 
 interface ButtonContainerProps {
   backgroundColor?: string;
@@ -69,19 +71,6 @@ const TokenNameText = styled.Text<{ theme: ThemeType }>`
   color: ${({ theme }) => theme.colors.white};
 `;
 
-function findTokenPrice(tokenSymbol: string) {
-  const ethPriceMock = 3006.94;
-  const solPriceMock = 127.22;
-
-  if (tokenSymbol === "ETH") {
-    return ethPriceMock;
-  } else if (tokenSymbol === "SOL") {
-    return solPriceMock;
-  } else {
-    return 0;
-  }
-}
-
 interface TokenInfoCardProps {
   tokenName: string;
   tokenSymbol: string;
@@ -94,6 +83,20 @@ const TokenInfoCard: React.FC<TokenInfoCardProps> = ({
   tokenSymbol,
   network,
 }) => {
+  const prices = useSelector((state: RootState) => state.price.data);
+  const solPrice = prices.solana.usd;
+  const ethPrice = prices.ethereum.usd;
+
+  const findTokenPrice = (tokenSymbol: string) => {
+    if (tokenSymbol === "ETH") {
+      return ethPrice;
+    } else if (tokenSymbol === "SOL") {
+      return solPrice;
+    } else {
+      return 0;
+    }
+  };
+
   return (
     <TokenInfoCardContainer>
       <TokenSectionViewTop>

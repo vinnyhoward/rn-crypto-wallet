@@ -6,6 +6,7 @@ import styled, { useTheme } from "styled-components/native";
 import { ROUTES } from "../../constants/routes";
 import type { ThemeType } from "../../styles/theme";
 import type { RootState, AppDispatch } from "../../store";
+import { fetchPrices } from "../../store/priceSlice";
 import {
   fetchEthereumBalance,
   updateSolanaBalance,
@@ -19,6 +20,7 @@ import ReceiveIcon from "../../assets/svg/receive.svg";
 import CryptoInfoCard from "../../components/CryptoInfoCard/CryptoInfoCard";
 import SolanaIcon from "../../assets/svg/solana.svg";
 import EthereumIcon from "../../assets/svg/ethereum.svg";
+import { FETCH_PRICES_INTERVAL } from "../../constants/price";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -87,12 +89,14 @@ export default function Index() {
   const solBalance = useSelector(
     (state: RootState) => state.wallet.solana.balance
   );
+
+  const prices = useSelector((state: RootState) => state.price.data);
+  const solPrice = prices.solana.usd;
+  const ethPrice = prices.ethereum.usd;
+
   const [usdBalance, setUsdBalance] = useState(0);
   const [solUsd, setSolUsd] = useState(0);
   const [ethUsd, setEthUsd] = useState(0);
-
-  const ethPriceMock = 3006.94;
-  const solPriceMock = 127.22;
 
   useEffect(() => {
     const fetchSolanaBalance = async () => {
@@ -111,10 +115,8 @@ export default function Index() {
 
   useEffect(() => {
     const fetchPrices = async () => {
-      // const prices = await fetchCryptoPrices();
-      // setUsdBalance(prices.ethereum.usd * ethBalance);
-      const ethUsd = ethPriceMock * ethBalance;
-      const solUsd = solPriceMock * solBalance;
+      const ethUsd = ethPrice * ethBalance;
+      const solUsd = solPrice * solBalance;
 
       setUsdBalance(ethUsd + solUsd);
       setEthUsd(ethUsd);
@@ -123,6 +125,15 @@ export default function Index() {
 
     fetchPrices();
   }, [ethBalance, solBalance]);
+
+  useEffect(() => {
+    dispatch(fetchPrices());
+    const interval = setInterval(() => {
+      dispatch(fetchPrices());
+    }, FETCH_PRICES_INTERVAL);
+
+    return () => clearInterval(interval);
+  }, [dispatch]);
 
   return (
     <SafeAreaContainer>

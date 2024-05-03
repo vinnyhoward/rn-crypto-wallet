@@ -168,10 +168,12 @@ export default function SendPage() {
   const tokenBalance = useSelector(
     (state: RootState) => state.wallet[chainName].balance
   );
+  const prices = useSelector((state: RootState) => state.price.data);
+  const solPrice = prices.solana.usd;
+  const ethPrice = prices.ethereum.usd;
 
   const [isAddressInputFocused, setIsAddressInputFocused] = useState(false);
   const [isAmountInputFocused, setIsAmountInputFocused] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const renderIcons = () => {
     switch (chainName) {
@@ -186,9 +188,8 @@ export default function SendPage() {
 
   const renderDollarAmount = (amountValue: string) => {
     if (amountValue === "") return formatDollar(0);
-    // TODO: Use api for actual eth price
-    const ethPriceMock = 3006.94;
-    const USDAmount = ethPriceMock * parseFloat(amountValue);
+    const chainPrice = chainName === "ethereum" ? ethPrice : solPrice;
+    const USDAmount = chainPrice * parseFloat(amountValue);
     const currentUSDBalance = USDAmount * tokenBalance;
     return formatDollar(currentUSDBalance);
   };

@@ -115,13 +115,13 @@ export default function Index() {
   const transactionHistory = useSelector(
     (state: RootState) => state.wallet[chainName].transactions
   );
+  const prices = useSelector((state: RootState) => state.price.data);
+  const solPrice = prices.solana.usd;
+  const ethPrice = prices.ethereum.usd;
 
   const [usdBalance, setUsdBalance] = useState(0);
   const [transactions, setTransactions] = useState<AssetTransfer[]>([]);
 
-  // TODO: Find cheap api to find real prices of tokens
-  const ethPriceMock = 3006.94;
-  const solPriceMock = 127.22;
   const ticker = TICKERS[chainName];
   const isSolana = chainName === Chains.Solana;
   const isEthereum = chainName === Chains.Ethereum;
@@ -160,13 +160,13 @@ export default function Index() {
   const fetchPrices = async () => {
     if (chainName === Chains.Ethereum) {
       dispatch(fetchEthereumTransactions(tokenAddress));
-      const usd = ethPriceMock * tokenBalance;
+      const usd = ethPrice * tokenBalance;
       setUsdBalance(usd);
     }
 
     if (chainName === Chains.Solana) {
       // dispatch(fetchSolanaTransactions(tokenAddress));
-      const usd = solPriceMock * tokenBalance;
+      const usd = solPrice * tokenBalance;
       setUsdBalance(usd);
     }
   };
