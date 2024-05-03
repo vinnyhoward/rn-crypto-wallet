@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components/native";
 import { ThemeType } from "../../styles/theme";
 import { formatDollar } from "../../utils/formatDollars";
@@ -94,11 +94,6 @@ const TokenInfoCard: React.FC<TokenInfoCardProps> = ({
   tokenSymbol,
   network,
 }) => {
-  // TODO: Find cheap api to find real prices of tokens
-  const [currentTokenPrice, setCurrentTokenPrice] = useState<number>(
-    findTokenPrice(tokenSymbol)
-  );
-
   return (
     <TokenInfoCardContainer>
       <TokenSectionViewTop>
@@ -113,7 +108,9 @@ const TokenInfoCard: React.FC<TokenInfoCardProps> = ({
       </TokenSectionViewMid>
       <TokenSectionViewBot>
         <TokenNameLabel>Price</TokenNameLabel>
-        <TokenNameText>{formatDollar(currentTokenPrice)}</TokenNameText>
+        <TokenNameText>
+          {formatDollar(findTokenPrice(tokenSymbol))}
+        </TokenNameText>
       </TokenSectionViewBot>
     </TokenInfoCardContainer>
   );

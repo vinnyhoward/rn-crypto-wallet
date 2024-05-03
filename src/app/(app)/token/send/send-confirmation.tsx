@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native";
+import { StackActions } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
-import { useLocalSearchParams, router } from "expo-router";
+import {
+  useLocalSearchParams,
+  useNavigationContainerRef,
+  router,
+} from "expo-router";
 import type { ThemeType } from "../../../../styles/theme";
 import ConfirmSend from "../../../../assets/svg/confirm-send.svg";
 import { formatDollar } from "../../../../utils/formatDollars";
@@ -15,7 +20,6 @@ import {
   sendTransaction,
 } from "../../../../utils/etherHelpers";
 import { getPrivateKey } from "../../../../hooks/use-storage-state";
-import { ROUTES } from "../../../../constants/routes";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -80,7 +84,7 @@ const ErrorView = styled.View<{ theme: ThemeType }>`
 const ErrorText = styled.Text<{ theme: ThemeType }>`
   font-family: ${(props) => props.theme.fonts.families.openBold};
   font-size: ${(props) => props.theme.fonts.sizes.title};
-  color: ${(props) => props.theme.colors.red};
+  color: ${(props) => props.theme.colors.error};
   text-align: center;
 `;
 
@@ -101,6 +105,7 @@ const findChainPrice = (chainName: string, amount: string) => {
 };
 
 export default function SendConfirmationPage() {
+  const rootNavigation = useNavigationContainerRef();
   const theme = useTheme();
   const {
     address: toAddress,
@@ -129,10 +134,11 @@ export default function SendConfirmationPage() {
       setIsBtnDisabled(true);
       const privateKey = await getPrivateKey();
       const response = await sendTransaction(address, privateKey, amount);
-      console.log("Transaction response:", response);
+
       if (response) {
-        console.log("Transaction sent successfully.", `token/${chainName}`);
-        router.navigate(`token/${chainName}`);
+        rootNavigation.dispatch(StackActions.popToTop());
+        const dynamicUrl = `/token/${chainName}`;
+        router.navigate(dynamicUrl);
       }
       setLoading(false);
     } catch (error) {

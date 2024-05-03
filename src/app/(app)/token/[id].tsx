@@ -66,7 +66,6 @@ const ActionContainer = styled.View<{ theme: ThemeType }>`
 `;
 
 const CryptoInfoCardContainer = styled.View<{ theme: ThemeType }>`
-  flex: 1;
   flex-direction: column;
   align-items: center;
   width: 100%;
@@ -157,6 +156,19 @@ export default function Index() {
     }
   };
 
+  const fetchPrices = async () => {
+    if (chainName === Chains.Ethereum) {
+      dispatch(fetchEthereumTransactions(tokenAddress));
+      const usd = ethPriceMock * tokenBalance;
+      setUsdBalance(usd);
+    }
+
+    if (chainName === Chains.Solana) {
+      const usd = solPriceMock * tokenBalance;
+      setUsdBalance(usd);
+    }
+  };
+
   useEffect(() => {
     if (isSolana && tokenAddress) {
       const fetchSolanaBalance = async () => {
@@ -172,20 +184,10 @@ export default function Index() {
   }, [tokenAddress, dispatch]);
 
   useEffect(() => {
-    const fetchPrices = async () => {
-      if (chainName === Chains.Ethereum) {
-        dispatch(fetchEthereumTransactions(tokenAddress));
-        const usd = ethPriceMock * tokenBalance;
-        setUsdBalance(usd);
-      }
-
-      if (chainName === Chains.Solana) {
-        const usd = solPriceMock * tokenBalance;
-        setUsdBalance(usd);
-      }
-    };
-
-    fetchPrices();
+    const intervalId = setInterval(async () => {
+      await fetchPrices();
+    }, 5000);
+    return () => clearInterval(intervalId);
   }, [tokenBalance]);
 
   useEffect(() => {
