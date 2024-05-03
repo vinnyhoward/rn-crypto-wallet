@@ -195,11 +195,10 @@ export default function Index() {
           return tx.asset === ticker;
         }
       );
-      setTransactions(walletTransactions);
+      setTransactions(walletTransactions.reverse());
     }
   }, [transactionHistory]);
 
-  console.log("transactions", transactions);
   return (
     <SafeAreaContainer>
       <ContentContainer>

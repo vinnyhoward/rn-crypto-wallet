@@ -171,6 +171,7 @@ export default function SendPage() {
 
   const [isAddressInputFocused, setIsAddressInputFocused] = useState(false);
   const [isAmountInputFocused, setIsAmountInputFocused] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const renderIcons = () => {
     switch (chainName) {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native";
 import styled, { useTheme } from "styled-components/native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, router } from "expo-router";
 import type { ThemeType } from "../../../../styles/theme";
 import ConfirmSend from "../../../../assets/svg/confirm-send.svg";
 import { formatDollar } from "../../../../utils/formatDollars";
@@ -10,7 +10,12 @@ import { truncateWalletAddress } from "../../../../utils/truncateWalletAddress";
 import SendConfCard from "../../../../components/SendConfCard/SendConfCard";
 import { capitalizeFirstLetter } from "../../../../utils/capitalizeFirstLetter";
 import Button from "../../../../components/Button/Button";
-import { calculateGasAndAmounts } from "../../../../utils/etherHelpers";
+import {
+  calculateGasAndAmounts,
+  sendTransaction,
+} from "../../../../utils/etherHelpers";
+import { getPrivateKey } from "../../../../hooks/use-storage-state";
+import { ROUTES } from "../../../../constants/routes";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -68,6 +73,17 @@ const ButtonContainer = styled.View<{ theme: ThemeType }>`
   margin-bottom: ${(props) => props.theme.spacing.small};
 `;
 
+const ErrorView = styled.View<{ theme: ThemeType }>`
+  margin-top: ${(props) => props.theme.spacing.medium};
+`;
+
+const ErrorText = styled.Text<{ theme: ThemeType }>`
+  font-family: ${(props) => props.theme.fonts.families.openBold};
+  font-size: ${(props) => props.theme.fonts.sizes.title};
+  color: ${(props) => props.theme.colors.red};
+  text-align: center;
+`;
+
 const ButtonView = styled.View<{ theme: ThemeType }>``;
 
 const ethPriceMock = 3006.94;
@@ -93,6 +109,9 @@ export default function SendConfirmationPage() {
   } = useLocalSearchParams();
   const [gasEstimate, setGasEstimate] = useState("0.00");
   const [totalCostMinusGas, setTotalCostMinusGas] = useState("0.00");
+  const [error, setError] = useState<string | null>(null);
+  const [isBtnDisabled, setIsBtnDisabled] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const chainName = chain as string;
   const ticker = TICKERS[chainName];
@@ -100,12 +119,28 @@ export default function SendConfirmationPage() {
   const address = toAddress as string;
 
   const chainBalance = `${amount} ${ticker}`;
-  const usdBalance = findChainPrice(chainName, amount);
+  // const usdBalance = findChainPrice(chainName, amount);
   const ethPriceMock = 3006.94;
   const solPriceMock = 127.22;
 
-  const handleSubmit = () => {
-    console.log("submit");
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      setIsBtnDisabled(true);
+      const privateKey = await getPrivateKey();
+      const response = await sendTransaction(address, privateKey, amount);
+      console.log("Transaction response:", response);
+      if (response) {
+        console.log("Transaction sent successfully.", `token/${chainName}`);
+        router.navigate(`token/${chainName}`);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Failed to send transaction:", error);
+      setError("Failed to send transaction. Please try again later.");
+      setLoading(false);
+      setIsBtnDisabled(false);
+    }
   };
 
   const calculateTransactionCosts = async () => {
@@ -118,11 +153,19 @@ export default function SendConfirmationPage() {
       const gasEstimateUsd = formatDollar(
         parseFloat(gasEstimate) * chainPriceMock
       );
-      const totalCostMinusGasUsd = formatDollar(
-        parseFloat(totalCostMinusGas) * chainPriceMock
+      const totalCostPlusGasUsd = formatDollar(
+        parseFloat(totalCost) * chainPriceMock
       );
       setGasEstimate(gasEstimateUsd);
-      setTotalCostMinusGas(totalCostMinusGasUsd);
+      setTotalCostMinusGas(totalCostPlusGasUsd);
+
+      if (totalCostMinusGas > amount) {
+        setError("Not enough funds to send transaction.");
+        setIsBtnDisabled(true);
+      } else {
+        setError("");
+        setIsBtnDisabled(false);
+      }
     } catch (error) {
       console.error("Failed to fetch transaction costs:", error);
     }
@@ -161,10 +204,17 @@ export default function SendConfirmationPage() {
             network={`${capitalizeFirstLetter(chainName)} ${networkName}`}
             networkFee={`Up to ${gasEstimate}`}
           />
+          {error && (
+            <ErrorView>
+              <ErrorText>{error}</ErrorText>
+            </ErrorView>
+          )}
         </CryptoInfoCardContainer>
         <ButtonView>
           <ButtonContainer>
             <Button
+              loading={loading}
+              disabled={isBtnDisabled}
               backgroundColor={theme.colors.primary}
               onPress={handleSubmit}
               title="Send"

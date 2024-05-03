@@ -1,4 +1,5 @@
 import React from "react";
+import { ActivityIndicator } from "react-native";
 import styled from "styled-components/native";
 import { ThemeType } from "../../styles/theme";
 
@@ -37,6 +38,7 @@ interface ButtonProps {
   disabled?: boolean;
   color?: string;
   backgroundColor?: string;
+  loading?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -45,6 +47,7 @@ const Button: React.FC<ButtonProps> = ({
   color,
   backgroundColor,
   disabled = false,
+  loading = false,
 }) => {
   return (
     <ButtonContainer
@@ -52,7 +55,11 @@ const Button: React.FC<ButtonProps> = ({
       backgroundColor={backgroundColor}
       onPress={disabled ? null : onPress}
     >
-      <ButtonText color={color}>{title}</ButtonText>
+      {!loading ? (
+        <ButtonText color={color}>{title}</ButtonText>
+      ) : (
+        <ActivityIndicator size="large" color="#fff" />
+      )}
     </ButtonContainer>
   );
 };

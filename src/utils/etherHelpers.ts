@@ -117,3 +117,23 @@ export async function calculateGasAndAmounts(
     throw new Error("Unable to calculate gas. Please try again later.");
   }
 }
+
+export const sendTransaction = async (
+  toAddress: string,
+  privateKey: string,
+  value: string
+) => {
+  const signer = new Wallet(privateKey, ethProvider);
+  const transaction = {
+    to: toAddress,
+    value: parseEther(value),
+  };
+
+  try {
+    const response = await signer.sendTransaction(transaction);
+    return response;
+  } catch (error) {
+    console.error("Failed to send transaction:", error);
+    throw new Error("Failed to send transaction. Please try again later.");
+  }
+};
