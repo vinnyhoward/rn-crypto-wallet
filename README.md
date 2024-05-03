@@ -23,23 +23,30 @@ This project is a React Native application for managing cryptocurrency transacti
 
 
 ## Roadmap
+#### Wallet Functionality
 - [x] Create wallet
 - [x] View seed phrase
 - [x] Confirm seed phrase
 - [x] Import wallet
+- [ ] Switch accounts
+
+#### Wallet Balance
 - [x] View all asset net worth
 - [x] View Ethereum balance
 - [x] View Solana balance
-- [ ] Switch accounts
-- [ ] Send Ethereum
+
+#### Ethereum Actions
+- [x] Send Ethereum
 - [x] List transactions on Ethereum
+
+#### Solana Actions
 - [ ] Send Solana
 - [ ] List transactions transactions on Solana
 
-### Nice to haves
+#### Nice to haves
 - [ ] UI improvements - android ui bugs, loaders, animation, etc
 - [ ] Refactor repeating styled components and some logic
-- [ ] Improve security (its never going to be in production but it'd be fun to add)
+- [ ] Improve security (this wallet will never be production but it'd be fun to add)
 
 ## Prerequisites
 

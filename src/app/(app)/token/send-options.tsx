@@ -6,7 +6,7 @@ import styled, { useTheme } from "styled-components/native";
 import { ThemeType } from "../../../styles/theme";
 import type { AppDispatch, RootState } from "../../../store";
 import { formatDollar } from "../../../utils/formatDollars";
-import { getSolanaBalance } from "../../../utils/getSolanaBalance";
+import { getSolanaBalance } from "../../../utils/solanaHelpers";
 import CryptoInfoCard from "../../../components/CryptoInfoCard/CryptoInfoCard";
 import SolanaIcon from "../../../assets/svg/solana.svg";
 import EthereumIcon from "../../../assets/svg/ethereum.svg";

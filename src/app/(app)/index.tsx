@@ -12,7 +12,7 @@ import {
 } from "../../store/walletSlice";
 // import { fetchCryptoPrices } from "../../utils/fetchCryptoPrices";
 import { formatDollar } from "../../utils/formatDollars";
-import { getSolanaBalance } from "../../utils/getSolanaBalance";
+import { getSolanaBalance } from "../../utils/solanaHelpers";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import SendIcon from "../../assets/svg/send.svg";
 import ReceiveIcon from "../../assets/svg/receive.svg";

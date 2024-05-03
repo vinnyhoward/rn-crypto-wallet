@@ -10,8 +10,9 @@ import {
   fetchEthereumBalance,
   updateSolanaBalance,
   fetchEthereumTransactions,
+  // fetchSolanaTransactions,
 } from "../../../store/walletSlice";
-import { getSolanaBalance } from "../../../utils/getSolanaBalance";
+import { getSolanaBalance } from "../../../utils/solanaHelpers";
 import { capitalizeFirstLetter } from "../../../utils/capitalizeFirstLetter";
 import { formatDollar } from "../../../utils/formatDollars";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
@@ -164,6 +165,7 @@ export default function Index() {
     }
 
     if (chainName === Chains.Solana) {
+      // dispatch(fetchSolanaTransactions(tokenAddress));
       const usd = solPriceMock * tokenBalance;
       setUsdBalance(usd);
     }
@@ -187,7 +189,11 @@ export default function Index() {
     const intervalId = setInterval(async () => {
       await fetchPrices();
     }, 5000);
-    return () => clearInterval(intervalId);
+
+    return () => {
+      console.log("clearing interval");
+      clearInterval(intervalId);
+    };
   }, [tokenBalance]);
 
   useEffect(() => {

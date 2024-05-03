@@ -6,6 +6,7 @@ import * as ethers from "ethers";
 import { RootState } from "./index";
 import { fetchTransactions } from "../utils/fetchTransactions";
 import { ethProvider } from "../utils/etherHelpers";
+import { getTransactionsByWallet } from "../utils/solanaHelpers";
 
 interface CryptoWallet {
   balance: number;
@@ -68,6 +69,19 @@ export const fetchEthereumTransactions = createAsyncThunk(
   async (address: string, { rejectWithValue }): Promise<any> => {
     try {
       const transactions = await fetchTransactions(address);
+      return transactions;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchSolanaTransactions = createAsyncThunk(
+  "wallet/fetchSolanaTransactions",
+  async (address: string, { rejectWithValue }): Promise<any> => {
+    try {
+      const transactions = await getTransactionsByWallet(address);
+      console.log("transactions from store", transactions);
       return transactions;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -146,6 +160,17 @@ export const walletSlice = createSlice({
       })
       .addCase(fetchEthereumTransactions.rejected, (state, action) => {
         state.ethereum.status = "failed";
+        console.error("Failed to fetch transactions:", action.payload);
+      })
+      .addCase(fetchSolanaTransactions.pending, (state) => {
+        state.solana.status = "loading";
+      })
+      .addCase(fetchSolanaTransactions.fulfilled, (state, action) => {
+        state.solana.transactions = action.payload;
+        state.solana.status = "idle";
+      })
+      .addCase(fetchSolanaTransactions.rejected, (state, action) => {
+        state.solana.status = "failed";
         console.error("Failed to fetch transactions:", action.payload);
       });
   },
