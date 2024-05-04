@@ -1,6 +1,10 @@
-export const truncateWalletAddress = (address: string) => {
-  return `${address.slice(0, 5)}...${address.slice(
-    address.length - 4,
+export const truncateWalletAddress = (
+  address: string,
+  end: number = 5,
+  offset: number = 4
+): string => {
+  return `${address.slice(0, end)}...${address.slice(
+    address.length - offset,
     address.length
   )}`;
 };

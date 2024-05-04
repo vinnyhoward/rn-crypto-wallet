@@ -100,6 +100,23 @@ export default function AppLayout() {
           }}
         />
         <Stack.Screen
+          name="token/receive/[receive]"
+          options={{
+            headerShown: true,
+            headerTransparent: true,
+            gestureEnabled: true,
+            headerTitleStyle: {
+              color: theme.colors.white,
+            },
+            presentation: "modal",
+            headerLeft: () => (
+              <IconTouchContainer onPress={() => router.back()}>
+                <LeftIcon width={25} height={25} fill={theme.colors.white} />
+              </IconTouchContainer>
+            ),
+          }}
+        />
+        <Stack.Screen
           name="token/send/send-confirmation"
           options={{
             headerShown: true,
@@ -114,7 +131,7 @@ export default function AppLayout() {
           }}
         />
         <Stack.Screen
-          name="token/receive"
+          name="token/receive-options"
           options={{
             headerShown: true,
             headerTransparent: true,

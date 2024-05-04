@@ -11,7 +11,7 @@ export interface Routes {
   walletImportSeedPhrase: string;
   sendOptions: string;
   send: string;
-  receive: string;
+  receiveOptions: string;
   ethDetails: string;
   solDetails: string;
   sendEth: string;
@@ -31,13 +31,13 @@ export const ROUTES: Routes = {
   walletCreatedSuccessfully: "(wallet)/wallet-created-successfully",
   walletImportOptions: "(wallet)/wallet-import-options",
   walletImportSeedPhrase: "(wallet)/wallet-import-seed-phrase",
-  sendOptions: "token/send-options",
-  send: "token/send",
-  receive: "token/receive",
+  sendOptions: "/token/send-options",
+  send: "/token/send",
+  receiveOptions: "/token/receive-options",
   ethDetails: "/token/ethereum",
   solDetails: "/token/solana",
-  sendEth: "token/send/ethereum",
-  sendSol: "token/send/solana",
-  sendConfirmation: "token/send/send-confirmation",
-  settings: "(app)/settings/settings-modal",
+  sendEth: "/token/send/ethereum",
+  sendSol: "/token/send/solana",
+  sendConfirmation: "/token/send/send-confirmation",
+  settings: "/(app)/settings/settings-modal",
 };

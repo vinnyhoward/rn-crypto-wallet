@@ -159,7 +159,7 @@ export default function Index() {
                   fill={theme.colors.primary}
                 />
               }
-              onPress={() => router.push(ROUTES.receive)}
+              onPress={() => router.push(ROUTES.receiveOptions)}
               btnText="Receive"
             />
           </ActionContainer>

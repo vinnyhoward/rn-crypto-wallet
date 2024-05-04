@@ -1,9 +1,9 @@
 import * as Clipboard from "expo-clipboard";
 import { SafeAreaView } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
 import { ThemeType } from "../../../styles/theme";
-import type { AppDispatch, RootState } from "../../../store";
+import type { RootState } from "../../../store";
 import Ethereum from "../../../assets/svg/ethereum.svg";
 import Solana from "../../../assets/svg/solana.svg";
 import CopyIcon from "../../../assets/svg/copy.svg";
@@ -91,9 +91,7 @@ const ReceiveCard: React.FC<ReceiveCardsProps> = ({
   );
 };
 
-export default function ReceivePage() {
-  const dispatch = useDispatch<AppDispatch>();
-  const theme = useTheme();
+export default function ReceiveOptionsPage() {
   const ethAddress = useSelector(
     (state: RootState) => state.wallet.ethereum.address
   );

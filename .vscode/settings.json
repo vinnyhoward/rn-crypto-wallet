@@ -6,6 +6,7 @@
         "formik",
         "Keypair",
         "persistor",
+        "qrcode",
         "reduxjs",
         "roboto",
         "SEPOLIA",

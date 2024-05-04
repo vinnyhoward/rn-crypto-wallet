@@ -240,7 +240,7 @@ export default function Index() {
                       fill={theme.colors.primary}
                     />
                   }
-                  onPress={() => router.push(ROUTES.receive)}
+                  onPress={() => router.push(`token/receive/${chainName}`)}
                   btnText="Receive"
                 />
               </ActionContainer>
