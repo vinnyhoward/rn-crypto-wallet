@@ -1,6 +1,6 @@
 import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
-import { scale, verticalScale, moderateScale } from "react-native-size-matters";
+// import { scale, verticalScale, moderateScale } from "react-native-size-matters";
 import { ThemeType } from "../../styles/theme";
 
 interface BubbleContainerProps {
@@ -21,7 +21,7 @@ const BubbleContainer = styled.View<BubbleContainerProps>`
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  width: ${({ smallBubble }) => (smallBubble ? scale(80) : scale(90))};
+  width: ${({ smallBubble }) => (smallBubble ? "80px" : "100px")};
 `;
 
 const BubbleText = styled.Text<{ theme: ThemeType }>`

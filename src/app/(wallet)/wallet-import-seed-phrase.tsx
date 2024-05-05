@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Dimensions, ScrollView } from "react-native";
+import { Dimensions, Keyboard, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native";
 import { router } from "expo-router";
 import { useDispatch } from "react-redux";
@@ -65,7 +65,7 @@ const SeedTextInput = styled.TextInput<{ theme: ThemeType }>`
   margin: ${(props) => props.theme.spacing.large};
   background-color: ${(props) => props.theme.colors.dark};
   border-radius: ${(props) => props.theme.borderRadius.extraLarge};
-  min-height: 220px;
+  min-height: 135px;
   width: ${(Dimensions.get("window").width - 80).toFixed(0)}px;
   color: ${(props) => props.theme.colors.white};
   font-size: ${(props) => props.theme.fonts.sizes.large};\
@@ -89,6 +89,7 @@ export default function Page() {
   const dispatch = useDispatch();
   const [textValue, setTextValue] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleVerifySeedPhrase = async () => {
     const errorText =
@@ -97,9 +98,11 @@ export default function Page() {
       setError(errorText);
       return;
     }
+    setLoading(true);
 
     const importedWallets = restoreWalletFromPhrase(textValue);
     if (Object.keys(importedWallets).length > 0) {
+      setLoading(false);
       const masterPrivateKey = importedWallets.ethereumWallet.privateKey;
 
       const etherAddress = importedWallets.ethereumWallet.address;
@@ -123,6 +126,7 @@ export default function Page() {
         params: { successState: "IMPORTED_WALLET" },
       });
     } else {
+      setLoading(false);
       setError(errorText);
     }
   };
@@ -140,10 +144,15 @@ export default function Page() {
           </TextContainer>
           <SeedTextInput
             autoCapitalize="none"
-            secureTextEntry={true}
             multiline
+            returnKeyType="done"
             value={textValue}
+            readOnly={false}
             onChangeText={setTextValue}
+            placeholder="Enter your seed phrase"
+            placeholderTextColor={theme.colors.grey}
+            blurOnSubmit
+            onSubmitEditing={() => Keyboard.dismiss()}
           />
         </ContentContainer>
       </ScrollView>
@@ -154,6 +163,7 @@ export default function Page() {
       )}
       <ButtonContainer>
         <Button
+          loading={loading}
           color={theme.colors.white}
           backgroundColor={theme.colors.primary}
           onPress={handleVerifySeedPhrase}

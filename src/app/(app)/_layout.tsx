@@ -33,18 +33,22 @@ export default function AppLayout() {
     loadSeedPhraseConfirmation();
   }, []);
 
+  console.log("seed phrase confirmed:", seedPhraseConfirmed);
   if (seedPhraseConfirmed === null) {
     return null;
   }
 
-  if (!seedPhraseConfirmed) {
+  if (!seedPhraseConfirmed && (ethWallet.address || solWallet.address)) {
+    console.log("redirecting to seed phrase");
     return <Redirect href={ROUTES.seedPhrase} />;
   }
 
   if (!ethWallet.address || !solWallet.address) {
+    console.log("redirecting to wallet setup");
     return <Redirect href={ROUTES.walletSetup} />;
   }
 
+  console.log("rendering app layout");
   return (
     <>
       <Stack

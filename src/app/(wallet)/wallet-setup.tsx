@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { SafeAreaView } from "react-native";
 import { useDispatch } from "react-redux";
 import { Image } from "expo-image";
@@ -86,12 +87,15 @@ export const SecondaryButtonText = styled.Text<{ theme: ThemeType }>`
 
 export default function WalletSetup() {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
-  const walletSetup = () => {
-    const wallets = createWallet();
+  const walletSetup = async () => {
+    setLoading(true);
+    const wallets = await createWallet();
 
     if (Object.keys(wallets).length > 0) {
       saveWallet(JSON.stringify(wallets));
+      setLoading(false);
       const etherAddress = wallets.ethereumWallet.address;
       const masterMnemonicPhrase = wallets.ethereumWallet.mnemonic.phrase;
       const masterPrivateKey = wallets.ethereumWallet.privateKey;
@@ -114,7 +118,7 @@ export default function WalletSetup() {
       router.push(ROUTES.seedPhrase);
     }
   };
-
+  console.log("loading", loading);
   return (
     <SafeAreaContainer>
       <ContentContainer>
@@ -134,7 +138,7 @@ export default function WalletSetup() {
         </TextContainer>
       </ContentContainer>
       <ButtonContainer>
-        <Button onPress={walletSetup} title="Create Wallet" />
+        <Button loading={loading} onPress={walletSetup} title="Create Wallet" />
         <SecondaryButtonContainer
           onPress={() => router.push(ROUTES.walletImportOptions)}
         >

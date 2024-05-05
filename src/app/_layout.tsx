@@ -1,8 +1,8 @@
 import { StatusBar } from "expo-status-bar";
-import { Stack, router } from "expo-router";
+import { Stack, router, useNavigation } from "expo-router";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import { ThemeProvider } from "styled-components/native";
+import styled, { ThemeProvider } from "styled-components/native";
 import {
   useFonts,
   OpenSans_400Regular,
@@ -13,11 +13,15 @@ import {
   Roboto_700Bold as RobotoBld,
 } from "@expo-google-fonts/roboto";
 import { WalletProvider } from "../providers/wallet-provider";
-import LeftArrow from "../assets/svg/left-arrow.svg";
 import { clearStorage } from "../hooks/use-storage-state";
 import Theme from "../styles/theme";
 import { store, persistor } from "../store";
 import { ROUTES } from "../constants/routes";
+import LeftIcon from "../assets/svg/left-arrow.svg";
+
+const IconTouchContainer = styled.TouchableOpacity`
+  padding: 10px;
+`;
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -26,14 +30,24 @@ export default function RootLayout() {
     Roboto_400Regular: RobotoReg,
     Roboto_700Bold: RobotoBld,
   });
+  const navigation = useNavigation();
 
   if (!fontsLoaded) {
     return null;
   }
 
+  const resetStackAndClearData = () => {
+    router.replace(ROUTES.walletSetup);
+    clearStorage();
+  };
+
   const goBack = () => {
     clearStorage();
-    router.back();
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      resetStackAndClearData();
+    }
   };
 
   return (
@@ -47,6 +61,11 @@ export default function RootLayout() {
                 headerShown: false,
                 headerTransparent: true,
                 gestureEnabled: true,
+                headerLeft: () => (
+                  <IconTouchContainer onPress={goBack}>
+                    <LeftIcon width={35} height={35} fill="#FFF" />
+                  </IconTouchContainer>
+                ),
               }}
             >
               <Stack.Screen
@@ -62,14 +81,6 @@ export default function RootLayout() {
                   headerTitleStyle: {
                     color: "transparent",
                   },
-                  headerLeft: () => (
-                    <LeftArrow
-                      width={35}
-                      height={35}
-                      fill="#FFF"
-                      onPress={goBack}
-                    />
-                  ),
                 }}
               />
               <Stack.Screen
@@ -81,14 +92,6 @@ export default function RootLayout() {
                   headerTitleStyle: {
                     color: "transparent",
                   },
-                  headerLeft: () => (
-                    <LeftArrow
-                      width={35}
-                      height={35}
-                      fill="#FFF"
-                      onPress={goBack}
-                    />
-                  ),
                 }}
               />
               <Stack.Screen
@@ -100,14 +103,6 @@ export default function RootLayout() {
                   headerTitleStyle: {
                     color: "transparent",
                   },
-                  headerLeft: () => (
-                    <LeftArrow
-                      width={35}
-                      height={35}
-                      fill="#FFF"
-                      onPress={goBack}
-                    />
-                  ),
                 }}
               />
               <Stack.Screen
@@ -119,14 +114,6 @@ export default function RootLayout() {
                   headerTitleStyle: {
                     color: "transparent",
                   },
-                  headerLeft: () => (
-                    <LeftArrow
-                      width={35}
-                      height={35}
-                      fill="#FFF"
-                      onPress={goBack}
-                    />
-                  ),
                 }}
               />
               <Stack.Screen
@@ -138,14 +125,6 @@ export default function RootLayout() {
                   headerTitleStyle: {
                     color: "transparent",
                   },
-                  headerLeft: () => (
-                    <LeftArrow
-                      width={35}
-                      height={35}
-                      fill="#FFF"
-                      onPress={goBack}
-                    />
-                  ),
                 }}
               />
             </Stack>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, ScrollView } from "react-native";
-import { useDispatch } from "react-redux";
 import * as Clipboard from "expo-clipboard";
 import { router } from "expo-router";
 import styled from "styled-components/native";
@@ -82,7 +81,6 @@ const LogoContainer = styled.View``;
 
 export default function Page() {
   const theme = useTheme();
-  const dispatch = useDispatch();
   const [buttonText, setButtonText] = useState("Copy to clipboard");
   const [seedPhrase, setSeedPhrase] = useState<string[]>([]);
 
