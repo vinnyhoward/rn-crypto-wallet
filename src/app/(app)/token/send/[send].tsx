@@ -148,7 +148,7 @@ const AmountDetailsView = styled.View<{ theme: ThemeType }>`
 `;
 
 const ButtonContainer = styled.View<{ theme: ThemeType }>`
-  margin-bottom: ${(props) => props.theme.spacing.small};
+  margin-bottom: ${(props) => props.theme.spacing.medium};
 `;
 
 const ButtonView = styled.View<{ theme: ThemeType }>``;
@@ -312,6 +312,7 @@ export default function SendPage() {
                 <TextView>
                   <AmountTextInputContainer>
                     <AmountTextInput
+                      returnKeyType="done"
                       isAmountInputFocused={isAmountInputFocused}
                       placeholder="Amount"
                       value={values.amount}

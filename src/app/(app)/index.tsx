@@ -101,8 +101,9 @@ export default function Index() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await fetchTokenBalances();
     dispatch(fetchPrices());
+    fetchTokenBalances();
+    updatePrices();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -123,33 +124,24 @@ export default function Index() {
     }
   };
 
-  useEffect(() => {
-    const intervalId = setInterval(async () => {
-      await fetchTokenBalances();
-    }, 5000);
+  const updatePrices = () => {
+    const ethUsd = ethPrice * ethBalance;
+    const solUsd = solPrice * solBalance;
 
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [dispatch]);
-
-  useEffect(() => {
-    const fetchPrices = async () => {
-      const ethUsd = ethPrice * ethBalance;
-      const solUsd = solPrice * solBalance;
-
-      setUsdBalance(ethUsd + solUsd);
-      setEthUsd(ethUsd);
-      setSolUsd(solUsd);
-    };
-
-    fetchPrices();
-  }, [ethBalance, solBalance]);
+    setUsdBalance(ethUsd + solUsd);
+    setEthUsd(ethUsd);
+    setSolUsd(solUsd);
+  };
 
   useEffect(() => {
     dispatch(fetchPrices());
-    const interval = setInterval(() => {
+    fetchTokenBalances();
+    updatePrices();
+
+    const interval = setInterval(async () => {
+      await fetchTokenBalances();
       dispatch(fetchPrices());
+      updatePrices();
     }, FETCH_PRICES_INTERVAL);
 
     return () => clearInterval(interval);

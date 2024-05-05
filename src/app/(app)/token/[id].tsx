@@ -26,6 +26,7 @@ import CryptoInfoCard from "../../../components/CryptoInfoCard/CryptoInfoCard";
 import { truncateWalletAddress } from "../../../utils/truncateWalletAddress";
 import { TICKERS } from "../../../constants/tickers";
 import { Chains } from "../../../types";
+import { FETCH_PRICES_INTERVAL } from "../../../constants/price";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -130,7 +131,8 @@ export default function Index() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    dispatch(fetchEthereumBalance(tokenAddress));
+    await fetchTokenBalance();
+    await fetchPrices();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -195,28 +197,7 @@ export default function Index() {
     }
   };
 
-  useEffect(() => {
-    const intervalId = setInterval(async () => {
-      await fetchTokenBalance();
-    }, 5000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [dispatch]);
-
-  useEffect(() => {
-    fetchPrices();
-    const intervalId = setInterval(async () => {
-      await fetchPrices();
-    }, 5000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [tokenBalance]);
-
-  useEffect(() => {
+  const setTokenTransactions = async () => {
     if (transactionHistory.length !== 0 && isEthereum) {
       const walletTransactions = transactionHistory.transfers.filter(
         (tx: AssetTransfer) => {
@@ -225,6 +206,21 @@ export default function Index() {
       );
       setTransactions(walletTransactions.reverse());
     }
+  };
+
+  useEffect(() => {
+    const intervalId = setInterval(async () => {
+      await fetchTokenBalance();
+      await fetchPrices();
+    }, FETCH_PRICES_INTERVAL);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    setTokenTransactions();
   }, [transactionHistory]);
 
   return (
