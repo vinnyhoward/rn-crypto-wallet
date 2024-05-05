@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { View, SafeAreaView, FlatList } from "react-native";
+import { useEffect, useState, useCallback } from "react";
+import { View, SafeAreaView, FlatList, RefreshControl } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { router, useLocalSearchParams } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
@@ -121,11 +121,20 @@ export default function Index() {
 
   const [usdBalance, setUsdBalance] = useState(0);
   const [transactions, setTransactions] = useState<AssetTransfer[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const ticker = TICKERS[chainName];
   const isSolana = chainName === Chains.Solana;
   const isEthereum = chainName === Chains.Ethereum;
   const Icon = isSolana ? SolanaIcon : EthereumIcon;
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    dispatch(fetchEthereumBalance(tokenAddress));
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, [dispatch]);
 
   const renderItem = ({ item }) => {
     if (
@@ -171,27 +180,38 @@ export default function Index() {
     }
   };
 
-  useEffect(() => {
+  const fetchSolanaBalance = async () => {
+    const currentSolBalance = await getSolanaBalance(tokenAddress);
+    dispatch(updateSolanaBalance(currentSolBalance));
+  };
+
+  const fetchTokenBalance = async () => {
     if (isSolana && tokenAddress) {
-      const fetchSolanaBalance = async () => {
-        const currentSolBalance = await getSolanaBalance(tokenAddress);
-        dispatch(updateSolanaBalance(currentSolBalance));
-      };
       fetchSolanaBalance();
     }
 
     if (isEthereum && tokenAddress) {
       dispatch(fetchEthereumBalance(tokenAddress));
     }
-  }, [tokenAddress, dispatch]);
+  };
 
   useEffect(() => {
+    const intervalId = setInterval(async () => {
+      await fetchTokenBalance();
+    }, 5000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    fetchPrices();
     const intervalId = setInterval(async () => {
       await fetchPrices();
     }, 5000);
 
     return () => {
-      console.log("clearing interval");
       clearInterval(intervalId);
     };
   }, [tokenBalance]);
@@ -211,6 +231,13 @@ export default function Index() {
     <SafeAreaContainer>
       <ContentContainer>
         <FlatList
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={theme.colors.white}
+            />
+          }
           ListHeaderComponent={
             <>
               <BalanceContainer>

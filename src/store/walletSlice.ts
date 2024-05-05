@@ -81,7 +81,7 @@ export const fetchSolanaTransactions = createAsyncThunk(
   async (address: string, { rejectWithValue }): Promise<any> => {
     try {
       const transactions = await getTransactionsByWallet(address);
-      console.log("transactions from store", transactions);
+      // console.log("transactions from store", transactions);
       return transactions;
     } catch (error) {
       return rejectWithValue(error.message);

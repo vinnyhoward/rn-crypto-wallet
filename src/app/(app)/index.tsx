@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { View, SafeAreaView, ScrollView } from "react-native";
+import { useEffect, useState, useCallback } from "react";
+import { View, SafeAreaView, ScrollView, RefreshControl } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { router, Link } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
@@ -94,16 +94,26 @@ export default function Index() {
   const solPrice = prices.solana.usd;
   const ethPrice = prices.ethereum.usd;
 
+  const [refreshing, setRefreshing] = useState(false);
   const [usdBalance, setUsdBalance] = useState(0);
   const [solUsd, setSolUsd] = useState(0);
   const [ethUsd, setEthUsd] = useState(0);
 
-  useEffect(() => {
-    const fetchSolanaBalance = async () => {
-      const currentSolBalance = await getSolanaBalance(solWalletAddress);
-      dispatch(updateSolanaBalance(currentSolBalance));
-    };
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchTokenBalances();
+    dispatch(fetchPrices());
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, [dispatch]);
 
+  const fetchSolanaBalance = async () => {
+    const currentSolBalance = await getSolanaBalance(solWalletAddress);
+    dispatch(updateSolanaBalance(currentSolBalance));
+  };
+
+  const fetchTokenBalances = async () => {
     if (ethWalletAddress) {
       dispatch(fetchEthereumBalance(ethWalletAddress));
     }
@@ -111,7 +121,17 @@ export default function Index() {
     if (solWalletAddress) {
       fetchSolanaBalance();
     }
-  }, [ethWalletAddress, dispatch]);
+  };
+
+  useEffect(() => {
+    const intervalId = setInterval(async () => {
+      await fetchTokenBalances();
+    }, 5000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [dispatch]);
 
   useEffect(() => {
     const fetchPrices = async () => {
@@ -137,7 +157,16 @@ export default function Index() {
 
   return (
     <SafeAreaContainer>
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            tintColor="#fff"
+            titleColor="#fff"
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+      >
         <ContentContainer>
           <BalanceContainer>
             <BalanceText>{formatDollar(usdBalance)}</BalanceText>

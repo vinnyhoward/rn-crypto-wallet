@@ -118,7 +118,7 @@ export default function WalletSetup() {
       router.push(ROUTES.seedPhrase);
     }
   };
-  console.log("loading", loading);
+
   return (
     <SafeAreaContainer>
       <ContentContainer>

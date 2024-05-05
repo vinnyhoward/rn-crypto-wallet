@@ -32,13 +32,13 @@ export function restoreWalletFromPhrase(mnemonicPhrase: string) {
 
   try {
     const ethWallet = Wallet.fromPhrase(mnemonicPhrase);
-
     const seedBuffer = mnemonicToSeedSync(mnemonicPhrase);
     const seed = new Uint8Array(
       seedBuffer.buffer,
       seedBuffer.byteOffset,
       seedBuffer.byteLength
     ).slice(0, 32);
+    console.log("seed bytes:", seed.join(", "));
     const solWallet = Keypair.fromSeed(seed);
     return {
       ethereumWallet: ethWallet,

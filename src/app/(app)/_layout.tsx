@@ -16,6 +16,10 @@ const IconTouchContainer = styled.TouchableOpacity`
   padding: 10px;
 `;
 
+const IconContainer = styled.View`
+  padding: 10px;
+`;
+
 export default function AppLayout() {
   const theme = useTheme();
   const ethWallet = useSelector((state: RootState) => state.wallet.ethereum);
@@ -33,22 +37,18 @@ export default function AppLayout() {
     loadSeedPhraseConfirmation();
   }, []);
 
-  console.log("seed phrase confirmed:", seedPhraseConfirmed);
   if (seedPhraseConfirmed === null) {
     return null;
   }
 
   if (!seedPhraseConfirmed && (ethWallet.address || solWallet.address)) {
-    console.log("redirecting to seed phrase");
     return <Redirect href={ROUTES.seedPhrase} />;
   }
 
   if (!ethWallet.address || !solWallet.address) {
-    console.log("redirecting to wallet setup");
     return <Redirect href={ROUTES.walletSetup} />;
   }
 
-  console.log("rendering app layout");
   return (
     <>
       <Stack
@@ -56,13 +56,13 @@ export default function AppLayout() {
           headerTransparent: true,
           gestureEnabled: true,
           headerLeft: () => (
-            <Link href={ROUTES.settings}>
+            <IconTouchContainer onPress={() => router.push(ROUTES.settings)}>
               <SettingsIcon
                 width={25}
                 height={25}
                 fill={theme.colors.primary}
               />
-            </Link>
+            </IconTouchContainer>
           ),
         }}
       >
