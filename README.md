@@ -87,14 +87,6 @@ EXPO_PUBLIC_ENVIRONMENT=development
 expo start
 ```
 
-## Features
-
-- View Ethereum and Solana balance and transactions
-- Send and receive cryptocurrencies
-- Connect to blockchain networks via Alchemy API
-- Responsive UI compatible with both iOS and Android devices
-
-
 ## Environment Variables
 
 `EXPO_PUBLIC_ALCHEMY_KEY`: Your Alchemy API key for accessing Ethereum blockchain data.
