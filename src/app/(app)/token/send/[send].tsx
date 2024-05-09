@@ -1,9 +1,10 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useRef } from "react";
 import { SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { router, useLocalSearchParams } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
-import { Formik } from "formik";
+import { Formik, FormikProps } from "formik";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { ThemeType } from "../../../../styles/theme";
 import { TICKERS } from "../../../../constants/tickers";
 import { ROUTES } from "../../../../constants/routes";
@@ -16,7 +17,10 @@ import {
   validateEthereumAddress,
   calculateGasAndAmounts,
 } from "../../../../utils/etherHelpers";
-import { validateSolanaAddress } from "../../../../utils/solanaHelpers";
+import {
+  validateSolanaAddress,
+  calculateSolanaTransactionFee,
+} from "../../../../utils/solanaHelpers";
 import Button from "../../../../components/Button/Button";
 
 type FormikChangeHandler = {
@@ -159,15 +163,23 @@ const FormWrapper = styled.View<{ theme: ThemeType }>`
   justify-content: space-between;
 `;
 
+interface FormValues {
+  address: string;
+  amount: string;
+}
 export default function SendPage() {
   const { send } = useLocalSearchParams();
   const theme = useTheme();
+  const formRef = useRef<FormikProps<FormValues>>(null);
 
   const chainName = send as string;
   const ticker = TICKERS[chainName];
 
   const tokenBalance = useSelector(
     (state: RootState) => state.wallet[chainName].balance
+  );
+  const address = useSelector(
+    (state: RootState) => state.wallet[chainName].address
   );
   const prices = useSelector((state: RootState) => state.price.data);
   const solPrice = prices.solana.usd;
@@ -208,11 +220,9 @@ export default function SendPage() {
       };
     };
 
-  const validateFields = async (values: {
-    address: string;
-    amount: string;
-  }) => {
+  const validateFields = async (values: FormValues) => {
     const errors: Record<string, string> = {};
+
     if (!values.address) {
       errors.address = "This field is required";
     }
@@ -220,38 +230,63 @@ export default function SendPage() {
       errors.amount = "This field is required";
     }
 
-    if (
-      values.amount > tokenBalance &&
-      values.amount !== "" &&
-      tokenBalance !== 0
-    ) {
-      errors.amount = "Insufficient funds";
-    } else {
-      if (chainName === "ethereum") {
-        const { totalCostMinusGas } = await calculateGasAndAmounts(
-          values.address,
-          values.amount
-        );
-        if (totalCostMinusGas > tokenBalance) {
-          errors.amount = "Insufficient funds for amount plus gas costs";
-        }
-      }
-
-      if (chainName === "solana") {
-        // calculate solana gas
-      }
-    }
-    const isEthAddressValid = await validateEthereumAddress(values.address);
-    if (!isEthAddressValid && chainName === "ethereum") {
+    const isAddressValid = await validateAddress(values.address);
+    if (!isAddressValid) {
       errors.address = "Recipient address is invalid";
     }
 
-    const isSolanaAddressValid = await validateSolanaAddress(values.address);
-    if (!isSolanaAddressValid && chainName === "solana") {
-      errors.address = "Recipient address is invalid";
+    if (values.amount && parseFloat(values.amount) > 0) {
+      await validateFunds(values, errors);
     }
 
     return errors;
+  };
+
+  const validateAddress = async (address: string): Promise<boolean> => {
+    return chainName === "ethereum"
+      ? validateEthereumAddress(address)
+      : await validateSolanaAddress(address);
+  };
+
+  const validateFunds = async (
+    values: FormValues,
+    errors: Record<string, string>
+  ) => {
+    const amount = parseFloat(values.amount);
+    if (amount > tokenBalance) {
+      errors.amount = "Insufficient funds";
+    } else {
+      await calculateCostsAndValidate(amount, values.address, errors);
+    }
+  };
+
+  const calculateCostsAndValidate = async (
+    amount: number,
+    toAddress: string,
+    errors: Record<string, string>
+  ) => {
+    if (chainName === "ethereum") {
+      const { totalCostMinusGas } = await calculateGasAndAmounts(
+        toAddress,
+        amount.toString()
+      );
+      if (totalCostMinusGas > tokenBalance) {
+        errors.amount = "Insufficient funds for amount plus gas costs";
+      }
+    } else if (chainName === "solana") {
+      const transactionFeeLamports = await calculateSolanaTransactionFee(
+        address,
+        toAddress,
+        amount
+      );
+
+      const tokenBalanceLamports = parseFloat(tokenBalance) * LAMPORTS_PER_SOL;
+      const maxAmountLamports = tokenBalanceLamports - transactionFeeLamports;
+      const maxAmount = maxAmountLamports / LAMPORTS_PER_SOL;
+      if (amount > maxAmount) {
+        errors.amount = "Insufficient funds for amount plus transaction fees";
+      }
+    }
   };
 
   const calculateMaxAmount = async (
@@ -259,18 +294,49 @@ export default function SendPage() {
     tokenBalance: string,
     address: string
   ) => {
+    const toAddress = formRef.current?.values?.address || "";
+
+    const isAddressValid =
+      chainName === "ethereum"
+        ? validateEthereumAddress(toAddress)
+        : await validateSolanaAddress(toAddress);
+
+    if (!isAddressValid) {
+      formRef.current?.setFieldError(
+        "address",
+        "A valid address is required to calculate max amount"
+      );
+      return;
+    }
+
     try {
       if (chainName === "ethereum") {
         const { totalCostMinusGas } = await calculateGasAndAmounts(
           address,
-          tokenBalance.toString()
+          tokenBalance
         );
-
         setFieldValue("amount", totalCostMinusGas);
-      }
-
-      if (chainName === "solana") {
-        setFieldValue("amount", tokenBalance.toString());
+      } else if (chainName === "solana") {
+        console.log("args:", {
+          address,
+          toAddress,
+          amount: parseFloat(tokenBalance),
+        });
+        const totalBalanceLamports =
+          parseFloat(tokenBalance) * LAMPORTS_PER_SOL;
+        const transactionFeeLamports = await calculateSolanaTransactionFee(
+          address,
+          toAddress,
+          totalBalanceLamports
+        );
+        const maxAmountLamports = totalBalanceLamports - transactionFeeLamports;
+        const maxAmount = maxAmountLamports / LAMPORTS_PER_SOL;
+        if (maxAmountLamports > 0) {
+          setFieldValue("amount", maxAmount.toString());
+        } else {
+          setFieldValue("amount", "0");
+          console.error("Insufficient funds for transaction fee.");
+        }
       }
     } catch (error) {
       console.error("Failed to calculate max amount:", error);
@@ -296,6 +362,7 @@ export default function SendPage() {
           <IconBackground>{renderIcons()}</IconBackground>
         </IconView>
         <Formik
+          innerRef={formRef}
           initialValues={{ address: "", amount: "" }}
           validate={validateFields}
           onSubmit={handleSubmit}

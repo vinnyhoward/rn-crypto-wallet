@@ -1,4 +1,14 @@
-import { Connection, PublicKey, clusterApiUrl } from "@solana/web3.js";
+import {
+  Connection,
+  PublicKey,
+  clusterApiUrl,
+  SystemProgram,
+  Transaction,
+  LAMPORTS_PER_SOL,
+  sendAndConfirmTransaction,
+  Signer,
+  TransactionSignature,
+} from "@solana/web3.js";
 import { BorshCoder } from "@coral-xyz/anchor";
 
 const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
@@ -42,4 +52,59 @@ export const validateSolanaAddress = async (addr: string) => {
   }
 };
 
-export const calculateSolanaTransactionFee = async () => {};
+export const calculateSolanaTransactionFee = async (
+  from: string,
+  to: string,
+  amount: number
+) => {
+  try {
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: new PublicKey(from),
+        toPubkey: new PublicKey(to),
+        lamports: amount * LAMPORTS_PER_SOL,
+      })
+    );
+    let recentBlockhash = (await connection.getLatestBlockhash("finalized"))
+      .blockhash;
+    transaction.recentBlockhash = recentBlockhash;
+    transaction.feePayer = new PublicKey(from);
+
+    const response = await connection.getFeeForMessage(
+      transaction.compileMessage(),
+      "confirmed"
+    );
+    return response.value;
+  } catch (err) {
+    console.error("Error fetching Solana transaction fee:", err);
+    throw err;
+  }
+};
+
+export const sendSolanaTransaction = async (
+  from: Signer,
+  to: string,
+  amount: number
+) => {
+  try {
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: new PublicKey(from),
+        toPubkey: new PublicKey(to),
+        lamports: amount * LAMPORTS_PER_SOL,
+      })
+    );
+    let recentBlockhash = (await connection.getLatestBlockhash("finalized"))
+      .blockhash;
+    transaction.recentBlockhash = recentBlockhash;
+    transaction.feePayer = new PublicKey(from);
+
+    const signature = await sendAndConfirmTransaction(connection, transaction, [
+      from,
+    ]);
+    return signature;
+  } catch (err) {
+    console.error("Error sending Solana transaction:", err);
+    throw err;
+  }
+};
