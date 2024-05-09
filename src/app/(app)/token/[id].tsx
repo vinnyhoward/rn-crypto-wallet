@@ -4,13 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { router, useLocalSearchParams } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import type { ThemeType } from "../../../styles/theme";
-import { ROUTES } from "../../../constants/routes";
 import type { RootState, AppDispatch } from "../../../store";
 import {
   fetchEthereumBalance,
   updateSolanaBalance,
   fetchEthereumTransactions,
-  // fetchSolanaTransactions,
+  fetchSolanaTransactions,
 } from "../../../store/walletSlice";
 import { getSolanaBalance } from "../../../utils/solanaHelpers";
 import { capitalizeFirstLetter } from "../../../utils/capitalizeFirstLetter";
@@ -182,14 +181,10 @@ export default function Index() {
     }
   };
 
-  const fetchSolanaBalance = async () => {
-    const currentSolBalance = await getSolanaBalance(tokenAddress);
-    dispatch(updateSolanaBalance(currentSolBalance));
-  };
-
   const fetchTokenBalance = async () => {
     if (isSolana && tokenAddress) {
-      fetchSolanaBalance();
+      const currentSolBalance = await getSolanaBalance(tokenAddress);
+      dispatch(updateSolanaBalance(currentSolBalance));
     }
 
     if (isEthereum && tokenAddress) {
@@ -209,6 +204,9 @@ export default function Index() {
   };
 
   useEffect(() => {
+    fetchTokenBalance();
+    fetchPrices();
+
     const intervalId = setInterval(async () => {
       await fetchTokenBalance();
       await fetchPrices();

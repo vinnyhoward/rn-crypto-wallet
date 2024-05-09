@@ -1,4 +1,5 @@
 import { Connection, PublicKey, clusterApiUrl } from "@solana/web3.js";
+import { BorshCoder } from "@coral-xyz/anchor";
 
 const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 
@@ -18,19 +19,27 @@ export const getTransactionsByWallet = async (walletAddress: string) => {
   const publicKey = new PublicKey(walletAddress);
 
   try {
-    const signatures = await connection.getConfirmedSignaturesForAddress2(
-      publicKey
-    );
+    const signatures = await connection.getSignaturesForAddress(publicKey);
     const signature = signatures.map((signature) => signature.signature)[0];
+    console.log("signature:", signature);
+    const response = await connection.getParsedTransaction(signature);
+    console.log("transactions", response);
 
-    const response = await connection.getParsedTransaction(signature, {
-      maxSupportedTransactionVersion: 0,
-    });
-
-    console.log("response from util", response);
     return response;
   } catch (error) {
     console.error("Failed to fetch transactions:", error);
     return [];
   }
 };
+
+export const validateSolanaAddress = async (addr: string) => {
+  let publicKey: PublicKey;
+  try {
+    publicKey = new PublicKey(addr);
+    return await PublicKey.isOnCurve(publicKey.toBytes());
+  } catch (err) {
+    return false;
+  }
+};
+
+export const calculateSolanaTransactionFee = async () => {};

@@ -13,9 +13,10 @@ import EthereumIcon from "../../../../assets/svg/ethereum_plain.svg";
 import { capitalizeFirstLetter } from "../../../../utils/capitalizeFirstLetter";
 import { formatDollar } from "../../../../utils/formatDollars";
 import {
-  isAddressValid,
+  validateEthereumAddress,
   calculateGasAndAmounts,
 } from "../../../../utils/etherHelpers";
+import { validateSolanaAddress } from "../../../../utils/solanaHelpers";
 import Button from "../../../../components/Button/Button";
 
 type FormikChangeHandler = {
@@ -190,8 +191,7 @@ export default function SendPage() {
     if (amountValue === "") return formatDollar(0);
     const chainPrice = chainName === "ethereum" ? ethPrice : solPrice;
     const USDAmount = chainPrice * parseFloat(amountValue);
-    const currentUSDBalance = USDAmount * tokenBalance;
-    return formatDollar(currentUSDBalance);
+    return formatDollar(USDAmount);
   };
 
   const handleNumericChange =
@@ -227,17 +227,27 @@ export default function SendPage() {
     ) {
       errors.amount = "Insufficient funds";
     } else {
-      const { totalCostMinusGas } = await calculateGasAndAmounts(
-        values.address,
-        values.amount
-      );
+      if (chainName === "ethereum") {
+        const { totalCostMinusGas } = await calculateGasAndAmounts(
+          values.address,
+          values.amount
+        );
+        if (totalCostMinusGas > tokenBalance) {
+          errors.amount = "Insufficient funds for amount plus gas costs";
+        }
+      }
 
-      if (totalCostMinusGas > tokenBalance) {
-        errors.amount = "Insufficient funds for amount plus gas costs";
+      if (chainName === "solana") {
+        // calculate solana gas
       }
     }
+    const isEthAddressValid = await validateEthereumAddress(values.address);
+    if (!isEthAddressValid && chainName === "ethereum") {
+      errors.address = "Recipient address is invalid";
+    }
 
-    if (!isAddressValid(values.address)) {
+    const isSolanaAddressValid = await validateSolanaAddress(values.address);
+    if (!isSolanaAddressValid && chainName === "solana") {
       errors.address = "Recipient address is invalid";
     }
 
@@ -250,12 +260,18 @@ export default function SendPage() {
     address: string
   ) => {
     try {
-      const { totalCostMinusGas } = await calculateGasAndAmounts(
-        address,
-        tokenBalance.toString()
-      );
+      if (chainName === "ethereum") {
+        const { totalCostMinusGas } = await calculateGasAndAmounts(
+          address,
+          tokenBalance.toString()
+        );
 
-      setFieldValue("amount", totalCostMinusGas);
+        setFieldValue("amount", totalCostMinusGas);
+      }
+
+      if (chainName === "solana") {
+        setFieldValue("amount", tokenBalance.toString());
+      }
     } catch (error) {
       console.error("Failed to calculate max amount:", error);
       setFieldValue("amount", "0");

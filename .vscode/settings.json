@@ -1,10 +1,12 @@
 {
     "cSpell.words": [
+        "Blockhash",
         "blurhash",
         "devnet",
         "ethersproject",
         "formik",
         "Keypair",
+        "lamports",
         "persistor",
         "qrcode",
         "reduxjs",

@@ -38,7 +38,7 @@ export function restoreWalletFromPhrase(mnemonicPhrase: string) {
       seedBuffer.byteOffset,
       seedBuffer.byteLength
     ).slice(0, 32);
-    console.log("seed bytes:", seed.join(", "));
+
     const solWallet = Keypair.fromSeed(seed);
     return {
       ethereumWallet: ethWallet,
@@ -73,7 +73,7 @@ export const createWallet = async () => {
   }
 };
 
-export function isAddressValid(address: string) {
+export function validateEthereumAddress(address: string) {
   return isAddress(address);
 }
 

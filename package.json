@@ -10,6 +10,7 @@
     "redux-devtools": "redux-devtools --open=electron --hostname=localhost --port=8000"
   },
   "dependencies": {
+    "@coral-xyz/anchor": "^0.30.0",
     "@ethersproject/shims": "^5.7.0",
     "@expo-google-fonts/inter": "^0.2.3",
     "@expo-google-fonts/open-sans": "^0.2.3",
