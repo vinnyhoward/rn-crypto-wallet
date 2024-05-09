@@ -25,15 +25,15 @@ This project is a React Native application for managing cryptocurrency transacti
 
 __Testnet-Only Application__: This application is specifically designed for interaction with the Sepolia testnet for Ethereum and the Solana Devnet. It is crucial that you do not use real wallets or wallets containing actual cryptocurrencies with this application. Use this app strictly with wallet addresses generated within this application or with other testnet wallets that do not hold any real value.
 
-__Note__: The security architecture for this project is currently in a developmental phase and has not yet been fully implemented. It is intended solely for development and testing purposes, with plans to enhance security features in future updates.
-
 The testnet environments allow developers and users to experiment with blockchain features without any financial risk. Testnet tokens do not have real-world value but mimic the behavior of actual tokens to allow comprehensive testing and interaction:
 
 - Ethereum (Sepolia Testnet): You can obtain Sepolia testnet ETH from the [Sepolia Faucet](https://www.infura.io/faucet/sepolia), which provides free testnet tokens.
 
 - Solana (Devnet): For testing on the Solana blockchain, use the [Solana Devnet Faucet](https://faucet.solana.com/) to receive free SOL tokens for the Devnet.
 
-Please ensure that you are connecting to the correct network (testnet) and using appropriate testnet addresses when using this application.
+__Network Configuration Assurance__: This application is exclusively configured to connect with the Ethereum Sepolia testnet and the Solana Devnet. It is not capable of connecting to mainnet environments, ensuring there is no risk of accidental transactions involving real cryptocurrencies. Please be diligent in using only testnet addresses while interacting with this application.
+
+__Note__: The security architecture for this project is currently in a developmental phase and has not yet been fully implemented. It is intended solely for development and testing purposes, with plans to enhance security features in future updates.
 
 ## Roadmap
 #### Wallet Functionality
