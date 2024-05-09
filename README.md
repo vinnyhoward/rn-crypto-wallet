@@ -21,6 +21,19 @@
 
 This project is a React Native application for managing cryptocurrency transactions and balances. It utilizes the Expo framework, the Alchemy API for blockchain interaction, and is built with a focus on Ethereum and Solana cryptocurrencies.
 
+## Important Safety Information
+
+__Testnet-Only Application__: This application is specifically designed for interaction with the Sepolia testnet for Ethereum and the Solana Devnet. It is crucial that you do not use real wallets or wallets containing actual cryptocurrencies with this application. Use this app strictly with wallet addresses generated within this application or with other testnet wallets that do not hold any real value.
+
+__Note__: The security architecture for this project is currently in a developmental phase and has not yet been fully implemented. It is intended solely for development and testing purposes, with plans to enhance security features in future updates.
+
+The testnet environments allow developers and users to experiment with blockchain features without any financial risk. Testnet tokens do not have real-world value but mimic the behavior of actual tokens to allow comprehensive testing and interaction:
+
+- Ethereum (Sepolia Testnet): You can obtain Sepolia testnet ETH from the [Sepolia Faucet](https://www.infura.io/faucet/sepolia), which provides free testnet tokens.
+
+- Solana (Devnet): For testing on the Solana blockchain, use the [Solana Devnet Faucet](https://faucet.solana.com/) to receive free SOL tokens for the Devnet.
+
+Please ensure that you are connecting to the correct network (testnet) and using appropriate testnet addresses when using this application.
 
 ## Roadmap
 #### Wallet Functionality
@@ -46,7 +59,7 @@ This project is a React Native application for managing cryptocurrency transacti
 #### Nice to haves
 - [ ] UI improvements - android ui bugs, loaders, animation, etc
 - [ ] Refactor repeating styled components and some logic
-- [ ] Improve security (this wallet will never be production but it'd be fun to add)
+- [ ] Improve security and management of private keys (this wallet will never be production but it'd be fun to add)
 
 ## Prerequisites
 

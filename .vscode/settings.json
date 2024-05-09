@@ -7,12 +7,14 @@
         "formik",
         "Keypair",
         "lamports",
+        "nacl",
         "persistor",
         "qrcode",
         "reduxjs",
         "roboto",
         "SEPOLIA",
         "solana",
-        "specialnft"
+        "specialnft",
+        "tweetnacl"
     ]
 }

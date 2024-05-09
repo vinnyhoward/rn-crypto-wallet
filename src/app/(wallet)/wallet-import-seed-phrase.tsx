@@ -103,7 +103,8 @@ export default function Page() {
     const importedWallets = restoreWalletFromPhrase(textValue);
     if (Object.keys(importedWallets).length > 0) {
       setLoading(false);
-      const masterPrivateKey = importedWallets.ethereumWallet.privateKey;
+      const ethPrivateKey = importedWallets.ethereumWallet.privateKey;
+      // const solPrivateKey = importedWallets.solanaWallet.secretKey;
 
       const etherAddress = importedWallets.ethereumWallet.address;
       const etherPublicKey = importedWallets.ethereumWallet.publicKey;
@@ -111,7 +112,7 @@ export default function Page() {
       const solanaAddress = importedWallets.solanaWallet.publicKey.toBase58();
       const solanaPublicKey = importedWallets.solanaWallet.publicKey.toBase58();
 
-      savePrivateKey(masterPrivateKey);
+      savePrivateKey(ethPrivateKey);
 
       dispatch(saveEthereumAddress(etherAddress));
       dispatch(saveEthereumPublicKey(etherPublicKey));

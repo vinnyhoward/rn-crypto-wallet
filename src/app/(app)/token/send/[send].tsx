@@ -280,10 +280,11 @@ export default function SendPage() {
         amount
       );
 
-      const tokenBalanceLamports = parseFloat(tokenBalance) * LAMPORTS_PER_SOL;
+      const tokenBalanceLamports = amount * LAMPORTS_PER_SOL;
       const maxAmountLamports = tokenBalanceLamports - transactionFeeLamports;
       const maxAmount = maxAmountLamports / LAMPORTS_PER_SOL;
-      if (amount > maxAmount) {
+      console.log("maxAmount:", maxAmount);
+      if (maxAmount > amount) {
         errors.amount = "Insufficient funds for amount plus transaction fees";
       }
     }

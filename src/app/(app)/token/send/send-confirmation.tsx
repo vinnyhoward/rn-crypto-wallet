@@ -8,6 +8,7 @@ import {
   router,
 } from "expo-router";
 import { useSelector } from "react-redux";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import type { ThemeType } from "../../../../styles/theme";
 import ConfirmSend from "../../../../assets/svg/confirm-send.svg";
 import { formatDollar } from "../../../../utils/formatDollars";
@@ -20,6 +21,10 @@ import {
   calculateGasAndAmounts,
   sendTransaction,
 } from "../../../../utils/etherHelpers";
+import {
+  sendSolanaTransaction,
+  calculateSolanaTransactionFee,
+} from "../../../../utils/solanaHelpers";
 import { getPrivateKey } from "../../../../hooks/use-storage-state";
 import type { RootState } from "../../../../store";
 
@@ -85,7 +90,7 @@ const ErrorView = styled.View<{ theme: ThemeType }>`
 
 const ErrorText = styled.Text<{ theme: ThemeType }>`
   font-family: ${(props) => props.theme.fonts.families.openBold};
-  font-size: ${(props) => props.theme.fonts.sizes.title};
+  font-size: ${(props) => props.theme.fonts.sizes.normal};
   color: ${(props) => props.theme.colors.error};
   text-align: center;
 `;
@@ -101,64 +106,133 @@ export default function SendConfirmationPage() {
     chainName: chain,
   } = useLocalSearchParams();
 
-  const prices = useSelector((state: RootState) => state.price.data);
-  const solPrice = prices.solana.usd;
-  const ethPrice = prices.ethereum.usd;
-
-  const [gasEstimate, setGasEstimate] = useState("0.00");
-  const [totalCost, setTotalCost] = useState("0.00");
-  const [error, setError] = useState<string | null>(null);
-  const [isBtnDisabled, setIsBtnDisabled] = useState(true);
-  const [loading, setLoading] = useState(false);
-
   const chainName = chain as string;
   const ticker = TICKERS[chainName];
   const amount = tokenAmount as string;
   const address = toAddress as string;
 
+  const prices = useSelector((state: RootState) => state.price.data);
+  const walletAddress = useSelector(
+    (state: RootState) => state.wallet[chainName].address
+  );
+
+  const solPrice = prices.solana.usd;
+  const ethPrice = prices.ethereum.usd;
+
+  const [transactionFeeEstimate, setTransactionFeeEstimate] = useState("0.00");
+  const [totalCost, setTotalCost] = useState("0.00");
+  const [error, setError] = useState<string | null>(null);
+  const [isBtnDisabled, setBtnDisabled] = useState(true);
+  const [loading, setLoading] = useState(false);
+
   const chainBalance = `${amount} ${ticker}`;
 
   const handleSubmit = async () => {
-    try {
-      setLoading(true);
-      setIsBtnDisabled(true);
-      const privateKey = await getPrivateKey();
-      const response = await sendTransaction(address, privateKey, amount);
+    if (chainName === "ethereum") {
+      try {
+        setLoading(true);
+        setBtnDisabled(true);
+        const privateKey = await getPrivateKey();
+        const response = await sendTransaction(address, privateKey, amount);
 
-      if (response) {
-        rootNavigation.dispatch(StackActions.popToTop());
-        const dynamicUrl = `/token/${chainName}`;
-        router.navigate(dynamicUrl);
+        if (response) {
+          rootNavigation.dispatch(StackActions.popToTop());
+          const dynamicUrl = `/token/${chainName}`;
+          router.navigate(dynamicUrl);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to send transaction:", error);
+        setError("Failed to send transaction. Please try again later.");
+        setLoading(false);
+        setBtnDisabled(false);
       }
-      setLoading(false);
-    } catch (error) {
-      console.error("Failed to send transaction:", error);
-      setError("Failed to send transaction. Please try again later.");
-      setLoading(false);
-      setIsBtnDisabled(false);
+    }
+
+    if (chainName === "solana") {
+      // TODO: Finish transaction sending for Solana
+      // after finding best way to manage keys
+      try {
+        setLoading(true);
+        setBtnDisabled(true);
+
+        const response = await sendSolanaTransaction(
+          walletAddress,
+          address,
+          parseFloat(amount)
+        );
+        if (response) {
+          rootNavigation.dispatch(StackActions.popToTop());
+          const dynamicUrl = `/token/${chainName}`;
+          router.navigate(dynamicUrl);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to send transaction:", error);
+        setError("Failed to send transaction. Please try again later.");
+        setLoading(false);
+        setBtnDisabled(false);
+      }
     }
   };
 
   const calculateTransactionCosts = async () => {
     const chainPrice = chainName === "ethereum" ? ethPrice : solPrice;
     try {
-      const { gasEstimate, totalCost, totalCostMinusGas } =
-        await calculateGasAndAmounts(address, amount);
+      if (chainName === "ethereum") {
+        const { gasEstimate, totalCost, totalCostMinusGas } =
+          await calculateGasAndAmounts(address, amount);
 
-      const gasEstimateUsd = formatDollar(parseFloat(gasEstimate) * chainPrice);
+        const gasEstimateUsd = formatDollar(
+          parseFloat(gasEstimate) * chainPrice
+        );
 
-      const totalCostPlusGasUsd = formatDollar(
-        parseFloat(totalCost) * chainPrice
-      );
-      setGasEstimate(gasEstimateUsd);
-      setTotalCost(totalCostPlusGasUsd);
+        const totalCostPlusGasUsd = formatDollar(
+          parseFloat(totalCost) * chainPrice
+        );
+        setTransactionFeeEstimate(gasEstimateUsd);
+        setTotalCost(totalCostPlusGasUsd);
 
-      if (totalCostMinusGas > amount) {
-        setError("Not enough funds to send transaction.");
-        setIsBtnDisabled(true);
-      } else {
-        setError("");
-        setIsBtnDisabled(false);
+        if (totalCostMinusGas > amount) {
+          setError("Not enough funds to send transaction.");
+          setBtnDisabled(true);
+        } else {
+          setError("");
+          setBtnDisabled(false);
+        }
+      }
+
+      if (chainName === "solana") {
+        const transactionFeeLamports = await calculateSolanaTransactionFee(
+          walletAddress,
+          address,
+          parseFloat(amount)
+        );
+
+        const tokenBalanceLamports = parseFloat(amount) * LAMPORTS_PER_SOL;
+        const maxAmountLamports = tokenBalanceLamports - transactionFeeLamports;
+        const transactionFeeSol = transactionFeeLamports / LAMPORTS_PER_SOL;
+        const maxAmount = maxAmountLamports / LAMPORTS_PER_SOL;
+
+        const txFeeFloat = transactionFeeSol * chainPrice;
+        const txFeeEstimateUsd = formatDollar(txFeeFloat);
+        const totalCostPlusTxFeeUsd = formatDollar(maxAmount * chainPrice);
+
+        if (txFeeFloat > 0 && txFeeFloat < 0.01) {
+          setTransactionFeeEstimate(`< ${txFeeEstimateUsd}`);
+        } else {
+          setTransactionFeeEstimate(txFeeEstimateUsd);
+        }
+
+        setTotalCost(totalCostPlusTxFeeUsd);
+
+        if (maxAmount > parseFloat(amount)) {
+          setError("Not enough funds to send transaction.");
+          setBtnDisabled(true);
+        } else {
+          setError("");
+          setBtnDisabled(false);
+        }
       }
     } catch (error) {
       console.error("Failed to fetch transaction costs:", error);
@@ -175,10 +249,13 @@ export default function SendConfirmationPage() {
     return () => clearInterval(intervalId);
   }, [address, amount]);
 
-  const networkName =
-    process.env.EXPO_PUBLIC_ENVIRONMENT === "production"
-      ? "Mainnet"
-      : "Sepolia";
+  const renderNetworkName = () => {
+    const isDev = process.env.EXPO_PUBLIC_ENVIRONMENT === "development";
+    if (chainName === "ethereum") {
+      return isDev ? "Sepolia" : "Mainnet";
+    }
+    return isDev ? "Devnet" : "Mainnet";
+  };
 
   return (
     <SafeAreaContainer>
@@ -195,8 +272,10 @@ export default function SendConfirmationPage() {
         <CryptoInfoCardContainer>
           <SendConfCard
             toAddress={truncateWalletAddress(address)}
-            network={`${capitalizeFirstLetter(chainName)} ${networkName}`}
-            networkFee={`Up to ${gasEstimate}`}
+            network={`${capitalizeFirstLetter(
+              chainName
+            )} ${renderNetworkName()}`}
+            networkFee={`Up to ${transactionFeeEstimate}`}
           />
           {error && (
             <ErrorView>

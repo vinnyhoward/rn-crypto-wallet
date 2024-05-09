@@ -7,9 +7,7 @@ import {
   LAMPORTS_PER_SOL,
   sendAndConfirmTransaction,
   Signer,
-  TransactionSignature,
 } from "@solana/web3.js";
-import { BorshCoder } from "@coral-xyz/anchor";
 
 const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 
