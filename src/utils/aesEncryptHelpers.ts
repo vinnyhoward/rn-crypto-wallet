@@ -5,24 +5,22 @@ export interface EncryptedData {
   iv: string;
 }
 
-// Generate a key from a password and salt
 export const generateKey = async (
   password: string,
   salt: string
 ): Promise<string> => {
   const key = CryptoES.PBKDF2(password, salt, {
-    keySize: 256 / 32, // Key size divided by 32 to get the number of words
+    keySize: 256 / 32,
     iterations: 1000,
   });
   return key.toString(CryptoES.enc.Hex);
 };
 
-// Encrypt data using AES
 export const encryptData = async (
   text: string,
   key: string
 ): Promise<EncryptedData> => {
-  const iv = CryptoES.lib.WordArray.random(128 / 8); // IV size of 128 bits / 8 = 16 bytes
+  const iv = CryptoES.lib.WordArray.random(128 / 8);
   const keyHex = CryptoES.enc.Hex.parse(key);
   const encrypted = CryptoES.AES.encrypt(text, keyHex, {
     iv: iv,
@@ -35,7 +33,6 @@ export const encryptData = async (
   };
 };
 
-// Decrypt data
 export const decryptData = async (
   encryptedData: EncryptedData,
   key: string

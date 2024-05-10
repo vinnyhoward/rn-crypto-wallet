@@ -31,7 +31,7 @@ The testnet environments allow developers and users to experiment with blockchai
 
 - Solana (Devnet): For testing on the Solana blockchain, use the [Solana Devnet Faucet](https://faucet.solana.com/) to receive free SOL tokens for the Devnet.
 
-__Network Configuration Assurance__: This application is exclusively configured to connect with the Ethereum Sepolia testnet and the Solana Devnet. It is not capable of connecting to mainnet environments, ensuring there is no risk of accidental transactions involving real cryptocurrencies. Please be diligent in using only testnet addresses while interacting with this application.
+__Network Configuration Assurance__:It is crucial to understand that as long as the `.env` variables are correctly set to point to these testnet environments, the application cannot connect to the mainnet. Ensuring there is no risk of accidental transactions involving real cryptocurrencies. Please be diligent in using only testnet addresses while interacting with this application.
 
 __Note__: The security architecture for this project is currently in a developmental phase and has not yet been fully implemented. It is intended solely for development and testing purposes, with plans to enhance security features in future updates.
 
@@ -53,7 +53,7 @@ __Note__: The security architecture for this project is currently in a developme
 - [x] List transactions on Ethereum
 
 #### Solana Actions
-- [ ] Send Solana
+- [x] Send Solana
 - [ ] List transactions transactions on Solana
 
 #### Nice to haves

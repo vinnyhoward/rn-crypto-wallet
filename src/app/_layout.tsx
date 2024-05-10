@@ -15,7 +15,7 @@ import {
 import { WalletProvider } from "../providers/wallet-provider";
 import { clearStorage } from "../hooks/use-storage-state";
 import Theme from "../styles/theme";
-import { store, persistor } from "../store";
+import { store, persistor, clearPersistedState } from "../store";
 import { ROUTES } from "../constants/routes";
 import LeftIcon from "../assets/svg/left-arrow.svg";
 
@@ -36,17 +36,13 @@ export default function RootLayout() {
     return null;
   }
 
-  const resetStackAndClearData = () => {
-    router.replace(ROUTES.walletSetup);
-    clearStorage();
-  };
-
   const goBack = () => {
-    clearStorage();
     if (navigation.canGoBack()) {
       navigation.goBack();
     } else {
-      resetStackAndClearData();
+      clearStorage();
+      clearPersistedState();
+      router.replace(ROUTES.walletSetup);
     }
   };
 
@@ -92,6 +88,11 @@ export default function RootLayout() {
                   headerTitleStyle: {
                     color: "transparent",
                   },
+                  headerLeft: () => (
+                    <IconTouchContainer onPress={() => router.back()}>
+                      <LeftIcon width={35} height={35} fill="#FFF" />
+                    </IconTouchContainer>
+                  ),
                 }}
               />
               <Stack.Screen
@@ -103,6 +104,7 @@ export default function RootLayout() {
                   headerTitleStyle: {
                     color: "transparent",
                   },
+                  headerLeft: null,
                 }}
               />
               <Stack.Screen
@@ -114,6 +116,11 @@ export default function RootLayout() {
                   headerTitleStyle: {
                     color: "transparent",
                   },
+                  headerLeft: () => (
+                    <IconTouchContainer onPress={() => router.back()}>
+                      <LeftIcon width={35} height={35} fill="#FFF" />
+                    </IconTouchContainer>
+                  ),
                 }}
               />
               <Stack.Screen
@@ -125,6 +132,11 @@ export default function RootLayout() {
                   headerTitleStyle: {
                     color: "transparent",
                   },
+                  headerLeft: () => (
+                    <IconTouchContainer onPress={() => router.back()}>
+                      <LeftIcon width={35} height={35} fill="#FFF" />
+                    </IconTouchContainer>
+                  ),
                 }}
               />
             </Stack>

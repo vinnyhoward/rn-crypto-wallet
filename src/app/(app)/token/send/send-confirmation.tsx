@@ -25,8 +25,9 @@ import {
   sendSolanaTransaction,
   calculateSolanaTransactionFee,
 } from "../../../../utils/solanaHelpers";
-import { getPrivateKey } from "../../../../hooks/use-storage-state";
+import { getPrivateKeys } from "../../../../hooks/use-storage-state";
 import type { RootState } from "../../../../store";
+import { base64ToUint8Array } from "../../../../utils/base64ToUint8Array";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -128,12 +129,16 @@ export default function SendConfirmationPage() {
   const chainBalance = `${amount} ${ticker}`;
 
   const handleSubmit = async () => {
+    const stringifiedPrivateKeys = await getPrivateKeys();
+    const privateKeys = JSON.parse(stringifiedPrivateKeys);
+    const ethPrivateKey = privateKeys.ethereum;
+    const solPrivateKey = base64ToUint8Array(privateKeys.solana);
+
     if (chainName === "ethereum") {
       try {
         setLoading(true);
         setBtnDisabled(true);
-        const privateKey = await getPrivateKey();
-        const response = await sendTransaction(address, privateKey, amount);
+        const response = await sendTransaction(address, ethPrivateKey, amount);
 
         if (response) {
           rootNavigation.dispatch(StackActions.popToTop());
@@ -150,14 +155,12 @@ export default function SendConfirmationPage() {
     }
 
     if (chainName === "solana") {
-      // TODO: Finish transaction sending for Solana
-      // after finding best way to manage keys
       try {
         setLoading(true);
         setBtnDisabled(true);
 
         const response = await sendSolanaTransaction(
-          walletAddress,
+          solPrivateKey,
           address,
           parseFloat(amount)
         );

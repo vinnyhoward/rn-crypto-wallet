@@ -7,6 +7,7 @@ import {
   LAMPORTS_PER_SOL,
   sendAndConfirmTransaction,
   Signer,
+  Keypair,
 } from "@solana/web3.js";
 
 const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
@@ -29,9 +30,7 @@ export const getTransactionsByWallet = async (walletAddress: string) => {
   try {
     const signatures = await connection.getSignaturesForAddress(publicKey);
     const signature = signatures.map((signature) => signature.signature)[0];
-    console.log("signature:", signature);
     const response = await connection.getParsedTransaction(signature);
-    console.log("transactions", response);
 
     return response;
   } catch (error) {
@@ -80,14 +79,15 @@ export const calculateSolanaTransactionFee = async (
 };
 
 export const sendSolanaTransaction = async (
-  from: Signer,
+  secretKey: Uint8Array,
   to: string,
   amount: number
 ) => {
   try {
+    const keyPair = Keypair.fromSecretKey(secretKey);
     const transaction = new Transaction().add(
       SystemProgram.transfer({
-        fromPubkey: new PublicKey(from),
+        fromPubkey: new PublicKey(keyPair.publicKey.toString()),
         toPubkey: new PublicKey(to),
         lamports: amount * LAMPORTS_PER_SOL,
       })
@@ -95,10 +95,10 @@ export const sendSolanaTransaction = async (
     let recentBlockhash = (await connection.getLatestBlockhash("finalized"))
       .blockhash;
     transaction.recentBlockhash = recentBlockhash;
-    transaction.feePayer = new PublicKey(from);
+    transaction.feePayer = new PublicKey(keyPair.publicKey.toString());
 
     const signature = await sendAndConfirmTransaction(connection, transaction, [
-      from,
+      keyPair,
     ]);
     return signature;
   } catch (err) {

@@ -18,8 +18,6 @@ import { formatEther } from "ethers";
 
 const persistConfig = {
   key: "root",
-  // TODO: Remove this in favor of a more secure storage.
-  // This is for development purposes only.
   storage: AsyncStorage,
 };
 

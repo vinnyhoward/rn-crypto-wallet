@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { Redirect, Stack, router } from "expo-router";
 import { useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
-import { Link } from "expo-router";
 import type { RootState } from "../../store";
 import { ROUTES } from "../../constants/routes";
 import SettingsIcon from "../../assets/svg/settings.svg";
@@ -13,10 +12,6 @@ import CloseIcon from "../../assets/svg/close.svg";
 import { getSeedPhraseConfirmation } from "../../hooks/use-storage-state";
 
 const IconTouchContainer = styled.TouchableOpacity`
-  padding: 10px;
-`;
-
-const IconContainer = styled.View`
   padding: 10px;
 `;
 

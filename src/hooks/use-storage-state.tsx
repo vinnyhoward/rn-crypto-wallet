@@ -104,7 +104,6 @@ const password = process.env.EXPO_PUBLIC_PASSWORD;
 const salt = process.env.EXPO_PUBLIC_SALT;
 
 export async function savePrivateKeys(value: string): Promise<void> {
-  console.log("value", JSON.parse(value));
   try {
     const key = await generateKey(password, salt);
     const encryptedData = await encryptData(value, key);
