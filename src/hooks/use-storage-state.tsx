@@ -1,6 +1,12 @@
 import * as SecureStore from "expo-secure-store";
 import * as React from "react";
 import { Platform } from "react-native";
+import {
+  generateKey,
+  encryptData,
+  decryptData,
+} from "../utils/aesEncryptHelpers";
+import type { EncryptedData } from "../utils/aesEncryptHelpers";
 
 type UseStateHook<T> = [[boolean, T | null], (value: T | null) => void];
 
@@ -94,23 +100,37 @@ export async function removeWallet(): Promise<void> {
   }
 }
 
-export async function savePrivateKey(key: string): Promise<void> {
+const password = process.env.EXPO_PUBLIC_PASSWORD;
+const salt = process.env.EXPO_PUBLIC_SALT;
+
+export async function savePrivateKeys(value: string): Promise<void> {
+  console.log("value", JSON.parse(value));
   try {
-    await SecureStore.setItemAsync("privateKey", key);
+    const key = await generateKey(password, salt);
+    const encryptedData = await encryptData(value, key);
+    await SecureStore.setItemAsync("privateKey", JSON.stringify(encryptedData));
   } catch (error) {
     console.error("Failed to save the private key securely.", error);
   }
 }
 
-export async function getPrivateKey() {
+export async function getPrivateKeys(): Promise<string | null> {
   try {
-    return await SecureStore.getItemAsync("privateKey");
+    const encryptedDataString = await SecureStore.getItemAsync("privateKey");
+    if (encryptedDataString) {
+      const encryptedData: EncryptedData = JSON.parse(encryptedDataString);
+      const key = await generateKey(password, salt);
+      const privateKey = await decryptData(encryptedData, key);
+      return privateKey;
+    } else {
+      console.error("No encrypted private key found.");
+      return null;
+    }
   } catch (error) {
     console.error("Failed to retrieve the private key.", error);
     return null;
   }
 }
-
 export async function removePhrase(): Promise<void> {
   try {
     await SecureStore.deleteItemAsync("phrase");

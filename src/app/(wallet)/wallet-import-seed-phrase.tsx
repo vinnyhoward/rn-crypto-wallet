@@ -15,8 +15,9 @@ import {
 } from "../../store/walletSlice";
 import Button from "../../components/Button/Button";
 import { ROUTES } from "../../constants/routes";
-import { savePrivateKey } from "../../hooks/use-storage-state";
+import { savePrivateKeys } from "../../hooks/use-storage-state";
 import { setSeedPhraseConfirmation } from "../../hooks/use-storage-state";
+import { uint8ArrayToBase64 } from "../../utils/uint8ArrayToBase64";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -104,15 +105,26 @@ export default function Page() {
     if (Object.keys(importedWallets).length > 0) {
       setLoading(false);
       const ethPrivateKey = importedWallets.ethereumWallet.privateKey;
-      // const solPrivateKey = importedWallets.solanaWallet.secretKey;
-
       const etherAddress = importedWallets.ethereumWallet.address;
       const etherPublicKey = importedWallets.ethereumWallet.publicKey;
 
+      const solPrivateKeyBase64 = uint8ArrayToBase64(
+        importedWallets.solanaWallet.secretKey
+      );
       const solanaAddress = importedWallets.solanaWallet.publicKey.toBase58();
       const solanaPublicKey = importedWallets.solanaWallet.publicKey.toBase58();
 
-      savePrivateKey(ethPrivateKey);
+      const masterPrivateKeys = {
+        ethereum: ethPrivateKey,
+        solana: solPrivateKeyBase64,
+      };
+
+      try {
+        await savePrivateKeys(JSON.stringify(masterPrivateKeys));
+      } catch (e) {
+        console.error("Failed to save private key", e);
+        throw e;
+      }
 
       dispatch(saveEthereumAddress(etherAddress));
       dispatch(saveEthereumPublicKey(etherPublicKey));
