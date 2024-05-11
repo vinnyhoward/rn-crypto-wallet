@@ -4,6 +4,7 @@ import { Platform } from "react-native";
 import {
   generateKeyAndEncryptData,
   generateKeyAndDecryptData,
+  EncryptedData,
 } from "../utils/aesEncryptHelpers";
 
 type UseStateHook<T> = [[boolean, T | null], (value: T | null) => void];
@@ -85,8 +86,9 @@ export async function saveWallet(key: string): Promise<void> {
 export async function getWallet() {
   try {
     const encryptedDataString = await SecureStore.getItemAsync("wallet");
+    const encryptedData: EncryptedData = JSON.parse(encryptedDataString);
     if (encryptedDataString) {
-      const wallet = await generateKeyAndDecryptData(encryptedDataString);
+      const wallet = await generateKeyAndDecryptData(encryptedData);
       return wallet;
     } else {
       console.error("No encrypted wallet found.");
@@ -118,9 +120,11 @@ export async function savePrivateKeys(value: string): Promise<void> {
 export async function getPrivateKeys(): Promise<string | null> {
   try {
     const encryptedDataString = await SecureStore.getItemAsync("privateKey");
+    const encryptedData: EncryptedData = JSON.parse(encryptedDataString);
     if (encryptedDataString) {
-      const privateKey = await generateKeyAndDecryptData(encryptedDataString);
-      return privateKey;
+      const privateKeyString = await generateKeyAndDecryptData(encryptedData);
+
+      return privateKeyString;
     } else {
       console.error("No encrypted private key found.");
       return null;
@@ -140,7 +144,9 @@ export async function removePhrase(): Promise<void> {
 
 export async function savePhrase(phrase: string): Promise<void> {
   try {
-    await SecureStore.setItemAsync("phrase", phrase);
+    const encryptedData = await generateKeyAndEncryptData(phrase);
+
+    await SecureStore.setItemAsync("phrase", JSON.stringify(encryptedData));
   } catch (error) {
     console.error("Failed to save the phrase securely.", error);
   }
@@ -148,7 +154,14 @@ export async function savePhrase(phrase: string): Promise<void> {
 
 export async function getPhrase(): Promise<string | null> {
   try {
-    return await SecureStore.getItemAsync("phrase");
+    const encryptedDataString = await SecureStore.getItemAsync("phrase");
+    const encryptedData: EncryptedData = JSON.parse(encryptedDataString);
+    if (encryptedDataString) {
+      const phrase = await generateKeyAndDecryptData(encryptedData);
+      return phrase;
+    } else {
+      return null;
+    }
   } catch (error) {
     console.error("Failed to retrieve the phrase.", error);
     return null;
@@ -164,30 +177,8 @@ export async function clearStorage(): Promise<void> {
     }
   } else {
     await SecureStore.deleteItemAsync("address");
-    await SecureStore.deleteItemAsync("mnemonicPhrase");
+    await SecureStore.deleteItemAsync("phrase");
     await SecureStore.deleteItemAsync("publicKey");
     await SecureStore.deleteItemAsync("privateKey");
-  }
-}
-
-export async function setSeedPhraseConfirmation(
-  confirmed: boolean
-): Promise<boolean> {
-  try {
-    await SecureStore.setItemAsync("seed_phrase_confirmed", String(confirmed));
-    return true;
-  } catch (error) {
-    console.error("Failed to save the seed phrase confirmation:", error);
-    return false;
-  }
-}
-
-export async function getSeedPhraseConfirmation(): Promise<boolean> {
-  try {
-    const confirmed = await SecureStore.getItemAsync("seed_phrase_confirmed");
-    return confirmed === "true";
-  } catch (error) {
-    console.error("Failed to retrieve the seed phrase confirmation:", error);
-    return false;
   }
 }

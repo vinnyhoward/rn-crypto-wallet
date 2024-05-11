@@ -10,7 +10,6 @@ import {
   savePrivateKeys,
   savePhrase,
   saveWallet,
-  setSeedPhraseConfirmation,
 } from "../../hooks/use-storage-state";
 import Button from "../../components/Button/Button";
 import { ThemeType } from "../../styles/theme";
@@ -120,8 +119,7 @@ export default function WalletSetup() {
         throw e;
       }
 
-      savePhrase(masterMnemonicPhrase);
-      setSeedPhraseConfirmation(false);
+      await savePhrase(masterMnemonicPhrase);
 
       dispatch(saveEthereumAddress(etherAddress));
       dispatch(saveEthereumPublicKey(etherPublicKey));
@@ -129,7 +127,10 @@ export default function WalletSetup() {
       dispatch(saveSolanaAddress(solanaAddress));
       dispatch(saveSolanaPublicKey(solanaPublicKey));
 
-      router.push(ROUTES.seedPhrase);
+      router.push({
+        pathname: ROUTES.seedPhrase,
+        params: { phrase: masterMnemonicPhrase },
+      });
     }
   };
 

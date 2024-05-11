@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { SafeAreaView, ScrollView } from "react-native";
 import * as Clipboard from "expo-clipboard";
-import { router } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
 import { getPhrase } from "../../hooks/use-storage-state";
@@ -81,8 +81,10 @@ const LogoContainer = styled.View``;
 
 export default function Page() {
   const theme = useTheme();
+  const { phrase } = useLocalSearchParams();
+  const seedPhraseParams = phrase ? (phrase as string).split(" ") : [];
   const [buttonText, setButtonText] = useState("Copy to clipboard");
-  const [seedPhrase, setSeedPhrase] = useState<string[]>([]);
+  const [seedPhrase, setSeedPhrase] = useState<string[]>(seedPhraseParams);
 
   const handleCopy = async () => {
     await Clipboard.setStringAsync(seedPhrase.join(" "));
@@ -92,14 +94,14 @@ export default function Page() {
     }, 4000);
   };
 
-  useEffect(() => {
-    const fetchSeedPhrase = async () => {
-      const storedSeedPhrase: string = await getPhrase();
-      setSeedPhrase(storedSeedPhrase.split(" "));
-    };
+  const getSeedPhraseFromStorage = async () => {
+    const phrase = await getPhrase();
+    setSeedPhrase(phrase.split(" "));
+  };
 
-    fetchSeedPhrase();
-  }, []);
+  useFocusEffect(() => {
+    getSeedPhraseFromStorage();
+  });
 
   return (
     <SafeAreaContainer>

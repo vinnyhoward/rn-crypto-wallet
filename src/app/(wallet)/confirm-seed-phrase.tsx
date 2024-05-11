@@ -4,12 +4,11 @@ import { SafeAreaView } from "react-native";
 import { router } from "expo-router";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
-import { getPhrase } from "../../hooks/use-storage-state";
+import { getPhrase, removePhrase } from "../../hooks/use-storage-state";
 import { ThemeType } from "../../styles/theme";
 import Button from "../../components/Button/Button";
 import Bubble from "../../components/Bubble/Bubble";
 import { ROUTES } from "../../constants/routes";
-import { setSeedPhraseConfirmation } from "../../hooks/use-storage-state";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -108,10 +107,11 @@ export default function Page() {
       setError("Please select all the words to verify your seed phrase");
       return;
     }
+
     const originalSeedPhrase = await getPhrase();
 
     if (selectedWords.join(" ") === originalSeedPhrase) {
-      await setSeedPhraseConfirmation(true);
+      await removePhrase();
       router.push({
         pathname: ROUTES.walletCreatedSuccessfully,
         params: { successState: "CREATED_WALLET" },
@@ -124,6 +124,7 @@ export default function Page() {
   useEffect(() => {
     const fetchSeedPhrase = async () => {
       const storedSeedPhrase: string = await getPhrase();
+      if (!storedSeedPhrase) router.replace(ROUTES.walletSetup);
       const randomizedSeedPhrase = storedSeedPhrase
         .split(" ")
         .sort(() => 0.5 - Math.random());

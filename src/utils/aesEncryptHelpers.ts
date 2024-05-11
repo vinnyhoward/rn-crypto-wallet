@@ -62,12 +62,11 @@ export const generateKeyAndEncryptData = async (value: string) => {
 };
 
 export const generateKeyAndDecryptData = async (
-  encryptedDataString: string
+  encryptedDataString: EncryptedData
 ) => {
   try {
-    const encryptedData: EncryptedData = JSON.parse(encryptedDataString);
     const key = await generateKey(password, salt);
-    const data = await decryptData(encryptedData, key);
+    const data = await decryptData(encryptedDataString, key);
     return data;
   } catch (error) {
     console.error("Failed to retrieve the private key.", error);
