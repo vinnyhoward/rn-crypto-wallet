@@ -1,4 +1,4 @@
-import { Alchemy, Network } from "alchemy-sdk";
+import { Alchemy, Network, AlchemySubscription } from "alchemy-sdk";
 
 const { EXPO_PUBLIC_ENVIRONMENT, EXPO_PUBLIC_ALCHEMY_KEY } = process.env;
 const network =

@@ -121,8 +121,6 @@ export default function Index() {
     if (solWalletAddress) {
       await fetchSolanaBalance();
     }
-
-    updatePrices();
   }, [ethBalance, solBalance, dispatch]);
 
   const updatePrices = () => {
@@ -135,16 +133,19 @@ export default function Index() {
   };
 
   useEffect(() => {
-    dispatch(fetchPrices());
-    fetchTokenBalances();
-
-    const interval = setInterval(async () => {
+    const fetchAndUpdatePrices = async () => {
+      await dispatch(fetchPrices());
       await fetchTokenBalances();
-      dispatch(fetchPrices());
-    }, FETCH_PRICES_INTERVAL);
+    };
+    fetchAndUpdatePrices();
+    const interval = setInterval(fetchAndUpdatePrices, FETCH_PRICES_INTERVAL);
 
     return () => clearInterval(interval);
   }, [dispatch]);
+
+  useEffect(() => {
+    updatePrices();
+  }, [ethBalance, solBalance]);
 
   return (
     <SafeAreaContainer>

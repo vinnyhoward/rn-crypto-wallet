@@ -131,7 +131,7 @@ export default function Index() {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await fetchTokenBalance();
-    await fetchPrices();
+    await fetchPrices(tokenBalance);
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -167,16 +167,16 @@ export default function Index() {
     }
   };
 
-  const fetchPrices = async () => {
+  const fetchPrices = async (currentTokenBalance: number) => {
     if (chainName === Chains.Ethereum) {
       dispatch(fetchEthereumTransactions(tokenAddress));
-      const usd = ethPrice * tokenBalance;
+      const usd = ethPrice * currentTokenBalance;
       setUsdBalance(usd);
     }
 
     if (chainName === Chains.Solana) {
       // dispatch(fetchSolanaTransactions(tokenAddress));
-      const usd = solPrice * tokenBalance;
+      const usd = solPrice * currentTokenBalance;
       setUsdBalance(usd);
     }
   };
@@ -204,18 +204,17 @@ export default function Index() {
   };
 
   useEffect(() => {
-    fetchTokenBalance();
-    fetchPrices();
-
-    const intervalId = setInterval(async () => {
+    const fetchAndUpdatePrices = async () => {
       await fetchTokenBalance();
-      await fetchPrices();
-    }, FETCH_PRICES_INTERVAL);
+      await fetchPrices(tokenBalance);
+    };
+    fetchAndUpdatePrices();
+    const intervalId = setInterval(fetchAndUpdatePrices, FETCH_PRICES_INTERVAL);
 
     return () => {
       clearInterval(intervalId);
     };
-  }, [dispatch]);
+  }, [dispatch, tokenBalance, ethPrice, solPrice, chainName, tokenAddress]);
 
   useEffect(() => {
     setTokenTransactions();

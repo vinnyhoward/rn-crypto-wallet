@@ -5,6 +5,9 @@ export interface EncryptedData {
   iv: string;
 }
 
+const password = process.env.EXPO_PUBLIC_PASSWORD;
+const salt = process.env.EXPO_PUBLIC_SALT;
+
 export const generateKey = async (
   password: string,
   salt: string
@@ -45,4 +48,29 @@ export const decryptData = async (
     padding: CryptoES.pad.Pkcs7,
   });
   return decrypted.toString(CryptoES.enc.Utf8);
+};
+
+export const generateKeyAndEncryptData = async (value: string) => {
+  try {
+    const key = await generateKey(password, salt);
+    const encryptedData = await encryptData(value, key);
+    return encryptedData;
+  } catch (error) {
+    console.error("Failed to save the private key securely.", error);
+    throw new Error("Failed to save the private key securely.");
+  }
+};
+
+export const generateKeyAndDecryptData = async (
+  encryptedDataString: string
+) => {
+  try {
+    const encryptedData: EncryptedData = JSON.parse(encryptedDataString);
+    const key = await generateKey(password, salt);
+    const data = await decryptData(encryptedData, key);
+    return data;
+  } catch (error) {
+    console.error("Failed to retrieve the private key.", error);
+    throw new Error("Failed to retrieve the private key.");
+  }
 };
