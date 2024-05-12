@@ -101,6 +101,24 @@ const ComingSoonText = styled.Text<{ theme: ThemeType }>`
   margin-top: ${(props) => props.theme.spacing.medium};
 `;
 
+const ErrorContainer = styled.View<{ theme: ThemeType }>`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background-color: rgba(255, 0, 0, 0.3);
+  border: 2px solid rgba(255, 0, 0, 0.4);
+  border-radius: ${(props) => props.theme.borderRadius.large};
+  height: 85px;
+  padding: ${(props) => props.theme.spacing.medium};
+`;
+
+const ErrorText = styled.Text<{ theme: ThemeType }>`
+  font-family: ${(props) => props.theme.fonts.families.openBold};
+  font-size: ${(props) => props.theme.fonts.sizes.normal};
+  color: ${(props) => props.theme.colors.white};
+`;
+
 export default function Index() {
   const dispatch = useDispatch<AppDispatch>();
   const { id } = useLocalSearchParams();
@@ -284,9 +302,11 @@ export default function Index() {
           contentContainerStyle={{ gap: 10 }}
           ListEmptyComponent={
             isSolana ? (
-              <ComingSoonView>
-                <ComingSoonText>Coming Soon</ComingSoonText>
-              </ComingSoonView>
+              <ErrorContainer>
+                <ErrorText>
+                  Devnet transactions are not available currently
+                </ErrorText>
+              </ErrorContainer>
             ) : (
               <ComingSoonView>
                 <ComingSoonText>

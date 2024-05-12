@@ -83,6 +83,7 @@ export const fetchSolanaTransactions = createAsyncThunk(
       const transactions = await getTransactionsByWallet(address);
       return transactions;
     } catch (error) {
+      console.log("error", error);
       return rejectWithValue(error.message);
     }
   }
