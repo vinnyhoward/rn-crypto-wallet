@@ -35,6 +35,7 @@
     "expo-secure-store": "~12.8.1",
     "expo-splash-screen": "~0.26.5",
     "expo-status-bar": "~1.11.1",
+    "expo-web-browser": "~12.8.2",
     "formik": "^2.4.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",

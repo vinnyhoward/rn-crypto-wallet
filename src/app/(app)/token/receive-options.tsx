@@ -1,5 +1,5 @@
 import * as Clipboard from "expo-clipboard";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, Platform } from "react-native";
 import { useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
 import { ThemeType } from "../../../styles/theme";
@@ -18,6 +18,7 @@ const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
   justify-content: flex-start;
   padding: ${(props) => props.theme.spacing.large};
+  margin-top: ${(props) => Platform.OS === "android" && "75px"};
 `;
 
 const ReceiveCardsContainer = styled.View<{ theme: ThemeType }>`

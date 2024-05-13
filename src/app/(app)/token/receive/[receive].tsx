@@ -1,4 +1,4 @@
-import { SafeAreaView, Share, Alert } from "react-native";
+import { SafeAreaView, Share, Alert, Platform } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import * as Clipboard from "expo-clipboard";
 import { useLayoutEffect, useState } from "react";
@@ -28,6 +28,8 @@ const ContentContainer = styled.View<{ theme: ThemeType }>`
   justify-content: center;
   align-items: center;
   padding: ${(props) => props.theme.spacing.large};
+  margin-top: ${(props) =>
+    Platform.OS === "android" && props.theme.spacing.huge};
 `;
 
 const ImageContainer = styled.View<{ theme: ThemeType }>`

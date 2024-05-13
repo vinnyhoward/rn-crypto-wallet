@@ -99,7 +99,7 @@ export default function RootLayout() {
                 name="(wallet)/wallet-created-successfully"
                 options={{
                   title: "Confirm Seed Phrase",
-                  headerShown: true,
+                  headerShown: false,
                   headerTransparent: true,
                   headerTitleStyle: {
                     color: "transparent",

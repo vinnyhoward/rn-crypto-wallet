@@ -18,7 +18,7 @@ interface CircleProps {
   theme: ThemeType;
 }
 
-const CryptoInfoCardContainer = styled.View<ButtonContainerProps>`
+const CryptoInfoCardContainer = styled.TouchableOpacity<ButtonContainerProps>`
   flex-direction: row;
   justify-content: space-between;
   background-color: ${({ theme }) => theme.colors.lightDark};
@@ -67,6 +67,7 @@ interface ButtonProps {
   backgroundColor?: string;
   icon: React.ReactNode;
   iconBackgroundColor?: string;
+  onPress: () => void;
 }
 
 const CryptoInfoCard: React.FC<ButtonProps> = ({
@@ -76,9 +77,13 @@ const CryptoInfoCard: React.FC<ButtonProps> = ({
   backgroundColor,
   icon,
   iconBackgroundColor,
+  onPress,
 }) => {
   return (
-    <CryptoInfoCardContainer backgroundColor={backgroundColor}>
+    <CryptoInfoCardContainer
+      onPress={onPress}
+      backgroundColor={backgroundColor}
+    >
       <ChainContainer>
         <Circle iconBackgroundColor={iconBackgroundColor}>{icon}</Circle>
         <PrimaryTextContainer>

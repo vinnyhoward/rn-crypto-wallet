@@ -33,6 +33,7 @@ export default function AppLayout() {
       const phrase = await getPhrase();
       if (!phrase && !ethWallet.address && !solWallet.address) {
         clearPersistedState();
+        setLoading(false);
         router.replace(ROUTES.walletSetup);
       }
       if (!phrase && ethWallet.address && solWallet.address) {
@@ -78,6 +79,7 @@ export default function AppLayout() {
           options={{
             headerShown: true,
             headerTransparent: true,
+            headerTitle: "",
             gestureEnabled: true,
             headerLeft: () => (
               <IconTouchContainer onPress={() => router.back()}>
@@ -105,6 +107,7 @@ export default function AppLayout() {
           options={{
             headerShown: true,
             headerTransparent: true,
+            headerTitle: "",
             gestureEnabled: true,
             presentation: "modal",
             headerLeft: null,
@@ -115,6 +118,7 @@ export default function AppLayout() {
           options={{
             headerShown: true,
             headerTransparent: true,
+            headerTitle: "",
             gestureEnabled: true,
             headerTitleStyle: {
               color: theme.colors.white,
@@ -132,6 +136,7 @@ export default function AppLayout() {
           options={{
             headerShown: true,
             headerTransparent: true,
+            headerTitle: "",
             gestureEnabled: true,
             presentation: "modal",
             headerLeft: () => (
@@ -146,6 +151,7 @@ export default function AppLayout() {
           options={{
             headerShown: true,
             headerTransparent: true,
+            headerTitle: "",
             gestureEnabled: true,
             presentation: "modal",
             headerLeft: () => (

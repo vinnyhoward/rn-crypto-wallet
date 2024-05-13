@@ -1,7 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
-import { View, SafeAreaView, ScrollView, RefreshControl } from "react-native";
+import {
+  View,
+  SafeAreaView,
+  ScrollView,
+  RefreshControl,
+  Platform,
+} from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { router, Link } from "expo-router";
+import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import { ROUTES } from "../../constants/routes";
 import type { ThemeType } from "../../styles/theme";
@@ -31,6 +37,8 @@ const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
   justify-content: flex-start;
   padding: ${(props) => props.theme.spacing.large};
+  margin-top: ${(props) =>
+    Platform.OS === "android" && props.theme.spacing.huge};
 `;
 
 const BalanceContainer = styled.View<{ theme: ThemeType }>`
@@ -90,8 +98,8 @@ export default function Index() {
   );
 
   const prices = useSelector((state: RootState) => state.price.data);
-  const solPrice = prices.solana.usd;
-  const ethPrice = prices.ethereum.usd;
+  const solPrice = prices?.solana?.usd;
+  const ethPrice = prices?.ethereum?.usd;
 
   const [refreshing, setRefreshing] = useState(false);
   const [usdBalance, setUsdBalance] = useState(0);
@@ -187,30 +195,28 @@ export default function Index() {
           <SectionTitle>Assets</SectionTitle>
           <CryptoInfoCardContainer>
             <CardView>
-              <Link href={ROUTES.ethDetails}>
-                <CryptoInfoCard
-                  title="Ethereum"
-                  caption={`${ethBalance} ETH`}
-                  details={formatDollar(ethUsd)}
-                  icon={
-                    <EthereumIcon
-                      width={35}
-                      height={35}
-                      fill={theme.colors.white}
-                    />
-                  }
-                />
-              </Link>
+              <CryptoInfoCard
+                onPress={() => router.push(ROUTES.ethDetails)}
+                title="Ethereum"
+                caption={`${ethBalance} ETH`}
+                details={formatDollar(ethUsd)}
+                icon={
+                  <EthereumIcon
+                    width={35}
+                    height={35}
+                    fill={theme.colors.white}
+                  />
+                }
+              />
             </CardView>
             <CardView>
-              <Link href={ROUTES.solDetails}>
-                <CryptoInfoCard
-                  title="Solana"
-                  caption={`${solBalance} SOL`}
-                  details={formatDollar(solUsd)}
-                  icon={<SolanaIcon width={25} height={25} fill="#14F195" />}
-                />
-              </Link>
+              <CryptoInfoCard
+                onPress={() => router.push(ROUTES.solDetails)}
+                title="Solana"
+                caption={`${solBalance} SOL`}
+                details={formatDollar(solUsd)}
+                icon={<SolanaIcon width={25} height={25} fill="#14F195" />}
+              />
             </CardView>
           </CryptoInfoCardContainer>
         </ContentContainer>

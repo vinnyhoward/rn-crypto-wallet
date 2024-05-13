@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, useRef } from "react";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, Platform } from "react-native";
 import { useSelector } from "react-redux";
 import { router, useLocalSearchParams } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
@@ -46,6 +46,8 @@ const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
   justify-content: flex-start;
   padding: ${(props) => props.theme.spacing.large};
+  margin-top: ${(props) =>
+    Platform.OS === "android" && props.theme.spacing.huge};
 `;
 
 const IconView = styled.View<{ theme: ThemeType }>`

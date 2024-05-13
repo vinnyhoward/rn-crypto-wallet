@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, Platform } from "react-native";
 import { StackActions } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
 import {
@@ -39,6 +39,8 @@ const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
   justify-content: flex-start;
   padding: ${(props) => props.theme.spacing.large};
+  margin-top: ${(props) =>
+    Platform.OS === "android" && props.theme.spacing.huge};
 `;
 
 const IconBackground = styled.View<{ theme: ThemeType }>`

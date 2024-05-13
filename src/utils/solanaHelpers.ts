@@ -38,7 +38,7 @@ export const getTransactionsByWallet = async (walletAddress: string) => {
         return transaction;
       })
     );
-
+    console.log("response", response);
     return response;
   } catch (error) {
     console.error("Failed to fetch transactions:", error);

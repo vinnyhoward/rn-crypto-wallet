@@ -1,8 +1,15 @@
 import { useEffect, useState, useCallback } from "react";
-import { View, SafeAreaView, FlatList, RefreshControl } from "react-native";
+import {
+  View,
+  SafeAreaView,
+  FlatList,
+  RefreshControl,
+  Platform,
+} from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { router, useLocalSearchParams } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
+import * as WebBrowser from "expo-web-browser";
 import type { ThemeType } from "../../../styles/theme";
 import type { RootState, AppDispatch } from "../../../store";
 import {
@@ -27,6 +34,8 @@ import { TICKERS } from "../../../constants/tickers";
 import { Chains } from "../../../types";
 import { FETCH_PRICES_INTERVAL } from "../../../constants/price";
 
+const isAndroid = Platform.OS === "android";
+
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
   background-color: ${(props) => props.theme.colors.dark};
@@ -37,6 +46,7 @@ const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
   justify-content: flex-start;
   padding: ${(props) => props.theme.spacing.large};
+  margin-top: ${(props) => isAndroid && props.theme.spacing.huge};
 `;
 
 const BalanceContainer = styled.View<{ theme: ThemeType }>`
@@ -155,6 +165,21 @@ export default function Index() {
     }, 2000);
   }, [dispatch]);
 
+  const _handlePressButtonAsync = async (url: string) => {
+    await WebBrowser.openBrowserAsync(url);
+  };
+
+  const urlBuilder = (hash: string) => {
+    let url: string;
+
+    if (chainName === Chains.Ethereum) {
+      url = `https://sepolia.etherscan.io/tx/${hash}`;
+    } else {
+      url = `https://explorer.solana.com/tx/${hash}`;
+    }
+    return url;
+  };
+
   const renderItem = ({ item }) => {
     if (
       item.category === "external" &&
@@ -162,6 +187,7 @@ export default function Index() {
     ) {
       return (
         <CryptoInfoCard
+          onPress={() => _handlePressButtonAsync(urlBuilder(item.hash))}
           title="Sent"
           caption={`To ${truncateWalletAddress(item.to)}`}
           details={`- ${item.value} ${item.asset}`}
@@ -176,6 +202,7 @@ export default function Index() {
     ) {
       return (
         <CryptoInfoCard
+          onPress={() => _handlePressButtonAsync(urlBuilder(item.hash))}
           title="Received"
           caption={`From ${truncateWalletAddress(item.from)}`}
           details={`+ ${item.value} ${item.asset}`}

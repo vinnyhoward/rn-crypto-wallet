@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { SafeAreaView, Platform } from "react-native";
 import { useSelector } from "react-redux";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import { ThemeType } from "../../../styles/theme";
 import type { RootState } from "../../../store";
 import { formatDollar } from "../../../utils/formatDollars";
-import { getSolanaBalance } from "../../../utils/solanaHelpers";
 import CryptoInfoCard from "../../../components/CryptoInfoCard/CryptoInfoCard";
 import SolanaIcon from "../../../assets/svg/solana.svg";
 import EthereumIcon from "../../../assets/svg/ethereum.svg";
@@ -31,6 +30,7 @@ const CardView = styled.View<{ theme: ThemeType }>`
 
 export default function SendOptions() {
   const theme = useTheme();
+  const router = useRouter();
   const ethBalance = useSelector(
     (state: RootState) => state.wallet.ethereum.balance
   );
@@ -60,30 +60,24 @@ export default function SendOptions() {
     <SafeAreaContainer>
       <ContentContainer>
         <CardView>
-          <Link href="/token/send/ethereum">
-            <CryptoInfoCard
-              title="Ethereum"
-              caption={`${ethBalance} ETH`}
-              details={formatDollar(ethUsd)}
-              icon={
-                <EthereumIcon
-                  width={35}
-                  height={35}
-                  fill={theme.colors.white}
-                />
-              }
-            />
-          </Link>
+          <CryptoInfoCard
+            onPress={() => router.push("/token/send/ethereum")}
+            title="Ethereum"
+            caption={`${ethBalance} ETH`}
+            details={formatDollar(ethUsd)}
+            icon={
+              <EthereumIcon width={35} height={35} fill={theme.colors.white} />
+            }
+          />
         </CardView>
         <CardView>
-          <Link href="/token/send/solana">
-            <CryptoInfoCard
-              title="Solana"
-              caption={`${solBalance} SOL`}
-              details={formatDollar(solUsd)}
-              icon={<SolanaIcon width={25} height={25} fill="#14F195" />}
-            />
-          </Link>
+          <CryptoInfoCard
+            onPress={() => router.push("/token/send/solana")}
+            title="Solana"
+            caption={`${solBalance} SOL`}
+            details={formatDollar(solUsd)}
+            icon={<SolanaIcon width={25} height={25} fill="#14F195" />}
+          />
         </CardView>
       </ContentContainer>
     </SafeAreaContainer>
