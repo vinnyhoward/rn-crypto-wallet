@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { SafeAreaView, Platform } from "react-native";
 import { useSelector } from "react-redux";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import { ThemeType } from "../../../styles/theme";
 import type { RootState } from "../../../store";

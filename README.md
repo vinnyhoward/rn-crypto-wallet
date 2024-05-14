@@ -57,7 +57,8 @@ __Note__: The security architecture for this project is currently in a developme
 - [ ] List transactions transactions on Solana
 
 #### Nice to haves
-- [ ] UI improvements - android ui bugs, loaders, animation, etc
+- [ ] UI improvements - loaders, animation, etc
+- [X] Android ui bugs
 - [ ] Refactor repeating styled components and some logic
 - [ ] Improve security and management of private keys (this wallet will never be production but it'd be fun to add)
 
@@ -91,7 +92,10 @@ yarn install
 EXPO_PUBLIC_ALCHEMY_KEY=your_alchemy_key
 EXPO_PUBLIC_ALCHEMY_URL=https://eth-sepolia.g.alchemy.com/v2/
 EXPO_PUBLIC_ALCHEMY_SOCKET_URL=wss://eth-sepolia.g.alchemy.com/v2/
-EXPO_PUBLIC_ENVIRONMENT=development 
+EXPO_PUBLIC_ENVIRONMENT=development
+EXPO_PUBLIC_PASSWORD=
+EXPO_PUBLIC_SALT=
+
 ```
 
 4. Start the development server:

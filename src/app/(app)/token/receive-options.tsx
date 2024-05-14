@@ -2,11 +2,13 @@ import * as Clipboard from "expo-clipboard";
 import { SafeAreaView, Platform } from "react-native";
 import { useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
+import { useRouter } from "expo-router";
 import { ThemeType } from "../../../styles/theme";
 import type { RootState } from "../../../store";
 import Ethereum from "../../../assets/svg/ethereum.svg";
 import Solana from "../../../assets/svg/solana.svg";
 import CopyIcon from "../../../assets/svg/copy.svg";
+import QRCodeIcon from "../../../assets/svg/qr-code.svg";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -52,7 +54,7 @@ const IconContainer = styled.View<{ theme: ThemeType }>`
   margin-right: 5px;
 `;
 
-const CopyView = styled.TouchableOpacity<{ theme: ThemeType }>`
+const IconView = styled.TouchableOpacity<{ theme: ThemeType }>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -62,6 +64,11 @@ const CopyView = styled.TouchableOpacity<{ theme: ThemeType }>`
   height: 45px;
   width: 45px;
   margin-right: ${(props) => props.theme.spacing.small};
+`;
+
+const ActionContainer = styled.View<{ theme: ThemeType }>`
+  display: flex;
+  flex-direction: row;
 `;
 
 interface ReceiveCardsProps {
@@ -76,6 +83,7 @@ const ReceiveCard: React.FC<ReceiveCardsProps> = ({
   icon,
 }) => {
   const theme = useTheme();
+  const router = useRouter();
   const handleCopy = async () => {
     await Clipboard.setStringAsync(address);
   };
@@ -85,9 +93,14 @@ const ReceiveCard: React.FC<ReceiveCardsProps> = ({
         <IconContainer>{icon}</IconContainer>
         <ReceiveText>{chainName}</ReceiveText>
       </TextContainer>
-      <CopyView onPress={handleCopy}>
-        <CopyIcon width={20} height={20} fill={theme.colors.white} />
-      </CopyView>
+      <ActionContainer>
+        <IconView onPress={() => router.replace("camera")}>
+          <QRCodeIcon width={20} height={20} fill={theme.colors.white} />
+        </IconView>
+        <IconView onPress={handleCopy}>
+          <CopyIcon width={20} height={20} fill={theme.colors.white} />
+        </IconView>
+      </ActionContainer>
     </ReceiveCardsContainer>
   );
 };

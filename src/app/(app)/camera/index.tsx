@@ -1,0 +1,158 @@
+import { useState } from "react";
+import { SafeAreaView, View } from "react-native";
+import { useDispatch } from "react-redux";
+import { Image } from "expo-image";
+import { router } from "expo-router";
+import styled from "styled-components/native";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import Button from "../../../components/Button/Button";
+import { ThemeType } from "../../../styles/theme";
+
+const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
+  flex: 1;
+  justify-content: flex-end;
+  background-color: ${(props) => props.theme.colors.primary};
+`;
+
+const ContentContainer = styled.View<{ theme: ThemeType }>`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+const TextContainer = styled.View<{ theme: ThemeType }>`
+  padding: ${(props) => props.theme.spacing.large};
+`;
+
+const Title = styled.Text<{ theme: ThemeType }>`
+  font-family: ${(props) => props.theme.fonts.families.openBold};
+  font-size: 32px;
+  color: ${(props) => props.theme.fonts.colors.primary};
+  margin-bottom: ${(props) => props.theme.spacing.small};
+`;
+
+const Subtitle = styled.Text<{ theme: ThemeType }>`
+  font-family: ${(props) => props.theme.fonts.families.openRegular};
+  font-size: ${(props) => props.theme.fonts.sizes.large};
+  color: ${(props) => props.theme.fonts.colors.primary};
+`;
+
+const ButtonContainer = styled.View<{ theme: ThemeType }>`
+  padding-left: ${(props) => props.theme.spacing.large};
+  padding-right: ${(props) => props.theme.spacing.large};
+  padding-bottom: ${(props) => props.theme.spacing.large};
+  padding-top: ${(props) => props.theme.spacing.small};
+`;
+
+const ExpoImage = styled(Image)`
+  flex: 1;
+  width: 100%;
+`;
+
+const ImageContainer = styled.View<{ theme: ThemeType }>`
+  flex: 1;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+`;
+
+const SecondaryButtonContainer = styled.TouchableOpacity`
+  padding: 10px 20px;
+  border-radius: 5px;
+  align-items: center;
+  height: 60px;
+  justify-content: center;
+  width: 100%;
+  border-radius: ${(props) => props.theme.borderRadius.large};
+`;
+
+const SecondaryButtonText = styled.Text<{ theme: ThemeType }>`
+  font-family: ${(props) => props.theme.fonts.families.openBold};
+  font-size: ${(props) => props.theme.fonts.sizes.header};
+  color: ${(props) => props.theme.fonts.colors.primary};
+`;
+
+const CameraContainer = styled(CameraView)`
+  flex: 1;
+`;
+
+export default function Camera() {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [permission, requestPermission] = useCameraPermissions();
+
+  console.log("permission", permission);
+
+  if (!permission) {
+    return <View></View>;
+  }
+
+  if (permission.status === "denied") {
+    return (
+      <SafeAreaContainer>
+        <ContentContainer>
+          <ImageContainer>
+            <ExpoImage
+              source={require("../../../assets/images/camera.png")}
+              contentFit="cover"
+            />
+          </ImageContainer>
+
+          <TextContainer>
+            <Title>Camera Access Denied</Title>
+            <Subtitle>
+              To enable camera access, go to your device settings and allow
+              camera access to scan QR codes for easy token transactions.
+            </Subtitle>
+          </TextContainer>
+        </ContentContainer>
+        <ButtonContainer>
+          <Button
+            loading={loading}
+            onPress={requestPermission}
+            title="Try Again"
+          />
+        </ButtonContainer>
+      </SafeAreaContainer>
+    );
+  }
+
+  if (!permission.granted) {
+    return (
+      <SafeAreaContainer>
+        <ContentContainer>
+          <ImageContainer>
+            <ExpoImage
+              source={require("../../../assets/images/camera.png")}
+              contentFit="cover"
+            />
+          </ImageContainer>
+
+          <TextContainer>
+            <Title>Allow Camera Access</Title>
+            <Subtitle>
+              Allow camera access to quickly scan QR codes for easy token
+              transactions.
+            </Subtitle>
+          </TextContainer>
+        </ContentContainer>
+        <ButtonContainer>
+          <Button
+            loading={loading}
+            onPress={requestPermission}
+            title="Enable Camera"
+          />
+          <SecondaryButtonContainer onPress={() => router.back()}>
+            <SecondaryButtonText>Go Back</SecondaryButtonText>
+          </SecondaryButtonContainer>
+        </ButtonContainer>
+      </SafeAreaContainer>
+    );
+  }
+
+  return (
+    <SafeAreaContainer>
+      <CameraContainer></CameraContainer>
+    </SafeAreaContainer>
+  );
+}
