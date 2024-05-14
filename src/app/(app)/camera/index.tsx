@@ -2,9 +2,13 @@ import { useState } from "react";
 import { SafeAreaView, View } from "react-native";
 import { useDispatch } from "react-redux";
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import styled from "styled-components/native";
-import { CameraView, useCameraPermissions } from "expo-camera";
+import {
+  CameraView,
+  useCameraPermissions,
+  BarcodeScanningResult,
+} from "expo-camera";
 import Button from "../../../components/Button/Button";
 import { ThemeType } from "../../../styles/theme";
 
@@ -78,14 +82,36 @@ const CameraContainer = styled(CameraView)`
 
 export default function Camera() {
   const dispatch = useDispatch();
+  const { chain } = useLocalSearchParams();
+  const chainName = chain as string;
   const [loading, setLoading] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
 
-  console.log("permission", permission);
+  console.log("chainName", chainName);
+
+  useFocusEffect(() => {
+    setLoading(false);
+  });
 
   if (!permission) {
     return <View></View>;
   }
+
+  const onBarcodeScanned = (data: BarcodeScanningResult) => {
+    setLoading(true);
+    if (!data) {
+      return;
+    }
+
+    if (data.data !== "") {
+      return router.push({
+        pathname: `token/send/${chainName}`,
+        params: {
+          toAddress: data.data,
+        },
+      });
+    }
+  };
 
   if (permission.status === "denied") {
     return (
@@ -109,7 +135,7 @@ export default function Camera() {
         <ButtonContainer>
           <Button
             loading={loading}
-            onPress={requestPermission}
+            onPress={!loading && requestPermission}
             title="Try Again"
           />
         </ButtonContainer>
@@ -151,8 +177,13 @@ export default function Camera() {
   }
 
   return (
-    <SafeAreaContainer>
-      <CameraContainer></CameraContainer>
-    </SafeAreaContainer>
+    <CameraContainer
+      barcodeScannerSettings={{
+        barcodeTypes: ["qr"],
+      }}
+      onBarcodeScanned={(data: BarcodeScanningResult) =>
+        loading ? onBarcodeScanned(null) : onBarcodeScanned(data)
+      }
+    ></CameraContainer>
   );
 }

@@ -1,3 +1,4 @@
+import "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import { Stack, router, useNavigation } from "expo-router";
 import { Provider } from "react-redux";

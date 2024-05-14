@@ -94,7 +94,16 @@ const ReceiveCard: React.FC<ReceiveCardsProps> = ({
         <ReceiveText>{chainName}</ReceiveText>
       </TextContainer>
       <ActionContainer>
-        <IconView onPress={() => router.replace("camera")}>
+        <IconView
+          onPress={() =>
+            router.replace({
+              pathname: "camera",
+              params: {
+                chain: chainName.toLowerCase(),
+              },
+            })
+          }
+        >
           <QRCodeIcon width={20} height={20} fill={theme.colors.white} />
         </IconView>
         <IconView onPress={handleCopy}>

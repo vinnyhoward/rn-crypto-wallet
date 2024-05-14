@@ -32,6 +32,7 @@ export default function AppLayout() {
       const phrase = await getPhrase();
       if (!phrase && !ethWallet.address && !solWallet.address) {
         clearPersistedState();
+        clearStorage();
         setLoading(false);
         router.replace(ROUTES.walletSetup);
       }

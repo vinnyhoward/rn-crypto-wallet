@@ -170,11 +170,12 @@ interface FormValues {
   amount: string;
 }
 export default function SendPage() {
-  const { send } = useLocalSearchParams();
+  const { send, toAddress } = useLocalSearchParams();
   const theme = useTheme();
   const formRef = useRef<FormikProps<FormValues>>(null);
 
   const chainName = send as string;
+  const toWalletAddress = toAddress as string;
   const ticker = TICKERS[chainName];
 
   const tokenBalance = useSelector(
@@ -352,6 +353,8 @@ export default function SendPage() {
     });
   };
 
+  const initialValues = { address: toWalletAddress, amount: "" };
+
   return (
     <SafeAreaContainer>
       <ContentContainer>
@@ -360,7 +363,7 @@ export default function SendPage() {
         </IconView>
         <Formik
           innerRef={formRef}
-          initialValues={{ address: "", amount: "" }}
+          initialValues={initialValues}
           validate={validateFields}
           onSubmit={handleSubmit}
         >
