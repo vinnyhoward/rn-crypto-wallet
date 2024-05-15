@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { SafeAreaView, View } from "react-native";
-import { useDispatch } from "react-redux";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import {
   CameraView,
   useCameraPermissions,
@@ -11,6 +10,8 @@ import {
 } from "expo-camera";
 import Button from "../../../components/Button/Button";
 import { ThemeType } from "../../../styles/theme";
+import QRCodeCamera from "../../../assets/svg/qr-code-camera.svg";
+import CloseIcon from "../../../assets/svg/close.svg";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -78,10 +79,19 @@ const SecondaryButtonText = styled.Text<{ theme: ThemeType }>`
 
 const CameraContainer = styled(CameraView)`
   flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+const CloseIconContainer = styled.TouchableOpacity`
+  position: absolute;
+  top: 50px;
+  left: 20px;
+  padding: 10px;
 `;
 
 export default function Camera() {
-  const dispatch = useDispatch();
+  const theme = useTheme();
   const { chain } = useLocalSearchParams();
   const chainName = chain as string;
   const [loading, setLoading] = useState(false);
@@ -184,6 +194,11 @@ export default function Camera() {
       onBarcodeScanned={(data: BarcodeScanningResult) =>
         loading ? onBarcodeScanned(null) : onBarcodeScanned(data)
       }
-    ></CameraContainer>
+    >
+      <CloseIconContainer onPress={() => router.back()}>
+        <CloseIcon width={30} height={30} fill={theme.colors.white} />
+      </CloseIconContainer>
+      <QRCodeCamera width={250} height={250} fill={theme.colors.white} />
+    </CameraContainer>
   );
 }
