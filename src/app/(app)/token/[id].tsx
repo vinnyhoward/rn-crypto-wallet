@@ -96,6 +96,7 @@ const TransactionTitle = styled.Text<{ theme: ThemeType }>`
   font-size: ${(props) => props.theme.fonts.sizes.header};
   color: ${(props) => props.theme.fonts.colors.primary};
   margin-bottom: ${(props) => props.theme.spacing.small};
+  margin-top: ${(props) => props.theme.spacing.medium};
 `;
 
 const ComingSoonView = styled.View<{ theme: ThemeType }>`

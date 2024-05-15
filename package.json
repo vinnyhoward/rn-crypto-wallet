@@ -48,6 +48,7 @@
     "react-native-screens": "3.31.1",
     "react-native-size-matters": "^0.4.2",
     "react-native-svg": "15.2.0",
+    "react-native-toast-message": "^2.2.0",
     "react-native-web": "~0.19.6",
     "react-redux": "^9.1.1",
     "redux-persist": "^6.0.0",

@@ -3,12 +3,12 @@ import { SafeAreaView, Platform } from "react-native";
 import { useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
 import { useRouter } from "expo-router";
-import { ThemeType } from "../../../styles/theme";
-import type { RootState } from "../../../store";
-import Ethereum from "../../../assets/svg/ethereum.svg";
-import Solana from "../../../assets/svg/solana.svg";
-import CopyIcon from "../../../assets/svg/copy.svg";
-import QRCodeIcon from "../../../assets/svg/qr-code.svg";
+import { ThemeType } from "../../../../styles/theme";
+import type { RootState } from "../../../../store";
+import Ethereum from "../../../../assets/svg/ethereum.svg";
+import Solana from "../../../../assets/svg/solana.svg";
+import CopyIcon from "../../../../assets/svg/copy.svg";
+import QRCodeIcon from "../../../../assets/svg/qr-code.svg";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;

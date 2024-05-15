@@ -13,12 +13,12 @@ import {
   Roboto_400Regular as RobotoReg,
   Roboto_700Bold as RobotoBld,
 } from "@expo-google-fonts/roboto";
-import { WalletProvider } from "../providers/wallet-provider";
 import { clearStorage } from "../hooks/use-storage-state";
 import Theme from "../styles/theme";
 import { store, persistor, clearPersistedState } from "../store";
 import { ROUTES } from "../constants/routes";
 import LeftIcon from "../assets/svg/left-arrow.svg";
+import Toast from "react-native-toast-message";
 
 const IconTouchContainer = styled.TouchableOpacity`
   padding: 10px;
@@ -51,97 +51,96 @@ export default function RootLayout() {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <ThemeProvider theme={Theme}>
-          <WalletProvider>
-            <StatusBar style="light" />
-            <Stack
-              screenOptions={{
-                headerShown: false,
+          <StatusBar style="light" />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              headerTransparent: true,
+              gestureEnabled: true,
+              headerLeft: () => (
+                <IconTouchContainer onPress={goBack}>
+                  <LeftIcon width={35} height={35} fill="#FFF" />
+                </IconTouchContainer>
+              ),
+            }}
+          >
+            <Stack.Screen
+              name={ROUTES.walletSetup}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="(wallet)/seed-phrase"
+              options={{
+                title: "Seed Phrase",
+                headerShown: true,
                 headerTransparent: true,
-                gestureEnabled: true,
+                headerTitleStyle: {
+                  color: "transparent",
+                },
+              }}
+            />
+            <Stack.Screen
+              name="(wallet)/confirm-seed-phrase"
+              options={{
+                title: "Confirm Seed Phrase",
+                headerShown: true,
+                headerTransparent: true,
+                headerTitleStyle: {
+                  color: "transparent",
+                },
                 headerLeft: () => (
-                  <IconTouchContainer onPress={goBack}>
+                  <IconTouchContainer onPress={() => router.back()}>
                     <LeftIcon width={35} height={35} fill="#FFF" />
                   </IconTouchContainer>
                 ),
               }}
-            >
-              <Stack.Screen
-                name={ROUTES.walletSetup}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="(wallet)/seed-phrase"
-                options={{
-                  title: "Seed Phrase",
-                  headerShown: true,
-                  headerTransparent: true,
-                  headerTitleStyle: {
-                    color: "transparent",
-                  },
-                }}
-              />
-              <Stack.Screen
-                name="(wallet)/confirm-seed-phrase"
-                options={{
-                  title: "Confirm Seed Phrase",
-                  headerShown: true,
-                  headerTransparent: true,
-                  headerTitleStyle: {
-                    color: "transparent",
-                  },
-                  headerLeft: () => (
-                    <IconTouchContainer onPress={() => router.back()}>
-                      <LeftIcon width={35} height={35} fill="#FFF" />
-                    </IconTouchContainer>
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name="(wallet)/wallet-created-successfully"
-                options={{
-                  title: "Confirm Seed Phrase",
-                  headerShown: false,
-                  headerTransparent: true,
-                  headerTitleStyle: {
-                    color: "transparent",
-                  },
-                  headerLeft: null,
-                }}
-              />
-              <Stack.Screen
-                name="(wallet)/wallet-import-options"
-                options={{
-                  title: "Confirm Seed Phrase",
-                  headerShown: true,
-                  headerTransparent: true,
-                  headerTitleStyle: {
-                    color: "transparent",
-                  },
-                  headerLeft: () => (
-                    <IconTouchContainer onPress={() => router.back()}>
-                      <LeftIcon width={35} height={35} fill="#FFF" />
-                    </IconTouchContainer>
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name="(wallet)/wallet-import-seed-phrase"
-                options={{
-                  title: "Confirm Seed Phrase",
-                  headerShown: true,
-                  headerTransparent: true,
-                  headerTitleStyle: {
-                    color: "transparent",
-                  },
-                  headerLeft: () => (
-                    <IconTouchContainer onPress={() => router.back()}>
-                      <LeftIcon width={35} height={35} fill="#FFF" />
-                    </IconTouchContainer>
-                  ),
-                }}
-              />
-            </Stack>
-          </WalletProvider>
+            />
+            <Stack.Screen
+              name="(wallet)/wallet-created-successfully"
+              options={{
+                title: "Confirm Seed Phrase",
+                headerShown: false,
+                headerTransparent: true,
+                headerTitleStyle: {
+                  color: "transparent",
+                },
+                headerLeft: null,
+              }}
+            />
+            <Stack.Screen
+              name="(wallet)/wallet-import-options"
+              options={{
+                title: "Confirm Seed Phrase",
+                headerShown: true,
+                headerTransparent: true,
+                headerTitleStyle: {
+                  color: "transparent",
+                },
+                headerLeft: () => (
+                  <IconTouchContainer onPress={() => router.back()}>
+                    <LeftIcon width={35} height={35} fill="#FFF" />
+                  </IconTouchContainer>
+                ),
+              }}
+            />
+            <Stack.Screen
+              name="(wallet)/wallet-import-seed-phrase"
+              options={{
+                title: "Confirm Seed Phrase",
+                headerShown: true,
+                headerTransparent: true,
+                headerTitleStyle: {
+                  color: "transparent",
+                },
+                headerLeft: () => (
+                  <IconTouchContainer onPress={() => router.back()}>
+                    <LeftIcon width={35} height={35} fill="#FFF" />
+                  </IconTouchContainer>
+                ),
+              }}
+            />
+          </Stack>
+          <Toast position="bottom" bottomOffset={20} />
         </ThemeProvider>
       </PersistGate>
     </Provider>

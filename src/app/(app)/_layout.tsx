@@ -90,7 +90,7 @@ export default function AppLayout() {
           }}
         />
         <Stack.Screen
-          name="token/send-options"
+          name="token/send/send-options"
           options={{
             headerShown: true,
             headerTransparent: true,
@@ -148,7 +148,7 @@ export default function AppLayout() {
           }}
         />
         <Stack.Screen
-          name="token/receive-options"
+          name="token/receive/receive-options"
           options={{
             headerShown: true,
             headerTransparent: true,
