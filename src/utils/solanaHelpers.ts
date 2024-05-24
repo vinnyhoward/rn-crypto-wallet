@@ -6,9 +6,9 @@ import {
   Transaction,
   LAMPORTS_PER_SOL,
   sendAndConfirmTransaction,
-  Signer,
   Keypair,
 } from "@solana/web3.js";
+import { TransactionObject } from "../types";
 
 const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 
@@ -30,7 +30,7 @@ export const getTransactionsByWallet = async (walletAddress: string) => {
   try {
     const signatures = await connection.getSignaturesForAddress(publicKey);
 
-    const response = await Promise.all(
+    const rawTransactions = await Promise.all(
       signatures.map(async (signature) => {
         const transaction = await connection.getParsedTransaction(
           signature.signature
@@ -38,8 +38,12 @@ export const getTransactionsByWallet = async (walletAddress: string) => {
         return transaction;
       })
     );
-    console.log("response", response);
-    return response;
+
+    const transactions = rawTransactions.map((tx: any) =>
+      extractTransactionDetails(tx)
+    );
+
+    return transactions;
   } catch (error) {
     console.error("Failed to fetch transactions:", error);
     return [];
@@ -113,3 +117,33 @@ export const sendSolanaTransaction = async (
     throw err;
   }
 };
+
+export function extractTransactionDetails(
+  transactionObject: TransactionObject
+) {
+  const transferInstruction =
+    transactionObject.transaction.message.instructions.find(
+      (instruction) =>
+        instruction.parsed && instruction.parsed.type === "transfer"
+    );
+
+  if (!transferInstruction) {
+    console.log("No transfer instructions found.");
+    return;
+  }
+
+  const info = transferInstruction.parsed.info;
+  const hash = transactionObject.transaction.message.recentBlockhash;
+  const from = info.source;
+  const to = info.destination;
+  const amountSentLamports = info.lamports;
+  const value = amountSentLamports / 1000000000;
+
+  return {
+    from,
+    to,
+    hash,
+    value,
+    asset: "SOL",
+  };
+}

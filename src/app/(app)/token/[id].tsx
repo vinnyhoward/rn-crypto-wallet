@@ -221,7 +221,7 @@ export default function Index() {
     }
 
     if (chainName === Chains.Solana) {
-      // dispatch(fetchSolanaTransactions(tokenAddress));
+      dispatch(fetchSolanaTransactions(tokenAddress));
       const usd = solPrice * currentTokenBalance;
       setUsdBalance(usd);
     }
