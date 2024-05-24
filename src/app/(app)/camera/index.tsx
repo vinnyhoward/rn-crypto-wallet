@@ -97,8 +97,6 @@ export default function Camera() {
   const [loading, setLoading] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
 
-  console.log("chainName", chainName);
-
   useFocusEffect(() => {
     setLoading(false);
   });

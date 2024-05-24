@@ -140,7 +140,6 @@ export default function RootLayout() {
               }}
             />
           </Stack>
-          <Toast position="bottom" bottomOffset={20} />
         </ThemeProvider>
       </PersistGate>
     </Provider>

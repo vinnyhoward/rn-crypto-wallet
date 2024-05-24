@@ -20,6 +20,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function AppLayout() {
   const theme = useTheme();
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const ethWallet = useSelector((state: RootState) => state.wallet.ethereum);
   const solWallet = useSelector((state: RootState) => state.wallet.solana);
   const [seedPhraseConfirmed, setSeedPhraseConfirmed] =

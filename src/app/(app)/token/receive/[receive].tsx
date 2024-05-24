@@ -1,4 +1,4 @@
-import { SafeAreaView, Share, Alert, Platform } from "react-native";
+import { SafeAreaView, Share, Alert, Platform, Dimensions } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import * as Clipboard from "expo-clipboard";
 import { useLayoutEffect, useState } from "react";
@@ -10,7 +10,8 @@ import type { RootState } from "../../../../store";
 import { capitalizeFirstLetter } from "../../../../utils/capitalizeFirstLetter";
 import { truncateWalletAddress } from "../../../../utils/truncateWalletAddress";
 import Button from "../../../../components/Button/Button";
-
+const qrWidth = Dimensions.get("window").width * 0.8;
+const qrContainerWidth = Dimensions.get("window").width * 0.9;
 interface TextInputProps {
   isAddressInputFocused?: boolean;
   isAmountInputFocused?: boolean;
@@ -36,8 +37,8 @@ const ImageContainer = styled.View<{ theme: ThemeType }>`
   width: 100%;
   justify-content: center;
   align-items: center;
-  height: 225px;
-  width: 225px;
+  height: ${qrContainerWidth}px;
+  width: ${qrContainerWidth}px;
   border-radius: ${(props) => props.theme.spacing.medium};
   background-color: ${(props) => props.theme.colors.white};
 `;
@@ -135,12 +136,11 @@ export default function ReceivePage() {
       title: `Receive ${capitalizeFirstLetter(chainName)}`,
     });
   }, [navigation]);
-
   return (
     <SafeAreaContainer>
       <ContentContainer>
         <ImageContainer>
-          <QRCode value={tokenAddress} size={200} />
+          <QRCode value={tokenAddress} size={qrWidth} />
         </ImageContainer>
 
         <ReceiveTextInputContainer>

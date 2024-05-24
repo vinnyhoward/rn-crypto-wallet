@@ -17,7 +17,7 @@ import {
   fetchEthereumBalance,
   updateSolanaBalance,
 } from "../../store/walletSlice";
-import { formatDollar } from "../../utils/formatDollars";
+import { formatDollar, formatDollarRaw } from "../../utils/formatDollars";
 import { getSolanaBalance } from "../../utils/solanaHelpers";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import SendIcon from "../../assets/svg/send.svg";
@@ -42,6 +42,9 @@ const ContentContainer = styled.View<{ theme: ThemeType }>`
 `;
 
 const BalanceContainer = styled.View<{ theme: ThemeType }>`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
   margin-top: 10px;
   margin-bottom: ${(props) => props.theme.spacing.huge};
 `;
@@ -79,6 +82,13 @@ const SectionTitle = styled.Text<{ theme: ThemeType }>`
   color: ${(props) => props.theme.fonts.colors.primary};
   margin-bottom: ${(props) => props.theme.spacing.medium};
   margin-left: ${(props) => props.theme.spacing.small};
+`;
+
+const DollarSign = styled.Text<{ theme: ThemeType }>`
+  color: ${(props) => props.theme.colors.lightGrey};
+  font-family: ${(props) => props.theme.fonts.families.openBold};
+  font-size: ${(props) => props.theme.fonts.sizes.uberHuge};
+  text-align: center;
 `;
 
 export default function Index() {
@@ -169,7 +179,8 @@ export default function Index() {
       >
         <ContentContainer>
           <BalanceContainer>
-            <BalanceText>{formatDollar(usdBalance)}</BalanceText>
+            <DollarSign>$</DollarSign>
+            <BalanceText>{formatDollarRaw(usdBalance)}</BalanceText>
           </BalanceContainer>
           <ActionContainer>
             <PrimaryButton
