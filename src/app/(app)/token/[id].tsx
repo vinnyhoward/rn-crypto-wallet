@@ -144,6 +144,10 @@ export default function Index() {
   const transactionHistory = useSelector(
     (state: RootState) => state.wallet[chainName].transactions
   );
+
+  const walletState = useSelector(
+    (state: RootState) => state.wallet[chainName]
+  );
   const prices = useSelector((state: RootState) => state.price.data);
   const solPrice = prices.solana.usd;
   const ethPrice = prices.ethereum.usd;
@@ -186,7 +190,7 @@ export default function Index() {
       return (
         <CryptoInfoCard
           onPress={() => _handlePressButtonAsync(urlBuilder(item.hash))}
-          title="Sent"
+          title={capitalizeFirstLetter(item.direction)}
           caption={`To ${truncateWalletAddress(item.to)}`}
           details={`- ${item.value} ${item.asset}`}
           icon={<Icon width={35} height={35} fill={theme.colors.white} />}
@@ -254,7 +258,7 @@ export default function Index() {
 
   const setTokenTransactions = async () => {
     if (transactionHistory.length !== 0 && isEthereum) {
-      const walletTransactions = transactionHistory.transfers.filter(
+      const walletTransactions = transactionHistory.filter(
         (tx: AssetTransfer) => {
           return tx.asset === ticker;
         }
@@ -284,6 +288,7 @@ export default function Index() {
     setTokenTransactions();
   }, [transactionHistory]);
 
+  console.log("wallet state:", walletState);
   return (
     <SafeAreaContainer>
       <ContentContainer>

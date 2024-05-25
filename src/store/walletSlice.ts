@@ -69,8 +69,7 @@ export const fetchEthereumTransactions = createAsyncThunk(
   async (address: string, { rejectWithValue }): Promise<any> => {
     try {
       const transactions = await fetchTransactions(address);
-      console.log("eth transactions:", transactions);
-      return transactions;
+      return transactions.transfers;
     } catch (error) {
       return rejectWithValue(error.message);
     }

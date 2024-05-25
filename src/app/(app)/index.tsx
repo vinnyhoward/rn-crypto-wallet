@@ -107,6 +107,14 @@ export default function Index() {
     (state: RootState) => state.wallet.solana.balance
   );
 
+  const ethTransfers = useSelector(
+    (state: RootState) => state.wallet.ethereum.transactions
+  );
+
+  const solTransfers = useSelector(
+    (state: RootState) => state.wallet.solana.transactions
+  );
+
   const prices = useSelector((state: RootState) => state.price.data);
   const solPrice = prices?.solana?.usd;
   const ethPrice = prices?.ethereum?.usd;
@@ -116,6 +124,10 @@ export default function Index() {
   const [solUsd, setSolUsd] = useState(0);
   const [ethUsd, setEthUsd] = useState(0);
 
+  console.log("Lol", {
+    ethTransfers,
+    solTransfers,
+  });
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     dispatch(fetchPrices());

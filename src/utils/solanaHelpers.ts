@@ -26,27 +26,34 @@ export const getSolanaBalance = async (publicKeyString: string) => {
 
 export const getTransactionsByWallet = async (walletAddress: string) => {
   const publicKey = new PublicKey(walletAddress);
+  let signatures: any;
 
   try {
-    const signatures = await connection.getSignaturesForAddress(publicKey);
+    signatures = await connection.getSignaturesForAddress(publicKey);
+  } catch (err) {
+    console.error("Error fetching signature:", err);
+  }
 
-    const rawTransactions = await Promise.all(
-      signatures.map(async (signature) => {
-        const transaction = await connection.getParsedTransaction(
-          signature.signature
-        );
-        return transaction;
-      })
-    );
+  if (signatures) {
+    try {
+      const rawTransactions = await Promise.all(
+        signatures.map(async (signature: any) => {
+          const transaction = await connection.getParsedTransaction(
+            signature.signature
+          );
+          return transaction;
+        })
+      );
 
-    const transactions = rawTransactions.map((tx: any) =>
-      extractTransactionDetails(tx)
-    );
+      const transactions = rawTransactions.map((tx: any) =>
+        extractTransactionDetails(tx, walletAddress)
+      );
 
-    return transactions;
-  } catch (error) {
-    console.error("Failed to fetch transactions:", error);
-    return [];
+      return transactions;
+    } catch (error) {
+      console.error("Failed to fetch transactions:", error);
+      return [];
+    }
   }
 };
 
@@ -119,7 +126,8 @@ export const sendSolanaTransaction = async (
 };
 
 export function extractTransactionDetails(
-  transactionObject: TransactionObject
+  transactionObject: TransactionObject,
+  addressOfInterest: string
 ) {
   const transferInstruction =
     transactionObject.transaction.message.instructions.find(
@@ -133,17 +141,27 @@ export function extractTransactionDetails(
   }
 
   const info = transferInstruction.parsed.info;
+  let direction = "other";
+  if (info.source === addressOfInterest) {
+    direction = "sent";
+  } else if (info.destination === addressOfInterest) {
+    direction = "received";
+  }
+
   const hash = transactionObject.transaction.message.recentBlockhash;
+  const uniqueId = info.destination + info.source + hash;
   const from = info.source;
   const to = info.destination;
   const amountSentLamports = info.lamports;
   const value = amountSentLamports / 1000000000;
 
   return {
+    uniqueId,
     from,
     to,
     hash,
     value,
+    direction,
     asset: "SOL",
   };
 }

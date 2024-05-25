@@ -54,7 +54,7 @@ __Note__: The security architecture for this project is currently in a developme
 
 #### Solana Actions
 - [x] Send Solana
-- [ ] List transactions transactions on Solana
+- [x] List transactions transactions on Solana
 
 #### Nice to haves
 - [ ] UI improvements - loaders, animation, etc

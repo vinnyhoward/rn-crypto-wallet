@@ -46,13 +46,12 @@ export default function SendOptions() {
 
   useEffect(() => {
     const fetchPrices = async () => {
-      const ethUsd = solPrice * ethBalance;
-      const solUsd = ethPrice * solBalance;
+      const ethUsd = ethPrice * ethBalance;
+      const solUsd = solPrice * solBalance;
 
       setEthUsd(ethUsd);
       setSolUsd(solUsd);
     };
-
     fetchPrices();
   }, [ethBalance, solBalance]);
 
