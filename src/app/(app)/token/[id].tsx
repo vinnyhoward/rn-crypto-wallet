@@ -182,9 +182,22 @@ export default function Index() {
   };
 
   const renderItem = ({ item }) => {
+    if (isSolana) {
+      return (
+        <CryptoInfoCard
+          onPress={() => _handlePressButtonAsync(urlBuilder(item.hash))}
+          title="Sent"
+          caption={`To ${truncateWalletAddress(item.to)}`}
+          details={`- ${item.value} ${item.asset}`}
+          icon={<Icon width={35} height={35} fill={theme.colors.white} />}
+        />
+      );
+    }
+
     if (
       item.category === "external" &&
-      item.from.toLowerCase() === tokenAddress.toLowerCase()
+      item.from.toLowerCase() === tokenAddress.toLowerCase() &&
+      isEthereum
     ) {
       return (
         <CryptoInfoCard
@@ -199,7 +212,8 @@ export default function Index() {
 
     if (
       item.category === "external" &&
-      item.to.toLowerCase() === tokenAddress.toLowerCase()
+      item.to.toLowerCase() === tokenAddress.toLowerCase() &&
+      isEthereum
     ) {
       return (
         <CryptoInfoCard
@@ -246,6 +260,10 @@ export default function Index() {
         }
       );
       setTransactions(walletTransactions.reverse());
+    }
+
+    if (transactionHistory.length !== 0 && isSolana) {
+      setTransactions(transactionHistory);
     }
   };
 
@@ -329,22 +347,17 @@ export default function Index() {
           keyExtractor={(item) => item.uniqueId}
           contentContainerStyle={{ gap: 10 }}
           ListEmptyComponent={
-            isSolana ? (
-              <ErrorContainer>
-                <ErrorText>
-                  Devnet transactions are not available currently
-                </ErrorText>
-              </ErrorContainer>
-            ) : (
-              <ComingSoonView>
-                <ComingSoonText>
-                  Add some {ticker} to your wallet
-                </ComingSoonText>
-              </ComingSoonView>
-            )
+            <ComingSoonView>
+              <ComingSoonText>Add some {ticker} to your wallet</ComingSoonText>
+            </ComingSoonView>
           }
         />
       </ContentContainer>
     </SafeAreaContainer>
   );
 }
+
+// <ErrorContainer>
+//   <ErrorText>
+//     Devnet transactions are not available currently
+//   </ErrorText>
