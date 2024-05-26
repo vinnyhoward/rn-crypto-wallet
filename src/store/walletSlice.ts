@@ -14,6 +14,7 @@ interface CryptoWallet {
   status: "idle" | "loading" | "failed";
   address: string;
   publicKey: string;
+  failedNetworkRequest: boolean;
 }
 
 export interface WalletState {
@@ -32,6 +33,7 @@ const initialState: WalletState = {
   ethereum: {
     balance: 0,
     transactions: [],
+    failedNetworkRequest: false,
     status: "idle",
     address: "",
     publicKey: "",
@@ -39,6 +41,7 @@ const initialState: WalletState = {
   solana: {
     balance: 0,
     transactions: [],
+    failedNetworkRequest: false,
     status: "idle",
     address: "",
     publicKey: "",
@@ -155,7 +158,12 @@ export const walletSlice = createSlice({
         state.ethereum.status = "loading";
       })
       .addCase(fetchEthereumTransactions.fulfilled, (state, action) => {
-        state.ethereum.transactions = action.payload;
+        if (action.payload) {
+          state.ethereum.failedNetworkRequest = false;
+          state.ethereum.transactions = action.payload;
+        } else {
+          state.ethereum.failedNetworkRequest = true;
+        }
         state.ethereum.status = "idle";
       })
       .addCase(fetchEthereumTransactions.rejected, (state, action) => {
@@ -166,7 +174,12 @@ export const walletSlice = createSlice({
         state.solana.status = "loading";
       })
       .addCase(fetchSolanaTransactions.fulfilled, (state, action) => {
-        state.solana.transactions = action.payload;
+        if (action.payload) {
+          state.solana.failedNetworkRequest = false;
+          state.solana.transactions = action.payload;
+        } else {
+          state.solana.failedNetworkRequest = true;
+        }
         state.solana.status = "idle";
       })
       .addCase(fetchSolanaTransactions.rejected, (state, action) => {

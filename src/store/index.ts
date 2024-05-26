@@ -8,6 +8,7 @@ import {
   PayloadAction,
   ThunkAction,
   Action,
+  createListenerMiddleware,
 } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -56,6 +57,8 @@ export const clearPersistedState = async () => {
   }
 };
 
+const listenerMiddleware = createListenerMiddleware();
+
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
@@ -71,7 +74,9 @@ export const store = configureStore({
           "persist/DEFAULT_VERSION",
         ],
       },
-    }).concat(webSocketMiddleware),
+    })
+      .prepend(listenerMiddleware.middleware)
+      .concat(webSocketMiddleware),
 });
 
 export const persistor = persistStore(store);
@@ -86,3 +91,12 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   unknown,
   Action<string>
 >;
+
+// listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
+//   predicate: (_action, currentState, previousState) => {
+//     return currentState.wallet.solana.transactions !== previousState.wallet.solana.transactions
+//   },
+//   effect: async (_action, listenerApi) => {
+
+//   },
+// });

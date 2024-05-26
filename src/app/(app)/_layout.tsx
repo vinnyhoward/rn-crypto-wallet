@@ -5,6 +5,7 @@ import { Redirect, Stack, router } from "expo-router";
 import { useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
 import * as SplashScreen from "expo-splash-screen";
+import Toast from "react-native-toast-message";
 import type { RootState } from "../../store";
 import { ROUTES } from "../../constants/routes";
 import SettingsIcon from "../../assets/svg/settings.svg";
@@ -12,6 +13,7 @@ import LeftIcon from "../../assets/svg/left-arrow.svg";
 import CloseIcon from "../../assets/svg/close.svg";
 import { getPhrase, clearStorage } from "../../hooks/use-storage-state";
 import { clearPersistedState } from "../../store";
+import { toastConfig } from "../../config/toast";
 
 const IconTouchContainer = styled.TouchableOpacity`
   padding: 10px;
@@ -20,7 +22,6 @@ SplashScreen.preventAutoHideAsync();
 
 export default function AppLayout() {
   const theme = useTheme();
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const ethWallet = useSelector((state: RootState) => state.wallet.ethereum);
   const solWallet = useSelector((state: RootState) => state.wallet.solana);
   const [seedPhraseConfirmed, setSeedPhraseConfirmed] =
@@ -188,6 +189,7 @@ export default function AppLayout() {
           }}
         />
       </Stack>
+      <Toast position="top" topOffset={75} config={toastConfig} />
     </>
   );
 }

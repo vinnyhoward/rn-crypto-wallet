@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { router, useLocalSearchParams } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import * as WebBrowser from "expo-web-browser";
+import Toast from "react-native-toast-message";
 import type { ThemeType } from "../../../styles/theme";
 import type { RootState, AppDispatch } from "../../../store";
 import {
@@ -145,15 +146,15 @@ export default function Index() {
     (state: RootState) => state.wallet[chainName].transactions
   );
 
-  const walletState = useSelector(
-    (state: RootState) => state.wallet[chainName]
+  const failedNetworkRequest = useSelector(
+    (state: RootState) => state.wallet[chainName].failedNetworkRequest
   );
+
   const prices = useSelector((state: RootState) => state.price.data);
   const solPrice = prices.solana.usd;
   const ethPrice = prices.ethereum.usd;
 
   const [usdBalance, setUsdBalance] = useState(0);
-  const [transactions, setTransactions] = useState<AssetTransfer[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
   const ticker = TICKERS[chainName];
@@ -256,21 +257,6 @@ export default function Index() {
     }
   };
 
-  const setTokenTransactions = async () => {
-    if (transactionHistory.length !== 0 && isEthereum) {
-      const walletTransactions = transactionHistory.filter(
-        (tx: AssetTransfer) => {
-          return tx.asset === ticker;
-        }
-      );
-      setTransactions(walletTransactions.reverse());
-    }
-
-    if (transactionHistory.length !== 0 && isSolana) {
-      setTransactions(transactionHistory);
-    }
-  };
-
   useEffect(() => {
     const fetchAndUpdatePrices = async () => {
       await fetchTokenBalance();
@@ -285,10 +271,19 @@ export default function Index() {
   }, [dispatch, tokenBalance, ethPrice, solPrice, chainName, tokenAddress]);
 
   useEffect(() => {
-    setTokenTransactions();
-  }, [transactionHistory]);
+    if (failedNetworkRequest) {
+      setTimeout(() => {
+        Toast.show({
+          type: "success",
+          text1: `We are facing ${capitalizeFirstLetter(
+            chainName
+          )} network issues`,
+          text2: "Please try again later",
+        });
+      }, 2500);
+    }
+  }, [failedNetworkRequest]);
 
-  console.log("wallet state:", walletState);
   return (
     <SafeAreaContainer>
       <ContentContainer>
@@ -347,7 +342,7 @@ export default function Index() {
               <TransactionTitle>Transaction History</TransactionTitle>
             </>
           }
-          data={transactions}
+          data={transactionHistory}
           renderItem={renderItem}
           keyExtractor={(item) => item.uniqueId}
           contentContainerStyle={{ gap: 10 }}
