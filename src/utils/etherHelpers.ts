@@ -11,16 +11,29 @@ import {
 } from "ethers";
 import { mnemonicToSeedSync } from "bip39";
 import { Keypair } from "@solana/web3.js";
+import { Alchemy, Network } from "alchemy-sdk";
+import { truncateBalance } from "./truncateBalance";
 
 const {
   EXPO_PUBLIC_ALCHEMY_KEY,
   EXPO_PUBLIC_ALCHEMY_URL,
   EXPO_PUBLIC_ALCHEMY_SOCKET_URL,
+  EXPO_PUBLIC_ENVIRONMENT,
 } = process.env;
 
 const ethWebSocketUrl =
   EXPO_PUBLIC_ALCHEMY_SOCKET_URL + EXPO_PUBLIC_ALCHEMY_KEY;
 const ethereumUrl = EXPO_PUBLIC_ALCHEMY_URL + EXPO_PUBLIC_ALCHEMY_KEY;
+
+const network =
+  EXPO_PUBLIC_ENVIRONMENT === "production"
+    ? Network.ETH_MAINNET
+    : Network.ETH_SEPOLIA;
+const config = {
+  apiKey: EXPO_PUBLIC_ALCHEMY_KEY,
+  network,
+};
+const alchemy = new Alchemy(config);
 
 export const ethProvider = new JsonRpcProvider(ethereumUrl);
 export const webSocketProvider = new WebSocketProvider(ethWebSocketUrl);
@@ -132,5 +145,111 @@ export const sendTransaction = async (
   } catch (error) {
     console.error("Failed to send transaction:", error);
     throw new Error("Failed to send transaction. Please try again later.");
+  }
+};
+
+interface AssetTransferParams {
+  fromBlock: string;
+  excludeZeroValue: boolean;
+  withMetadata: boolean;
+  maxCount: number;
+  toAddress?: string;
+  fromAddress?: string;
+  pageKey?: string;
+  category: string[];
+}
+
+const assetTransferParamsBuilder = () =>
+  <AssetTransferParams>{
+    fromBlock: "0x0",
+    excludeZeroValue: true,
+    withMetadata: true,
+    maxCount: 25,
+    category: [
+      "internal",
+      "external",
+      "erc20",
+      "erc721",
+      "erc1155",
+      "specialnft",
+    ],
+  };
+
+export const fetchTransactions = async (
+  address: string,
+  pageKeys?: string[]
+) => {
+  let pageKeySent: string;
+  let pageKeyReceive: string;
+  const sentAssetTransferParams: AssetTransferParams =
+    assetTransferParamsBuilder();
+  const receiveAssetTransferParams: AssetTransferParams =
+    assetTransferParamsBuilder();
+
+  if (pageKeys && pageKeys.length === 2) {
+    pageKeySent = pageKeys[0];
+    pageKeyReceive = pageKeys[1];
+  }
+
+  try {
+    if (pageKeySent) {
+      sentAssetTransferParams.pageKey = pageKeySent;
+    }
+    sentAssetTransferParams.fromAddress = address;
+    const sentTransfers = await alchemy.core.getAssetTransfers(
+      // @ts-ignore
+      sentAssetTransferParams
+    );
+
+    if (pageKeyReceive) {
+      receiveAssetTransferParams.pageKey = pageKeyReceive;
+    }
+    receiveAssetTransferParams.toAddress = address;
+    const receivedTransfers = await alchemy.core.getAssetTransfers(
+      // @ts-ignore
+      receiveAssetTransferParams
+    );
+
+    const transformedSentTransfers = sentTransfers.transfers.map((tx) => {
+      const { uniqueId, from, to, hash, value, asset, metadata } = tx;
+      const blockTime = new Date(metadata.blockTimestamp).getTime() / 1000;
+      return {
+        uniqueId,
+        from,
+        to,
+        hash,
+        value: parseFloat(truncateBalance(value)),
+        blockTime,
+        asset,
+        direction: "sent",
+      };
+    });
+    const transformedReceivedTransfers = receivedTransfers.transfers.map(
+      (tx) => {
+        const { uniqueId, from, to, hash, value, asset, metadata } = tx;
+        const blockTime = new Date(metadata.blockTimestamp).getTime() / 1000;
+        return {
+          uniqueId,
+          from,
+          to,
+          hash,
+          value: parseFloat(truncateBalance(value)),
+          blockTime,
+          asset,
+          direction: "received",
+        };
+      }
+    );
+
+    const allTransfers = transformedSentTransfers
+      .concat(transformedReceivedTransfers)
+      .sort((a, b) => b.blockTime - a.blockTime);
+    return {
+      transferHistory: allTransfers,
+      paginationKey: [sentTransfers.pageKey, receivedTransfers.pageKey],
+    };
+  } catch (error) {
+    console.error("Error fetching transactions:", error);
+    throw new Error("Failed to fetch transactions: " + error.message);
   }
 };

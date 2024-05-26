@@ -75,7 +75,6 @@ export default function Confirmation() {
     <SafeAreaContainer>
       <ContentContainer>
         <ImageContainer></ImageContainer>
-
         <TextContainer>
           <Title></Title>
           <Subtitle></Subtitle>

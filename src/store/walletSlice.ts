@@ -4,8 +4,7 @@ import "@ethersproject/shims";
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import * as ethers from "ethers";
 import { RootState } from "./index";
-import { fetchTransactions } from "../utils/fetchTransactions";
-import { ethProvider } from "../utils/etherHelpers";
+import { fetchTransactions, ethProvider } from "../utils/etherHelpers";
 import {
   getTransactionsByWallet,
   getSolanaBalance,
@@ -14,7 +13,10 @@ import { truncateBalance } from "../utils/truncateBalance";
 
 interface CryptoWallet {
   balance: number;
-  transactions: Transaction[];
+  transactionMetadata: {
+    paginationKey: string | string[];
+    transactions: Transaction[];
+  };
   status: "idle" | "loading" | "failed";
   address: string;
   publicKey: string;
@@ -36,7 +38,10 @@ export interface Transaction {
 const initialState: WalletState = {
   ethereum: {
     balance: 0,
-    transactions: [],
+    transactionMetadata: {
+      paginationKey: "",
+      transactions: [],
+    },
     failedNetworkRequest: false,
     status: "idle",
     address: "",
@@ -44,7 +49,10 @@ const initialState: WalletState = {
   },
   solana: {
     balance: 0,
-    transactions: [],
+    transactionMetadata: {
+      paginationKey: "",
+      transactions: [],
+    },
     failedNetworkRequest: false,
     status: "idle",
     address: "",
@@ -77,7 +85,6 @@ export const fetchEthereumTransactions = createAsyncThunk(
   async (address: string, { rejectWithValue }): Promise<any> => {
     try {
       const transactions = await fetchTransactions(address);
-      console.log("trans obj:", transactions);
       return transactions;
     } catch (error) {
       console.error("error", error);
@@ -149,10 +156,10 @@ export const walletSlice = createSlice({
       }
     },
     addEthereumTransaction: (state, action: PayloadAction<Transaction>) => {
-      state.ethereum.transactions.push(action.payload);
+      state.ethereum.transactionMetadata.transactions.push(action.payload);
     },
     addSolanaTransaction: (state, action: PayloadAction<Transaction>) => {
-      state.solana.transactions.push(action.payload);
+      state.solana.transactionMetadata.transactions.push(action.payload);
     },
     updateEthereumBalance: (state, action: PayloadAction<string>) => {
       state.ethereum.balance = parseFloat(action.payload);
@@ -180,7 +187,10 @@ export const walletSlice = createSlice({
       .addCase(fetchEthereumTransactions.fulfilled, (state, action) => {
         if (action.payload) {
           state.ethereum.failedNetworkRequest = false;
-          state.ethereum.transactions = action.payload;
+          state.ethereum.transactionMetadata.transactions =
+            action.payload.transferHistory;
+          state.ethereum.transactionMetadata.paginationKey =
+            action.payload.paginationKey;
         } else {
           state.ethereum.failedNetworkRequest = true;
         }
@@ -207,7 +217,7 @@ export const walletSlice = createSlice({
       .addCase(fetchSolanaTransactions.fulfilled, (state, action) => {
         if (action.payload) {
           state.solana.failedNetworkRequest = false;
-          state.solana.transactions = action.payload;
+          state.solana.transactionMetadata.transactions = action.payload;
         } else {
           state.solana.failedNetworkRequest = true;
         }

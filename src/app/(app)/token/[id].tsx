@@ -21,6 +21,7 @@ import {
 } from "../../../store/walletSlice";
 import { capitalizeFirstLetter } from "../../../utils/capitalizeFirstLetter";
 import { formatDollar } from "../../../utils/formatDollars";
+import { isCloseToBottom } from "../../../utils/isCloseToBottom";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 import SendIcon from "../../../assets/svg/send.svg";
 import ReceiveIcon from "../../../assets/svg/receive.svg";
@@ -141,7 +142,8 @@ export default function Index() {
     (state: RootState) => state.wallet[chainName].balance
   );
   const transactionHistory = useSelector(
-    (state: RootState) => state.wallet[chainName].transactions
+    (state: RootState) =>
+      state.wallet[chainName].transactionMetadata.transactions
   );
 
   const failedNetworkRequest = useSelector(
@@ -150,6 +152,15 @@ export default function Index() {
 
   const failedStatus = useSelector(
     (state: RootState) => state.wallet[chainName].status === "failed"
+  );
+
+  const loadingStatus = useSelector(
+    (state: RootState) => state.wallet[chainName].status === "loading"
+  );
+
+  const paginationKey = useSelector(
+    (state: RootState) =>
+      state.wallet[chainName].transactionMetadata.paginationKey
   );
 
   const prices = useSelector((state: RootState) => state.price.data);
@@ -277,6 +288,9 @@ export default function Index() {
     }
   }, [failedNetworkRequest]);
 
+  const paginationKeyWithoutNull = paginationKey
+    ? paginationKey.filter((item) => item)
+    : [];
   return (
     <SafeAreaContainer>
       <ContentContainer>
@@ -339,6 +353,15 @@ export default function Index() {
           renderItem={renderItem}
           keyExtractor={(item) => item.uniqueId}
           contentContainerStyle={{ gap: 10 }}
+          onScroll={({ nativeEvent }) => {
+            if (
+              isCloseToBottom(nativeEvent) &&
+              !loadingStatus &&
+              paginationKeyWithoutNull.length > 0
+            ) {
+              console.log("true");
+            }
+          }}
           ListEmptyComponent={() => {
             if (failedStatus) {
               return (

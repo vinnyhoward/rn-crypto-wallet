@@ -24,12 +24,19 @@ export const getSolanaBalance = async (publicKeyString: string) => {
   }
 };
 
-export const getTransactionsByWallet = async (walletAddress: string) => {
+export const getTransactionsByWallet = async (
+  walletAddress: string,
+  beforeSignature?: string,
+  limit = 50
+) => {
   const publicKey = new PublicKey(walletAddress);
   let signatures: any;
 
   try {
-    signatures = await connection.getSignaturesForAddress(publicKey);
+    signatures = await connection.getSignaturesForAddress(publicKey, {
+      before: beforeSignature,
+      limit,
+    });
   } catch (err) {
     console.error("Error fetching signature:", err);
   }
@@ -48,7 +55,6 @@ export const getTransactionsByWallet = async (walletAddress: string) => {
       const transactions = rawTransactions
         .map((tx: any) => extractTransactionDetails(tx, walletAddress))
         .sort((a, b) => b.blockTime - a.blockTime);
-
       return transactions;
     } catch (error) {
       console.error("Failed to fetch transactions:", error);
