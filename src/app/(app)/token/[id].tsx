@@ -15,11 +15,10 @@ import type { ThemeType } from "../../../styles/theme";
 import type { RootState, AppDispatch } from "../../../store";
 import {
   fetchEthereumBalance,
-  updateSolanaBalance,
+  fetchSolanaBalance,
   fetchEthereumTransactions,
   fetchSolanaTransactions,
 } from "../../../store/walletSlice";
-import { getSolanaBalance } from "../../../utils/solanaHelpers";
 import { capitalizeFirstLetter } from "../../../utils/capitalizeFirstLetter";
 import { formatDollar } from "../../../utils/formatDollars";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
@@ -28,7 +27,6 @@ import ReceiveIcon from "../../../assets/svg/receive.svg";
 import TokenInfoCard from "../../../components/TokenInfoCard/TokenInfoCard";
 import SolanaIcon from "../../../assets/svg/solana.svg";
 import EthereumIcon from "../../../assets/svg/ethereum_plain.svg";
-import { AssetTransfer } from "../../../types";
 import CryptoInfoCard from "../../../components/CryptoInfoCard/CryptoInfoCard";
 import { truncateWalletAddress } from "../../../utils/truncateWalletAddress";
 import { TICKERS } from "../../../constants/tickers";
@@ -150,6 +148,10 @@ export default function Index() {
     (state: RootState) => state.wallet[chainName].failedNetworkRequest
   );
 
+  const failedStatus = useSelector(
+    (state: RootState) => state.wallet[chainName].status === "failed"
+  );
+
   const prices = useSelector((state: RootState) => state.price.data);
   const solPrice = prices.solana.usd;
   const ethPrice = prices.ethereum.usd;
@@ -187,45 +189,37 @@ export default function Index() {
   };
 
   const renderItem = ({ item }) => {
+    if (failedStatus) {
+      return (
+        <ErrorContainer>
+          <ErrorText>
+            There seems to be a network error, please try again later
+          </ErrorText>
+        </ErrorContainer>
+      );
+    }
+
+    const sign = item.direction === "received" ? "+" : "-";
+
     if (isSolana) {
       return (
         <CryptoInfoCard
           onPress={() => _handlePressButtonAsync(urlBuilder(item.hash))}
           title={capitalizeFirstLetter(item.direction)}
           caption={`To ${truncateWalletAddress(item.to)}`}
-          details={`- ${item.value} ${item.asset}`}
+          details={`${sign} ${item.value} ${item.asset}`}
           icon={<Icon width={35} height={35} fill={theme.colors.white} />}
         />
       );
     }
 
-    if (
-      item.category === "external" &&
-      item.from.toLowerCase() === tokenAddress.toLowerCase() &&
-      isEthereum
-    ) {
+    if (isEthereum) {
       return (
         <CryptoInfoCard
           onPress={() => _handlePressButtonAsync(urlBuilder(item.hash))}
-          title="Sent"
+          title={capitalizeFirstLetter(item.direction)}
           caption={`To ${truncateWalletAddress(item.to)}`}
-          details={`- ${item.value} ${item.asset}`}
-          icon={<Icon width={35} height={35} fill={theme.colors.white} />}
-        />
-      );
-    }
-
-    if (
-      item.category === "external" &&
-      item.to.toLowerCase() === tokenAddress.toLowerCase() &&
-      isEthereum
-    ) {
-      return (
-        <CryptoInfoCard
-          onPress={() => _handlePressButtonAsync(urlBuilder(item.hash))}
-          title="Received"
-          caption={`From ${truncateWalletAddress(item.from)}`}
-          details={`+ ${item.value} ${item.asset}`}
+          details={`${sign} ${item.value} ${item.asset}`}
           icon={<Icon width={35} height={35} fill={theme.colors.white} />}
         />
       );
@@ -248,8 +242,7 @@ export default function Index() {
 
   const fetchTokenBalance = async () => {
     if (isSolana && tokenAddress) {
-      const currentSolBalance = await getSolanaBalance(tokenAddress);
-      dispatch(updateSolanaBalance(currentSolBalance));
+      dispatch(fetchSolanaBalance(tokenAddress));
     }
 
     if (isEthereum && tokenAddress) {
@@ -342,22 +335,31 @@ export default function Index() {
               <TransactionTitle>Transaction History</TransactionTitle>
             </>
           }
-          data={transactionHistory}
+          data={failedStatus ? [] : transactionHistory}
           renderItem={renderItem}
           keyExtractor={(item) => item.uniqueId}
           contentContainerStyle={{ gap: 10 }}
-          ListEmptyComponent={
-            <ComingSoonView>
-              <ComingSoonText>Add some {ticker} to your wallet</ComingSoonText>
-            </ComingSoonView>
-          }
+          ListEmptyComponent={() => {
+            if (failedStatus) {
+              return (
+                <ErrorContainer>
+                  <ErrorText>
+                    There seems to be a network error, please try again later
+                  </ErrorText>
+                </ErrorContainer>
+              );
+            } else {
+              return (
+                <ComingSoonView>
+                  <ComingSoonText>
+                    Add some {ticker} to your wallet
+                  </ComingSoonText>
+                </ComingSoonView>
+              );
+            }
+          }}
         />
       </ContentContainer>
     </SafeAreaContainer>
   );
 }
-
-// <ErrorContainer>
-//   <ErrorText>
-//     Devnet transactions are not available currently
-//   </ErrorText>

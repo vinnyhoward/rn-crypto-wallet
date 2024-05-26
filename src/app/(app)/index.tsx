@@ -21,7 +21,7 @@ import { formatDollar, formatDollarRaw } from "../../utils/formatDollars";
 import { getSolanaBalance } from "../../utils/solanaHelpers";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import SendIcon from "../../assets/svg/send.svg";
-import ReceiveIcon from "../../assets/svg/receive.svg";
+import ReceiveIcon from "../../assets/svg/qr-code.svg";
 import CryptoInfoCard from "../../components/CryptoInfoCard/CryptoInfoCard";
 import SolanaIcon from "../../assets/svg/solana.svg";
 import EthereumIcon from "../../assets/svg/ethereum.svg";

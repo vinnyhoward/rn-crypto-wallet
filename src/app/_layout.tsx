@@ -18,7 +18,6 @@ import Theme from "../styles/theme";
 import { store, persistor, clearPersistedState } from "../store";
 import { ROUTES } from "../constants/routes";
 import LeftIcon from "../assets/svg/left-arrow.svg";
-import Toast from "react-native-toast-message";
 
 const IconTouchContainer = styled.TouchableOpacity`
   padding: 10px;

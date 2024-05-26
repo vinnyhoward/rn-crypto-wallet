@@ -3,10 +3,8 @@ import { SafeAreaView, Platform } from "react-native";
 import { useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
 import { useRouter } from "expo-router";
-import Toast from "react-native-toast-message";
 import { ThemeType } from "../../../../styles/theme";
 import type { RootState } from "../../../../store";
-import { toastConfig } from "../../../../config/toast";
 import Ethereum from "../../../../assets/svg/ethereum.svg";
 import Solana from "../../../../assets/svg/solana.svg";
 import CopyIcon from "../../../../assets/svg/copy.svg";
@@ -87,12 +85,9 @@ const ReceiveCard: React.FC<ReceiveCardsProps> = ({
   const theme = useTheme();
   const router = useRouter();
   const handleCopy = async () => {
-    Toast.show({
-      type: "success",
-      text1: "Copied Successfully✅",
-    });
     await Clipboard.setStringAsync(address);
   };
+
   return (
     <ReceiveCardsContainer>
       <TextContainer>
@@ -142,7 +137,6 @@ export default function ReceiveOptionsPage() {
           icon={<Solana width={25} height={25} />}
         />
       </ContentContainer>
-      <Toast position="bottom" bottomOffset={20} config={toastConfig} />
     </SafeAreaContainer>
   );
 }

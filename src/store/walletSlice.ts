@@ -6,7 +6,11 @@ import * as ethers from "ethers";
 import { RootState } from "./index";
 import { fetchTransactions } from "../utils/fetchTransactions";
 import { ethProvider } from "../utils/etherHelpers";
-import { getTransactionsByWallet } from "../utils/solanaHelpers";
+import {
+  getTransactionsByWallet,
+  getSolanaBalance,
+} from "../utils/solanaHelpers";
+import { truncateBalance } from "../utils/truncateBalance";
 
 interface CryptoWallet {
   balance: number;
@@ -62,6 +66,7 @@ export const fetchEthereumBalance = createAsyncThunk<
       const balance = await ethProvider.getBalance(address);
       return ethers.formatEther(balance);
     } catch (error) {
+      console.error("error", error);
       return rejectWithValue(error.message);
     }
   }
@@ -72,8 +77,10 @@ export const fetchEthereumTransactions = createAsyncThunk(
   async (address: string, { rejectWithValue }): Promise<any> => {
     try {
       const transactions = await fetchTransactions(address);
-      return transactions.transfers;
+      console.log("trans obj:", transactions);
+      return transactions;
     } catch (error) {
+      console.error("error", error);
       return rejectWithValue(error.message);
     }
   }
@@ -86,7 +93,20 @@ export const fetchSolanaTransactions = createAsyncThunk(
       const transactions = await getTransactionsByWallet(address);
       return transactions;
     } catch (error) {
-      console.log("error", error);
+      console.error("error", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchSolanaBalance = createAsyncThunk(
+  "wallet/fetchSolanaBalance",
+  async (tokenAddress: string, { rejectWithValue }): Promise<any> => {
+    try {
+      const currentSolBalance = await getSolanaBalance(tokenAddress);
+      return currentSolBalance;
+    } catch (error) {
+      console.error("error", error);
       return rejectWithValue(error.message);
     }
   }
@@ -147,7 +167,7 @@ export const walletSlice = createSlice({
         state.ethereum.status = "loading";
       })
       .addCase(fetchEthereumBalance.fulfilled, (state, action) => {
-        state.ethereum.balance = parseFloat(action.payload);
+        state.ethereum.balance = parseFloat(truncateBalance(action.payload));
         state.ethereum.status = "idle";
       })
       .addCase(fetchEthereumBalance.rejected, (state, action) => {
@@ -169,6 +189,17 @@ export const walletSlice = createSlice({
       .addCase(fetchEthereumTransactions.rejected, (state, action) => {
         state.ethereum.status = "failed";
         console.error("Failed to fetch transactions:", action.payload);
+      })
+      .addCase(fetchSolanaBalance.pending, (state) => {
+        state.solana.status = "loading";
+      })
+      .addCase(fetchSolanaBalance.fulfilled, (state, action) => {
+        state.solana.balance = parseFloat(truncateBalance(action.payload));
+        state.solana.status = "idle";
+      })
+      .addCase(fetchSolanaBalance.rejected, (state, action) => {
+        state.solana.status = "failed";
+        console.error("Failed to fetch balance:", action.payload);
       })
       .addCase(fetchSolanaTransactions.pending, (state) => {
         state.solana.status = "loading";

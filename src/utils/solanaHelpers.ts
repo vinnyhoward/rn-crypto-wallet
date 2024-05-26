@@ -45,9 +45,9 @@ export const getTransactionsByWallet = async (walletAddress: string) => {
         })
       );
 
-      const transactions = rawTransactions.map((tx: any) =>
-        extractTransactionDetails(tx, walletAddress)
-      );
+      const transactions = rawTransactions
+        .map((tx: any) => extractTransactionDetails(tx, walletAddress))
+        .sort((a, b) => b.blockTime - a.blockTime);
 
       return transactions;
     } catch (error) {
@@ -154,6 +154,7 @@ export function extractTransactionDetails(
   const to = info.destination;
   const amountSentLamports = info.lamports;
   const value = amountSentLamports / 1000000000;
+  const blockTime = transactionObject.blockTime;
 
   return {
     uniqueId,
@@ -162,6 +163,7 @@ export function extractTransactionDetails(
     hash,
     value,
     direction,
+    blockTime,
     asset: "SOL",
   };
 }
