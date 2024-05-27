@@ -14,7 +14,7 @@ import { truncateBalance } from "../utils/truncateBalance";
 interface CryptoWallet {
   balance: number;
   transactionMetadata: {
-    paginationKey: string | string[];
+    paginationKey: string | string[] | undefined;
     transactions: Transaction[];
   };
   status: "idle" | "loading" | "failed";
@@ -29,17 +29,21 @@ export interface WalletState {
 }
 
 export interface Transaction {
-  id: string;
-  type: string;
-  amount: number;
-  date: string;
+  uniqueId: string;
+  from: string;
+  to: string;
+  hash: string;
+  value: number;
+  blockTime: number;
+  asset: string;
+  direction: string;
 }
 
 const initialState: WalletState = {
   ethereum: {
     balance: 0,
     transactionMetadata: {
-      paginationKey: "",
+      paginationKey: undefined,
       transactions: [],
     },
     failedNetworkRequest: false,
@@ -50,7 +54,7 @@ const initialState: WalletState = {
   solana: {
     balance: 0,
     transactionMetadata: {
-      paginationKey: "",
+      paginationKey: undefined,
       transactions: [],
     },
     failedNetworkRequest: false,
@@ -80,9 +84,14 @@ export const fetchEthereumBalance = createAsyncThunk<
   }
 );
 
+export interface FetchTransactionsArg {
+  address: string;
+  paginationKey?: string[] | string;
+}
+
 export const fetchEthereumTransactions = createAsyncThunk(
   "wallet/fetchEthereumTransactions",
-  async (address: string, { rejectWithValue }): Promise<any> => {
+  async ({ address }: FetchTransactionsArg, { rejectWithValue }) => {
     try {
       const transactions = await fetchTransactions(address);
       return transactions;

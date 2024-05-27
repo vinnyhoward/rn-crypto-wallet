@@ -158,7 +158,7 @@ export default function Index() {
     (state: RootState) => state.wallet[chainName].status === "loading"
   );
 
-  const paginationKey = useSelector(
+  const paginationKey: string[] | string = useSelector(
     (state: RootState) =>
       state.wallet[chainName].transactionMetadata.paginationKey
   );
@@ -211,7 +211,6 @@ export default function Index() {
     }
 
     const sign = item.direction === "received" ? "+" : "-";
-
     if (isSolana) {
       return (
         <CryptoInfoCard
@@ -239,7 +238,7 @@ export default function Index() {
 
   const fetchPrices = async (currentTokenBalance: number) => {
     if (chainName === Chains.Ethereum) {
-      dispatch(fetchEthereumTransactions(tokenAddress));
+      dispatch(fetchEthereumTransactions({ address: tokenAddress }));
       const usd = ethPrice * currentTokenBalance;
       setUsdBalance(usd);
     }
@@ -261,11 +260,12 @@ export default function Index() {
     }
   };
 
+  const fetchAndUpdatePrices = async () => {
+    await fetchTokenBalance();
+    await fetchPrices(tokenBalance);
+  };
+
   useEffect(() => {
-    const fetchAndUpdatePrices = async () => {
-      await fetchTokenBalance();
-      await fetchPrices(tokenBalance);
-    };
     fetchAndUpdatePrices();
     const intervalId = setInterval(fetchAndUpdatePrices, FETCH_PRICES_INTERVAL);
 
@@ -288,9 +288,6 @@ export default function Index() {
     }
   }, [failedNetworkRequest]);
 
-  const paginationKeyWithoutNull = paginationKey
-    ? paginationKey.filter((item) => item)
-    : [];
   return (
     <SafeAreaContainer>
       <ContentContainer>
@@ -353,15 +350,11 @@ export default function Index() {
           renderItem={renderItem}
           keyExtractor={(item) => item.uniqueId}
           contentContainerStyle={{ gap: 10 }}
-          onScroll={({ nativeEvent }) => {
-            if (
-              isCloseToBottom(nativeEvent) &&
-              !loadingStatus &&
-              paginationKeyWithoutNull.length > 0
-            ) {
-              console.log("true");
-            }
-          }}
+          // onScroll={({ nativeEvent }) => {
+          //   if (isCloseToBottom(nativeEvent) && !loadingStatus) {
+          //     fetchAndUpdatePrices();
+          //   }
+          // }}
           ListEmptyComponent={() => {
             if (failedStatus) {
               return (

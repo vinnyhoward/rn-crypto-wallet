@@ -142,7 +142,6 @@ export function extractTransactionDetails(
     );
 
   if (!transferInstruction) {
-    console.log("No transfer instructions found.");
     return;
   }
 

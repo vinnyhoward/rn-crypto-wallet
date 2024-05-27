@@ -164,7 +164,7 @@ const assetTransferParamsBuilder = () =>
     fromBlock: "0x0",
     excludeZeroValue: true,
     withMetadata: true,
-    maxCount: 25,
+    // maxCount: 20,
     category: [
       "internal",
       "external",
@@ -177,7 +177,7 @@ const assetTransferParamsBuilder = () =>
 
 export const fetchTransactions = async (
   address: string,
-  pageKeys?: string[]
+  pageKeys?: string[] | string
 ) => {
   let pageKeySent: string;
   let pageKeyReceive: string;
