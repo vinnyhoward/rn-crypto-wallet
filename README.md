@@ -89,9 +89,14 @@ yarn install
 3. Set up environment variables. Rename .env.example to .env and update the following keys with appropriate values:
 
 ```bash
-EXPO_PUBLIC_ALCHEMY_KEY=your_alchemy_key
-EXPO_PUBLIC_ALCHEMY_URL=https://eth-sepolia.g.alchemy.com/v2/
+EXPO_PUBLIC_ALCHEMY_ETH_KEY=YOUR_ALCHEMY_KEY
+EXPO_PUBLIC_ALCHEMY_ETH_URL=https://eth-sepolia.g.alchemy.com/v2/
+
 EXPO_PUBLIC_ALCHEMY_SOCKET_URL=wss://eth-sepolia.g.alchemy.com/v2/
+
+EXPO_PUBLIC_ALCHEMY_SOL_URL=https://solana-devnet.g.alchemy.com/v2/
+EXPO_PUBLIC_ALCHEMY_SOL_API_KEY=YOUR_ALCHEMY_KEY
+
 EXPO_PUBLIC_ENVIRONMENT=development
 EXPO_PUBLIC_PASSWORD=
 EXPO_PUBLIC_SALT=
@@ -106,9 +111,9 @@ expo start
 
 ## Environment Variables
 
-`EXPO_PUBLIC_ALCHEMY_KEY`: Your Alchemy API key for accessing Ethereum blockchain data.
+`EXPO_PUBLIC_ALCHEMY_ETH_KEY`: Your Alchemy API key for accessing Ethereum blockchain data.
 
-`EXPO_PUBLIC_ALCHEMY_URL`: The base URL for Alchemy API requests.
+`EXPO_PUBLIC_ALCHEMY_ETH_URL`: The base URL for Alchemy API requests.
 
 `EXPO_PUBLIC_ALCHEMY_SOCKET_URL`: The WebSocket URL for real-time updates from Alchemy.
 

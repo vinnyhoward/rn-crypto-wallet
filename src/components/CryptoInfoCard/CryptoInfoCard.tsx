@@ -9,6 +9,7 @@ interface ButtonTextProps {
 }
 
 interface ButtonContainerProps {
+  hideBackground: boolean;
   backgroundColor?: string;
   theme: ThemeType;
 }
@@ -21,13 +22,15 @@ interface CircleProps {
 const CryptoInfoCardContainer = styled.TouchableOpacity<ButtonContainerProps>`
   flex-direction: row;
   justify-content: space-between;
-  background-color: ${({ theme }) => theme.colors.lightDark};
+  background-color: ${({ theme, hideBackground }) =>
+    hideBackground ? "transparent" : theme.colors.lightDark};
   border-radius: ${(props) => props.theme.borderRadius.large};
   height: 75px;
   padding: ${(props) => props.theme.spacing.medium};
   padding-left: 20px;
   padding-right: 27.5px;
   width: 100%;
+  opacity: 0.95;
 `;
 
 const CryptoInfoCardText = styled.Text<ButtonTextProps>`
@@ -68,6 +71,7 @@ interface ButtonProps {
   icon: React.ReactNode;
   iconBackgroundColor?: string;
   onPress: () => void;
+  hideBackground?: boolean;
 }
 
 const CryptoInfoCard: React.FC<ButtonProps> = ({
@@ -78,11 +82,13 @@ const CryptoInfoCard: React.FC<ButtonProps> = ({
   icon,
   iconBackgroundColor,
   onPress,
+  hideBackground = false,
 }) => {
   return (
     <CryptoInfoCardContainer
       onPress={onPress}
       backgroundColor={backgroundColor}
+      hideBackground={hideBackground}
     >
       <ChainContainer>
         <Circle iconBackgroundColor={iconBackgroundColor}>{icon}</Circle>

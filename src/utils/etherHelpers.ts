@@ -15,22 +15,22 @@ import { Alchemy, Network } from "alchemy-sdk";
 import { truncateBalance } from "./truncateBalance";
 
 const {
-  EXPO_PUBLIC_ALCHEMY_KEY,
-  EXPO_PUBLIC_ALCHEMY_URL,
+  EXPO_PUBLIC_ALCHEMY_ETH_KEY,
+  EXPO_PUBLIC_ALCHEMY_ETH_URL,
   EXPO_PUBLIC_ALCHEMY_SOCKET_URL,
   EXPO_PUBLIC_ENVIRONMENT,
 } = process.env;
 
 const ethWebSocketUrl =
-  EXPO_PUBLIC_ALCHEMY_SOCKET_URL + EXPO_PUBLIC_ALCHEMY_KEY;
-const ethereumUrl = EXPO_PUBLIC_ALCHEMY_URL + EXPO_PUBLIC_ALCHEMY_KEY;
+  EXPO_PUBLIC_ALCHEMY_SOCKET_URL + EXPO_PUBLIC_ALCHEMY_ETH_KEY;
+const ethereumUrl = EXPO_PUBLIC_ALCHEMY_ETH_URL + EXPO_PUBLIC_ALCHEMY_ETH_KEY;
 
 const network =
   EXPO_PUBLIC_ENVIRONMENT === "production"
     ? Network.ETH_MAINNET
     : Network.ETH_SEPOLIA;
 const config = {
-  apiKey: EXPO_PUBLIC_ALCHEMY_KEY,
+  apiKey: EXPO_PUBLIC_ALCHEMY_ETH_KEY,
   network,
 };
 const alchemy = new Alchemy(config);
@@ -251,5 +251,15 @@ export const fetchTransactions = async (
   } catch (error) {
     console.error("Error fetching transactions:", error);
     throw new Error("Failed to fetch transactions: " + error.message);
+  }
+};
+
+export const fetchNFTs = async (address: string) => {
+  try {
+    const response = await alchemy.nft.getNftsForOwner(address);
+    console.log("nft response:", response);
+  } catch (err) {
+    console.error("Error fetching nfts:", err);
+    throw new Error("Failed to fetch nfts: " + err.message);
   }
 };

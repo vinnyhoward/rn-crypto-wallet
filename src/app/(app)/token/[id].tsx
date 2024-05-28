@@ -21,17 +21,17 @@ import {
 } from "../../../store/walletSlice";
 import { capitalizeFirstLetter } from "../../../utils/capitalizeFirstLetter";
 import { formatDollar } from "../../../utils/formatDollars";
-import { isCloseToBottom } from "../../../utils/isCloseToBottom";
-import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
+import { Chains } from "../../../types";
+import { truncateWalletAddress } from "../../../utils/truncateWalletAddress";
+// import { isCloseToBottom } from "../../../utils/isCloseToBottom";
 import SendIcon from "../../../assets/svg/send.svg";
 import ReceiveIcon from "../../../assets/svg/receive.svg";
-import TokenInfoCard from "../../../components/TokenInfoCard/TokenInfoCard";
 import SolanaIcon from "../../../assets/svg/solana.svg";
 import EthereumIcon from "../../../assets/svg/ethereum_plain.svg";
+import TokenInfoCard from "../../../components/TokenInfoCard/TokenInfoCard";
 import CryptoInfoCard from "../../../components/CryptoInfoCard/CryptoInfoCard";
-import { truncateWalletAddress } from "../../../utils/truncateWalletAddress";
+import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 import { TICKERS } from "../../../constants/tickers";
-import { Chains } from "../../../types";
 import { FETCH_PRICES_INTERVAL } from "../../../constants/price";
 
 const isAndroid = Platform.OS === "android";
@@ -45,7 +45,7 @@ const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
   justify-content: flex-start;
-  padding: ${(props) => props.theme.spacing.large};
+  padding: ${(props) => props.theme.spacing.medium};
   margin-top: ${(props) => isAndroid && props.theme.spacing.huge};
 `;
 

@@ -17,7 +17,7 @@ const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
   justify-content: flex-start;
-  padding: ${(props) => props.theme.spacing.large};
+  padding: ${(props) => props.theme.spacing.medium};
 `;
 
 const TextContainer = styled.View<{ theme: ThemeType }>`

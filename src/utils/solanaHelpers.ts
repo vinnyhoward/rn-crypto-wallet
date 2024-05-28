@@ -1,7 +1,6 @@
 import {
   Connection,
   PublicKey,
-  clusterApiUrl,
   SystemProgram,
   Transaction,
   LAMPORTS_PER_SOL,
@@ -10,7 +9,11 @@ import {
 } from "@solana/web3.js";
 import { TransactionObject } from "../types";
 
-const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+const { EXPO_PUBLIC_ALCHEMY_SOL_URL, EXPO_PUBLIC_ALCHEMY_SOL_API_KEY } =
+  process.env;
+const customRpcUrl =
+  EXPO_PUBLIC_ALCHEMY_SOL_URL + EXPO_PUBLIC_ALCHEMY_SOL_API_KEY;
+const connection = new Connection(customRpcUrl, "confirmed");
 
 export const getSolanaBalance = async (publicKeyString: string) => {
   try {

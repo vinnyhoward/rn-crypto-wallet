@@ -5,6 +5,7 @@
         "devnet",
         "ethersproject",
         "formik",
+        "gorhom",
         "Keypair",
         "lamports",
         "nacl",
