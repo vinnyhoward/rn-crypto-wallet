@@ -5,7 +5,7 @@
 <br />
 <div align="center">
   <a>
-    <img src="assets/readme_banner_alt.png" alt="Logo" width="100%">
+    <img src="assets/readme_banner.png" alt="Logo" width="100%">
   </a>
 
   <h3 align="center">React Native Crypto Wallet</h3>

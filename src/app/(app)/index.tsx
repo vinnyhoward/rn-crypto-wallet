@@ -2,15 +2,16 @@ import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import {
   View,
   SafeAreaView,
-  ScrollView,
   RefreshControl,
   Platform,
   FlatList,
+  Dimensions,
 } from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useDispatch, useSelector } from "react-redux";
 import { router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
+import { Image } from "expo-image";
 import styled, { useTheme } from "styled-components/native";
 import { ROUTES } from "../../constants/routes";
 import type { ThemeType } from "../../styles/theme";
@@ -130,6 +131,20 @@ const ErrorText = styled.Text<{ theme: ThemeType }>`
   color: ${(props) => props.theme.colors.white};
 `;
 
+export const ExpoImage = styled(Image)`
+  flex: 1;
+  width: 100%;
+`;
+
+const containerWidth = Dimensions.get("window").width * 0.8;
+export const ImageContainer = styled.View<{ theme: ThemeType }>`
+  flex: 1;
+  width: ${containerWidth}px;
+  height: 215px;
+  justify-content: center;
+  align-items: center;
+`;
+
 export default function Index() {
   const dispatch = useDispatch<AppDispatch>();
   const sheetRef = useRef<BottomSheet>(null);
@@ -146,19 +161,15 @@ export default function Index() {
   const solBalance = useSelector(
     (state: RootState) => state.wallet.solana.balance
   );
-
   const solTransactions = useSelector(
     (state: RootState) => state.wallet.solana.transactionMetadata.transactions
   );
-
   const ethTransactions = useSelector(
     (state: RootState) => state.wallet.ethereum.transactionMetadata.transactions
   );
-
   const failedEthStatus = useSelector(
     (state: RootState) => state.wallet.ethereum.status === "failed"
   );
-
   const failedSolStatus = useSelector(
     (state: RootState) => state.wallet.solana.status === "failed"
   );
@@ -306,6 +317,14 @@ export default function Index() {
           data={failedEthStatus && failedSolStatus ? [] : transactions}
           renderItem={renderItem}
           keyExtractor={(item) => item.uniqueId}
+          refreshControl={
+            <RefreshControl
+              tintColor="#fff"
+              titleColor="#fff"
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
           ListHeaderComponent={
             <>
               <BalanceContainer>
@@ -340,13 +359,15 @@ export default function Index() {
               <SectionTitle>All Transactions</SectionTitle>
             </>
           }
-          refreshControl={
-            <RefreshControl
-              tintColor="#fff"
-              titleColor="#fff"
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-            />
+          ListEmptyComponent={
+            <ContentContainer>
+              <ImageContainer>
+                <ExpoImage
+                  source={require("../../assets/images/wallet.png")}
+                  contentFit="cover"
+                />
+              </ImageContainer>
+            </ContentContainer>
           }
         />
       </ContentContainer>
