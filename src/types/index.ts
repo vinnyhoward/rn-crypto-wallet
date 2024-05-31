@@ -94,3 +94,27 @@ export interface TransactionObject {
   slot: number;
   transaction: Transaction;
 }
+
+export interface GenericTransaction {
+  uniqueId: string;
+  from: string;
+  to: string;
+  hash: string;
+  value: BigInt;
+  blockTime: number;
+  asset: string;
+  direction: string;
+}
+
+export interface GenericTransactionFlatList {
+  item: {
+    uniqueId: string;
+    from: string;
+    to: string;
+    hash: string;
+    value: BigInt;
+    blockTime: number;
+    asset: string;
+    direction: string;
+  };
+}

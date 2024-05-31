@@ -1,8 +1,8 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import {
   View,
   SafeAreaView,
-  FlatList,
+  ScrollView,
   RefreshControl,
   Platform,
 } from "react-native";
@@ -21,9 +21,10 @@ import {
 } from "../../../store/walletSlice";
 import { capitalizeFirstLetter } from "../../../utils/capitalizeFirstLetter";
 import { formatDollar } from "../../../utils/formatDollars";
-import { Chains } from "../../../types";
+import { Chains, GenericTransaction } from "../../../types";
 import { truncateWalletAddress } from "../../../utils/truncateWalletAddress";
 // import { isCloseToBottom } from "../../../utils/isCloseToBottom";
+import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import SendIcon from "../../../assets/svg/send.svg";
 import ReceiveIcon from "../../../assets/svg/receive.svg";
 import SolanaIcon from "../../../assets/svg/solana.svg";
@@ -91,14 +92,6 @@ const SectionTitle = styled.Text<{ theme: ThemeType }>`
   margin-bottom: ${(props) => props.theme.spacing.medium};
 `;
 
-const TransactionTitle = styled.Text<{ theme: ThemeType }>`
-  font-family: ${(props) => props.theme.fonts.families.openBold};
-  font-size: ${(props) => props.theme.fonts.sizes.header};
-  color: ${(props) => props.theme.fonts.colors.primary};
-  margin-bottom: ${(props) => props.theme.spacing.small};
-  margin-top: ${(props) => props.theme.spacing.medium};
-`;
-
 const ComingSoonView = styled.View<{ theme: ThemeType }>`
   flex: 1;
   justify-content: center;
@@ -130,8 +123,61 @@ const ErrorText = styled.Text<{ theme: ThemeType }>`
   color: ${(props) => props.theme.colors.white};
 `;
 
+const BottomScrollFlatList = styled(BottomSheetFlatList)<{ theme: ThemeType }>`
+  padding: ${(props) => props.theme.spacing.tiny};
+  padding-top: ${(props) => props.theme.spacing.small};
+`;
+
+const BottomSectionTitle = styled.Text<{ theme: ThemeType }>`
+  font-family: ${(props) => props.theme.fonts.families.openBold};
+  font-size: ${(props) => props.theme.fonts.sizes.header};
+  color: ${(props) => props.theme.fonts.colors.primary};
+  margin-bottom: ${(props) => props.theme.spacing.medium};
+  margin-left: ${(props) => props.theme.spacing.huge};
+`;
+
+const SortContainer = styled.View<{ theme: ThemeType }>`
+  display: flex;
+  flex-direction: row;
+  padding-right: ${(props) => props.theme.spacing.medium};
+  padding-left: ${(props) => props.theme.spacing.medium};
+  width: 100%;
+  margin-bottom: ${(props) => props.theme.spacing.small};
+`;
+
+const SortButton = styled.TouchableOpacity<{
+  theme: ThemeType;
+  highlighted: boolean;
+}>`
+  background-color: ${({ theme, highlighted }) => {
+    return highlighted ? theme.colors.primary : theme.colors.dark;
+  }};
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 35px;
+  border-radius: 8px;
+  margin-right: 5px;
+  padding: 0 20px;
+`;
+
+const SortText = styled.Text<{ theme: ThemeType }>`
+  font-family: ${(props) => props.theme.fonts.families.openBold};
+  font-size: ${(props) => props.theme.fonts.sizes.normal};
+  color: ${(props) => props.theme.colors.white};
+  text-align: center;
+`;
+
+enum FilterTypes {
+  ALL,
+  RECEIVE,
+  SENT,
+}
+
 export default function Index() {
   const dispatch = useDispatch<AppDispatch>();
+  const sheetRef = useRef<BottomSheet>(null);
   const { id } = useLocalSearchParams();
   const theme = useTheme();
   const chainName = id as string;
@@ -154,14 +200,14 @@ export default function Index() {
     (state: RootState) => state.wallet[chainName].status === "failed"
   );
 
-  const loadingStatus = useSelector(
-    (state: RootState) => state.wallet[chainName].status === "loading"
-  );
+  // const loadingStatus = useSelector(
+  //   (state: RootState) => state.wallet[chainName].status === "loading"
+  // );
 
-  const paginationKey: string[] | string = useSelector(
-    (state: RootState) =>
-      state.wallet[chainName].transactionMetadata.paginationKey
-  );
+  // const paginationKey: string[] | string = useSelector(
+  //   (state: RootState) =>
+  //     state.wallet[chainName].transactionMetadata.paginationKey
+  // );
 
   const prices = useSelector((state: RootState) => state.price.data);
   const solPrice = prices.solana.usd;
@@ -169,6 +215,8 @@ export default function Index() {
 
   const [usdBalance, setUsdBalance] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
+  const [transactions, setTransactions] = useState(transactionHistory);
+  const [filter, setFilter] = useState(FilterTypes.ALL);
 
   const ticker = TICKERS[chainName];
   const isSolana = chainName === Chains.Solana;
@@ -265,6 +313,27 @@ export default function Index() {
     await fetchPrices(tokenBalance);
   };
 
+  const snapPoints = useMemo(() => ["38%", "66%", "90%"], []);
+
+  const filterTransactions = () => {
+    switch (filter) {
+      case FilterTypes.RECEIVE:
+        return setTransactions(
+          transactionHistory.filter(
+            (item: GenericTransaction) => item.direction === "received"
+          )
+        );
+      case FilterTypes.SENT:
+        return setTransactions(
+          transactionHistory.filter(
+            (item: GenericTransaction) => item.direction === "sent"
+          )
+        );
+      default:
+        return setTransactions(transactionHistory);
+    }
+  };
+
   useEffect(() => {
     fetchAndUpdatePrices();
     const intervalId = setInterval(fetchAndUpdatePrices, FETCH_PRICES_INTERVAL);
@@ -288,10 +357,86 @@ export default function Index() {
     }
   }, [failedNetworkRequest]);
 
+  useEffect(() => {
+    filterTransactions();
+  }, [transactionHistory, filter]);
+
   return (
     <SafeAreaContainer>
-      <ContentContainer>
-        <FlatList
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={theme.colors.white}
+          />
+        }
+      >
+        <ContentContainer>
+          <BalanceContainer>
+            <BalanceTokenText>
+              {tokenBalance} {ticker}
+            </BalanceTokenText>
+            <BalanceUsdText>{formatDollar(usdBalance)}</BalanceUsdText>
+          </BalanceContainer>
+          <ActionContainer>
+            <PrimaryButton
+              icon={
+                <SendIcon width={25} height={25} fill={theme.colors.primary} />
+              }
+              onPress={() => router.push(`token/send/${chainName}`)}
+              btnText="Send"
+            />
+            <View style={{ width: 15 }} />
+            <PrimaryButton
+              icon={
+                <ReceiveIcon
+                  width={25}
+                  height={25}
+                  fill={theme.colors.primary}
+                />
+              }
+              onPress={() => router.push(`token/receive/${chainName}`)}
+              btnText="Receive"
+            />
+          </ActionContainer>
+          <SectionTitle>About {capitalizeFirstLetter(chainName)}</SectionTitle>
+          <CryptoInfoCardContainer>
+            <TokenInfoCard
+              tokenName={capitalizeFirstLetter(chainName)}
+              tokenSymbol={ticker}
+              network={capitalizeFirstLetter(chainName)}
+            />
+          </CryptoInfoCardContainer>
+        </ContentContainer>
+      </ScrollView>
+      <BottomSheet
+        ref={sheetRef}
+        index={0}
+        snapPoints={snapPoints}
+        backgroundStyle={{
+          borderTopLeftRadius: 30,
+          borderTopRightRadius: 30,
+          backgroundColor: theme.colors.lightDark,
+          opacity: 0.98,
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 12,
+          },
+          shadowOpacity: 0.58,
+          shadowRadius: 16.0,
+
+          elevation: 24,
+        }}
+        handleIndicatorStyle={{
+          backgroundColor: theme.colors.white,
+        }}
+        handleStyle={{
+          marginTop: 6,
+        }}
+      >
+        <BottomScrollFlatList
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -301,60 +446,32 @@ export default function Index() {
           }
           ListHeaderComponent={
             <>
-              <BalanceContainer>
-                <BalanceTokenText>
-                  {tokenBalance} {ticker}
-                </BalanceTokenText>
-                <BalanceUsdText>{formatDollar(usdBalance)}</BalanceUsdText>
-              </BalanceContainer>
-              <ActionContainer>
-                <PrimaryButton
-                  icon={
-                    <SendIcon
-                      width={25}
-                      height={25}
-                      fill={theme.colors.primary}
-                    />
-                  }
-                  onPress={() => router.push(`token/send/${chainName}`)}
-                  btnText="Send"
-                />
-                <View style={{ width: 15 }} />
-                <PrimaryButton
-                  icon={
-                    <ReceiveIcon
-                      width={25}
-                      height={25}
-                      fill={theme.colors.primary}
-                    />
-                  }
-                  onPress={() => router.push(`token/receive/${chainName}`)}
-                  btnText="Receive"
-                />
-              </ActionContainer>
-              <SectionTitle>
-                About {capitalizeFirstLetter(chainName)}
-              </SectionTitle>
-              <CryptoInfoCardContainer>
-                <TokenInfoCard
-                  tokenName={capitalizeFirstLetter(chainName)}
-                  tokenSymbol={ticker}
-                  network={capitalizeFirstLetter(chainName)}
-                />
-              </CryptoInfoCardContainer>
-
-              <TransactionTitle>Transaction History</TransactionTitle>
+              <BottomSectionTitle>Transaction History</BottomSectionTitle>
+              <SortContainer>
+                <SortButton
+                  onPress={() => setFilter(FilterTypes.ALL)}
+                  highlighted={filter === FilterTypes.ALL}
+                >
+                  <SortText>All</SortText>
+                </SortButton>
+                <SortButton
+                  onPress={() => setFilter(FilterTypes.RECEIVE)}
+                  highlighted={filter === FilterTypes.RECEIVE}
+                >
+                  <SortText>Received</SortText>
+                </SortButton>
+                <SortButton
+                  onPress={() => setFilter(FilterTypes.SENT)}
+                  highlighted={filter === FilterTypes.SENT}
+                >
+                  <SortText>Sent</SortText>
+                </SortButton>
+              </SortContainer>
             </>
           }
-          data={failedStatus ? [] : transactionHistory}
+          data={failedStatus ? [] : transactions}
           renderItem={renderItem}
-          keyExtractor={(item) => item.uniqueId}
-          contentContainerStyle={{ gap: 10 }}
-          // onScroll={({ nativeEvent }) => {
-          //   if (isCloseToBottom(nativeEvent) && !loadingStatus) {
-          //     fetchAndUpdatePrices();
-          //   }
-          // }}
+          keyExtractor={(item: GenericTransaction) => item.uniqueId}
           ListEmptyComponent={() => {
             if (failedStatus) {
               return (
@@ -374,8 +491,8 @@ export default function Index() {
               );
             }
           }}
-        />
-      </ContentContainer>
+        ></BottomScrollFlatList>
+      </BottomSheet>
     </SafeAreaContainer>
   );
 }

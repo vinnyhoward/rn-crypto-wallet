@@ -1,6 +1,6 @@
 import styled from "styled-components/native";
 import { ThemeType } from "../../styles/theme";
-import React from "react";
+import React, { memo } from "react";
 
 interface ButtonTextProps {
   color?: string;
@@ -104,4 +104,4 @@ const CryptoInfoCard: React.FC<ButtonProps> = ({
   );
 };
 
-export default CryptoInfoCard;
+export default memo(CryptoInfoCard);
