@@ -10,6 +10,7 @@ import Copy from "../../assets/svg/copy.svg";
 import Button from "../../components/Button/Button";
 import Bubble from "../../components/Bubble/Bubble";
 import { ROUTES } from "../../constants/routes";
+import { Title, Subtitle } from "../../components/Styles/Text.styles";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -27,21 +28,6 @@ const ContentContainer = styled.View<{ theme: ThemeType }>`
 
 const TextContainer = styled.View<{ theme: ThemeType }>`
   margin-bottom: ${(props) => props.theme.spacing.huge};
-`;
-
-const Title = styled.Text<{ theme: ThemeType }>`
-  font-family: ${(props) => props.theme.fonts.families.openBold};
-  font-size: 28px;
-  color: ${(props) => props.theme.fonts.colors.primary};
-  margin-bottom: ${(props) => props.theme.spacing.medium};
-  text-align: center;
-`;
-
-const Subtitle = styled.Text<{ theme: ThemeType }>`
-  font-family: ${(props) => props.theme.fonts.families.openRegular};
-  font-size: ${(props) => props.theme.fonts.sizes.large};
-  color: ${(props) => props.theme.fonts.colors.primary};
-  text-align: center;
 `;
 
 const ButtonContainer = styled.View<{ theme: ThemeType }>`

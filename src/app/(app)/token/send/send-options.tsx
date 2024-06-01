@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SafeAreaView, Platform } from "react-native";
+import { Platform } from "react-native";
 import { useSelector } from "react-redux";
 import { useRouter } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
@@ -9,12 +9,7 @@ import { formatDollar } from "../../../../utils/formatDollars";
 import CryptoInfoCard from "../../../../components/CryptoInfoCard/CryptoInfoCard";
 import SolanaIcon from "../../../../assets/svg/solana.svg";
 import EthereumIcon from "../../../../assets/svg/ethereum.svg";
-
-const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
-  flex: 1;
-  background-color: ${(props) => props.theme.colors.dark};
-  justify-content: flex-end;
-`;
+import { SafeAreaContainer } from "../../../../components/Styles/Layout.styles";
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;

@@ -18,6 +18,11 @@ import { ROUTES } from "../../constants/routes";
 import { savePrivateKeys } from "../../hooks/use-storage-state";
 import { removePhrase } from "../../hooks/use-storage-state";
 import { uint8ArrayToBase64 } from "../../utils/uint8ArrayToBase64";
+import { Title, Subtitle } from "../../components/Styles/Text.styles";
+import {
+  ErrorTextCenter,
+  ErrorTextContainer,
+} from "../../components/Styles/Errors.styles";
 
 const isAndroid = Platform.OS === "android";
 
@@ -40,21 +45,6 @@ const TextContainer = styled.View<{ theme: ThemeType }>`
   margin-bottom: ${(props) => props.theme.spacing.huge};
 `;
 
-const Title = styled.Text<{ theme: ThemeType }>`
-  font-family: ${(props) => props.theme.fonts.families.openBold};
-  font-size: 28px;
-  color: ${(props) => props.theme.fonts.colors.primary};
-  margin-bottom: ${(props) => props.theme.spacing.medium};
-  text-align: center;
-`;
-
-const Subtitle = styled.Text<{ theme: ThemeType }>`
-  font-family: ${(props) => props.theme.fonts.families.openRegular};
-  font-size: ${(props) => props.theme.fonts.sizes.large};
-  color: ${(props) => props.theme.fonts.colors.primary};
-  text-align: center;
-`;
-
 const ButtonContainer = styled.View<{ theme: ThemeType }>`
   padding-left: ${(props) => props.theme.spacing.large};
   padding-right: ${(props) => props.theme.spacing.large};
@@ -74,17 +64,6 @@ const SeedTextInput = styled.TextInput<{ theme: ThemeType }>`
   font-size: ${(props) => props.theme.fonts.sizes.large};\
   font-family: ${(props) => props.theme.fonts.families.openRegular};
   border: 1px solid ${(props) => props.theme.colors.grey};
-`;
-
-const ErrorTextContainer = styled.View<{ theme: ThemeType }>`
-  padding: ${(props) => props.theme.spacing.medium};
-`;
-
-const ErrorText = styled.Text<{ theme: ThemeType }>`
-  font-family: ${(props) => props.theme.fonts.families.openRegular};
-  font-size: ${(props) => props.theme.fonts.sizes.large};
-  color: ${(props) => props.theme.colors.error};
-  text-align: center;
 `;
 
 export default function Page() {
@@ -173,7 +152,7 @@ export default function Page() {
       </ScrollView>
       {error && (
         <ErrorTextContainer>
-          <ErrorText>{error}</ErrorText>
+          <ErrorTextCenter>{error}</ErrorTextCenter>
         </ErrorTextContainer>
       )}
       <ButtonContainer>

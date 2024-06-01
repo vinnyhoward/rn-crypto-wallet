@@ -1,5 +1,5 @@
 import * as Clipboard from "expo-clipboard";
-import { SafeAreaView, Platform } from "react-native";
+import { Platform } from "react-native";
 import { useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
 import { useRouter } from "expo-router";
@@ -9,12 +9,7 @@ import Ethereum from "../../../../assets/svg/ethereum.svg";
 import Solana from "../../../../assets/svg/solana.svg";
 import CopyIcon from "../../../../assets/svg/copy.svg";
 import QRCodeIcon from "../../../../assets/svg/qr-code.svg";
-
-const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
-  flex: 1;
-  background-color: ${(props) => props.theme.colors.dark};
-  justify-content: flex-end;
-`;
+import { SafeAreaContainer } from "../../../../components/Styles/Layout.styles";
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;

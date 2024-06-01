@@ -1,4 +1,3 @@
-import { SafeAreaView } from "react-native";
 import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import { clearPersistedState } from "../../../store";
@@ -7,12 +6,7 @@ import { ROUTES } from "../../../constants/routes";
 import { ThemeType } from "../../../styles/theme";
 import ClearIcon from "../../../assets/svg/clear.svg";
 import CloseIcon from "../../../assets/svg/close.svg";
-
-const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
-  flex: 1;
-  background-color: ${(props) => props.theme.colors.dark};
-  justify-content: flex-end;
-`;
+import { SafeAreaContainer } from "../../../components/Styles/Layout.styles";
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;

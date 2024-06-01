@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, useRef } from "react";
-import { SafeAreaView, Platform } from "react-native";
+import { Platform } from "react-native";
 import { useSelector } from "react-redux";
 import { router, useLocalSearchParams } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
@@ -22,6 +22,7 @@ import {
   calculateSolanaTransactionFee,
 } from "../../../../utils/solanaHelpers";
 import Button from "../../../../components/Button/Button";
+import { SafeAreaContainer } from "../../../../components/Styles/Layout.styles";
 
 type FormikChangeHandler = {
   (e: ChangeEvent<any>): void;
@@ -35,12 +36,6 @@ interface TextInputProps {
   isAmountInputFocused?: boolean;
   theme: ThemeType;
 }
-
-const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
-  flex: 1;
-  background-color: ${(props) => props.theme.colors.dark};
-  justify-content: flex-end;
-`;
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;

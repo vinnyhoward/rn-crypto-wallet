@@ -9,6 +9,11 @@ import { ThemeType } from "../../styles/theme";
 import Button from "../../components/Button/Button";
 import Bubble from "../../components/Bubble/Bubble";
 import { ROUTES } from "../../constants/routes";
+import { Title, Subtitle } from "../../components/Styles/Text.styles";
+import {
+  ErrorTextCenter,
+  ErrorTextContainer,
+} from "../../components/Styles/Errors.styles";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -26,21 +31,6 @@ const ContentContainer = styled.View<{ theme: ThemeType }>`
 
 const TextContainer = styled.View<{ theme: ThemeType }>`
   margin-bottom: ${(props) => props.theme.spacing.huge};
-`;
-
-const Title = styled.Text<{ theme: ThemeType }>`
-  font-family: ${(props) => props.theme.fonts.families.openBold};
-  font-size: 28px;
-  color: ${(props) => props.theme.fonts.colors.primary};
-  margin-bottom: ${(props) => props.theme.spacing.medium};
-  text-align: center;
-`;
-
-const Subtitle = styled.Text<{ theme: ThemeType }>`
-  font-family: ${(props) => props.theme.fonts.families.openRegular};
-  font-size: ${(props) => props.theme.fonts.sizes.large};
-  color: ${(props) => props.theme.fonts.colors.primary};
-  text-align: center;
 `;
 
 const ButtonContainer = styled.View<{ theme: ThemeType }>`
@@ -71,17 +61,6 @@ const ConfirmSeedContainer = styled.View<{ theme: ThemeType }>`
   border-radius: ${(props) => props.theme.borderRadius.extraLarge};
   height: 220px;
   width: ${(Dimensions.get("window").width - 80).toFixed(0)}px;
-`;
-
-const ErrorTextContainer = styled.View<{ theme: ThemeType }>`
-  padding: ${(props) => props.theme.spacing.medium};
-`;
-
-const ErrorText = styled.Text<{ theme: ThemeType }>`
-  font-family: ${(props) => props.theme.fonts.families.openRegular};
-  font-size: ${(props) => props.theme.fonts.sizes.large};
-  color: ${(props) => props.theme.colors.error};
-  text-align: center;
 `;
 
 export default function Page() {
@@ -173,7 +152,7 @@ export default function Page() {
       </ScrollView>
       {error && (
         <ErrorTextContainer>
-          <ErrorText>{error}</ErrorText>
+          <ErrorTextCenter>{error}</ErrorTextCenter>
         </ErrorTextContainer>
       )}
       <ButtonContainer>

@@ -1,11 +1,5 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import {
-  View,
-  SafeAreaView,
-  ScrollView,
-  RefreshControl,
-  Platform,
-} from "react-native";
+import { View, ScrollView, RefreshControl, Platform } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { router, useLocalSearchParams } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
@@ -34,25 +28,22 @@ import CryptoInfoCard from "../../../components/CryptoInfoCard/CryptoInfoCard";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 import { TICKERS } from "../../../constants/tickers";
 import { FETCH_PRICES_INTERVAL } from "../../../constants/price";
+import {
+  SafeAreaContainer,
+  BalanceContainer,
+} from "../../../components/Styles/Layout.styles";
+import {
+  ErrorContainer,
+  ErrorText,
+} from "../../../components/Styles/Errors.styles";
 
 const isAndroid = Platform.OS === "android";
-
-const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
-  flex: 1;
-  background-color: ${(props) => props.theme.colors.dark};
-  justify-content: flex-end;
-`;
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
   justify-content: flex-start;
   padding: ${(props) => props.theme.spacing.medium};
   margin-top: ${(props) => isAndroid && props.theme.spacing.huge};
-`;
-
-const BalanceContainer = styled.View<{ theme: ThemeType }>`
-  margin-top: 10px;
-  margin-bottom: ${(props) => props.theme.spacing.huge};
 `;
 
 const BalanceTokenText = styled.Text<{ theme: ThemeType }>`
@@ -103,24 +94,6 @@ const ComingSoonText = styled.Text<{ theme: ThemeType }>`
   font-size: ${(props) => props.theme.fonts.sizes.header};
   color: ${(props) => props.theme.colors.lightGrey};
   margin-top: ${(props) => props.theme.spacing.medium};
-`;
-
-const ErrorContainer = styled.View<{ theme: ThemeType }>`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  background-color: rgba(255, 0, 0, 0.3);
-  border: 2px solid rgba(255, 0, 0, 0.4);
-  border-radius: ${(props) => props.theme.borderRadius.large};
-  height: 85px;
-  padding: ${(props) => props.theme.spacing.medium};
-`;
-
-const ErrorText = styled.Text<{ theme: ThemeType }>`
-  font-family: ${(props) => props.theme.fonts.families.openBold};
-  font-size: ${(props) => props.theme.fonts.sizes.normal};
-  color: ${(props) => props.theme.colors.white};
 `;
 
 const BottomScrollFlatList = styled(BottomSheetFlatList)<{ theme: ThemeType }>`

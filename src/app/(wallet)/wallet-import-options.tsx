@@ -1,16 +1,11 @@
-import { SafeAreaView } from "react-native";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import { ThemeType } from "../../styles/theme";
 import { ROUTES } from "../../constants/routes";
 import ImportWalletIcon from "../../assets/svg/import-wallet.svg";
-
-const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
-  flex: 1;
-  background-color: ${(props) => props.theme.colors.dark};
-  justify-content: flex-end;
-`;
+import { SafeAreaContainer } from "../../components/Styles/Layout.styles";
+import { Subtitle } from "../../components/Styles/Text.styles";
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
@@ -28,13 +23,6 @@ const Title = styled.Text<{ theme: ThemeType }>`
   font-size: 32px;
   color: ${(props) => props.theme.fonts.colors.primary};
   margin-bottom: ${(props) => props.theme.spacing.small};
-  text-align: center;
-`;
-
-const Subtitle = styled.Text<{ theme: ThemeType }>`
-  font-family: ${(props) => props.theme.fonts.families.openRegular};
-  font-size: ${(props) => props.theme.fonts.sizes.large};
-  color: ${(props) => props.theme.fonts.colors.primary};
   text-align: center;
 `;
 

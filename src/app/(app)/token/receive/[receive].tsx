@@ -1,4 +1,4 @@
-import { SafeAreaView, Share, Alert, Platform, Dimensions } from "react-native";
+import { Share, Alert, Platform, Dimensions } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import * as Clipboard from "expo-clipboard";
 import { useLayoutEffect, useState } from "react";
@@ -10,6 +10,7 @@ import type { RootState } from "../../../../store";
 import { capitalizeFirstLetter } from "../../../../utils/capitalizeFirstLetter";
 import { truncateWalletAddress } from "../../../../utils/truncateWalletAddress";
 import Button from "../../../../components/Button/Button";
+import { SafeAreaContainer } from "../../../../components/Styles/Layout.styles";
 const qrWidth = Dimensions.get("window").width * 0.8;
 const qrContainerWidth = Dimensions.get("window").width * 0.9;
 interface TextInputProps {
@@ -17,12 +18,6 @@ interface TextInputProps {
   isAmountInputFocused?: boolean;
   theme: ThemeType;
 }
-
-const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
-  flex: 1;
-  background-color: ${(props) => props.theme.colors.dark};
-  justify-content: flex-end;
-`;
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;

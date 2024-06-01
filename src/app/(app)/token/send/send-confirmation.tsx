@@ -28,12 +28,8 @@ import {
 import { getPrivateKeys } from "../../../../hooks/use-storage-state";
 import type { RootState } from "../../../../store";
 import { base64ToUint8Array } from "../../../../utils/base64ToUint8Array";
-
-const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
-  flex: 1;
-  background-color: ${(props) => props.theme.colors.dark};
-  justify-content: flex-end;
-`;
+import { BalanceContainer } from "../../../../components/Styles/Layout.styles";
+import { SafeAreaContainer } from "../../../../components/Styles/Layout.styles";
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
@@ -54,11 +50,6 @@ const IconView = styled.View<{ theme: ThemeType }>`
   align-items: center;
   margin-bottom: ${(props) => props.theme.spacing.medium};
   width: 100%;
-`;
-
-const BalanceContainer = styled.View<{ theme: ThemeType }>`
-  margin-top: 10px;
-  margin-bottom: ${(props) => props.theme.spacing.huge};
 `;
 
 const CryptoBalanceText = styled.Text<{ theme: ThemeType }>`

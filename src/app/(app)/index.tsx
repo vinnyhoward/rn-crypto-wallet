@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import {
   View,
-  SafeAreaView,
   RefreshControl,
   Platform,
   FlatList,
@@ -36,12 +35,7 @@ import EthereumPlainIcon from "../../assets/svg/ethereum_plain.svg";
 import EthereumIcon from "../../assets/svg/ethereum.svg";
 import { FETCH_PRICES_INTERVAL } from "../../constants/price";
 import { TICKERS } from "../../constants/tickers";
-
-const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
-  flex: 1;
-  background-color: ${(props) => props.theme.colors.dark};
-  justify-content: flex-end;
-`;
+import { SafeAreaContainer } from "../../components/Styles/Layout.styles";
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
