@@ -56,11 +56,18 @@ __Note__: The security architecture for this project is currently in a developme
 - [x] Send Solana
 - [x] List transactions transactions on Solana
 
+### Other wallet actions
+- [x] Scan QR code to share address or send crypto
+
+### Security
+- [x] Improve security and management of private keys (this wallet will never be 
+- [ ] Add biometrics screen and offer biometrics for wallet
+
 #### Nice to haves
+- [x] Android ui bugs
+production but it'd be fun to add)
 - [ ] UI improvements - loaders, animation, etc
-- [X] Android ui bugs
 - [ ] Refactor repeating styled components and some logic
-- [ ] Improve security and management of private keys (this wallet will never be production but it'd be fun to add)
 
 ## Prerequisites
 

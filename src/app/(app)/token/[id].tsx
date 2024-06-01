@@ -472,6 +472,9 @@ export default function Index() {
           data={failedStatus ? [] : transactions}
           renderItem={renderItem}
           keyExtractor={(item: GenericTransaction) => item.uniqueId}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={5}
           ListEmptyComponent={() => {
             if (failedStatus) {
               return (

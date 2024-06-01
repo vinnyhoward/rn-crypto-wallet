@@ -317,6 +317,9 @@ export default function Index() {
           data={failedEthStatus && failedSolStatus ? [] : transactions}
           renderItem={renderItem}
           keyExtractor={(item) => item.uniqueId}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={5}
           refreshControl={
             <RefreshControl
               tintColor="#fff"

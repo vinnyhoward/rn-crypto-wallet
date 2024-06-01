@@ -27,6 +27,28 @@ export const getSolanaBalance = async (publicKeyString: string) => {
   }
 };
 
+const fetchTransactionsSequentially = async (signatures: any[]) => {
+  const transactions = [];
+
+  for (const signature of signatures) {
+    try {
+      const transaction = await connection.getParsedTransaction(
+        signature.signature
+      );
+      transactions.push(transaction);
+    } catch (error) {
+      if (error.message.includes("429")) {
+        console.log("Rate limit hit, slowing down requests");
+        await new Promise((resolve) => setTimeout(resolve, 250));
+      } else {
+        console.error("Failed to fetch transaction:", error);
+      }
+    }
+  }
+
+  return transactions;
+};
+
 export const getTransactionsByWallet = async (
   walletAddress: string,
   beforeSignature?: string,
@@ -41,26 +63,19 @@ export const getTransactionsByWallet = async (
       limit,
     });
   } catch (err) {
-    console.error("Error fetching signature:", err);
+    console.error("Error fetching signatures:", err);
   }
 
   if (signatures) {
     try {
-      const rawTransactions = await Promise.all(
-        signatures.map(async (signature: any) => {
-          const transaction = await connection.getParsedTransaction(
-            signature.signature
-          );
-          return transaction;
-        })
-      );
+      const rawTransactions = await fetchTransactionsSequentially(signatures);
 
       const transactions = rawTransactions
         .map((tx: any) => extractTransactionDetails(tx, walletAddress))
         .sort((a, b) => b.blockTime - a.blockTime);
       return transactions;
     } catch (error) {
-      console.error("Failed to fetch transactions:", error);
+      console.error("Failed to process transactions:", error);
       return [];
     }
   }
