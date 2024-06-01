@@ -37,13 +37,11 @@ import {
   ErrorText,
 } from "../../../components/Styles/Errors.styles";
 
-const isAndroid = Platform.OS === "android";
-
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
   justify-content: flex-start;
   padding: ${(props) => props.theme.spacing.medium};
-  margin-top: ${(props) => isAndroid && props.theme.spacing.huge};
+  margin-top: ${(props) => props.theme.spacing.huge};
 `;
 
 const BalanceTokenText = styled.Text<{ theme: ThemeType }>`

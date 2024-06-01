@@ -1,6 +1,6 @@
 global.Buffer = require("buffer").Buffer;
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Redirect, Stack, router } from "expo-router";
 import { useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
@@ -9,15 +9,18 @@ import Toast from "react-native-toast-message";
 import type { RootState } from "../../store";
 import { ROUTES } from "../../constants/routes";
 import SettingsIcon from "../../assets/svg/settings.svg";
+import QRCodeIcon from "../../assets/svg/qr-code.svg";
 import LeftIcon from "../../assets/svg/left-arrow.svg";
 import CloseIcon from "../../assets/svg/close.svg";
 import { getPhrase, clearStorage } from "../../hooks/use-storage-state";
 import { clearPersistedState } from "../../store";
 import { toastConfig } from "../../config/toast";
+import Header from "../../components/Header/Header";
 
 const IconTouchContainer = styled.TouchableOpacity`
   padding: 10px;
 `;
+
 SplashScreen.preventAutoHideAsync();
 
 export default function AppLayout() {
@@ -27,6 +30,8 @@ export default function AppLayout() {
   const [seedPhraseConfirmed, setSeedPhraseConfirmed] =
     useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const snapPoints = useMemo(() => ["10%", "33%", "66%", "90%"], []);
 
   const walletsExist = ethWallet.address && solWallet.address;
   useEffect(() => {
@@ -66,17 +71,18 @@ export default function AppLayout() {
           headerTransparent: true,
           gestureEnabled: true,
           headerTitle: "",
-          headerLeft: () => (
-            <IconTouchContainer onPress={() => router.push(ROUTES.settings)}>
-              <SettingsIcon
-                width={25}
-                height={25}
-                fill={theme.colors.primary}
-              />
-            </IconTouchContainer>
-          ),
         }}
       >
+        <Stack.Screen
+          name="index"
+          options={{
+            headerShown: true,
+            headerTransparent: true,
+            headerTitle: "",
+            gestureEnabled: true,
+            header: (props) => <Header {...props} />,
+          }}
+        />
         <Stack.Screen
           name="token/[id]"
           options={{
@@ -84,6 +90,7 @@ export default function AppLayout() {
             headerTransparent: true,
             headerTitle: "",
             gestureEnabled: true,
+            headerRight: null,
             headerLeft: () => (
               <IconTouchContainer onPress={() => router.back()}>
                 <LeftIcon width={25} height={25} fill={theme.colors.primary} />
@@ -98,6 +105,7 @@ export default function AppLayout() {
             headerTransparent: true,
             gestureEnabled: true,
             presentation: "modal",
+            headerRight: null,
             headerLeft: () => (
               <IconTouchContainer onPress={() => router.back()}>
                 <CloseIcon width={25} height={25} fill={theme.colors.primary} />
@@ -114,6 +122,8 @@ export default function AppLayout() {
             gestureEnabled: true,
             presentation: "modal",
             headerLeft: null,
+            headerRight: null,
+            header: () => null,
           }}
         />
         <Stack.Screen
@@ -127,6 +137,7 @@ export default function AppLayout() {
               color: theme.colors.white,
             },
             presentation: "modal",
+            headerRight: null,
             headerLeft: () => (
               <IconTouchContainer onPress={() => router.back()}>
                 <LeftIcon width={25} height={25} fill={theme.colors.white} />
@@ -142,6 +153,7 @@ export default function AppLayout() {
             headerTitle: "",
             gestureEnabled: true,
             presentation: "modal",
+            headerRight: null,
             headerLeft: () => (
               <IconTouchContainer onPress={() => router.back()}>
                 <LeftIcon width={25} height={25} fill={theme.colors.primary} />
@@ -157,6 +169,7 @@ export default function AppLayout() {
             headerTitle: "",
             gestureEnabled: true,
             presentation: "modal",
+            headerRight: null,
             headerLeft: () => (
               <IconTouchContainer onPress={() => router.back()}>
                 <CloseIcon width={25} height={25} fill={theme.colors.primary} />
@@ -171,6 +184,7 @@ export default function AppLayout() {
             headerTransparent: true,
             headerTitle: "",
             gestureEnabled: true,
+            headerRight: null,
             headerLeft: () => (
               <IconTouchContainer onPress={() => router.back()}>
                 <CloseIcon width={25} height={25} fill={theme.colors.white} />
@@ -186,6 +200,18 @@ export default function AppLayout() {
             gestureEnabled: true,
             presentation: "modal",
             headerLeft: null,
+            headerRight: null,
+          }}
+        />
+        <Stack.Screen
+          name="accounts/accounts-modal"
+          options={{
+            headerShown: false,
+            headerTransparent: true,
+            gestureEnabled: true,
+            presentation: "modal",
+            headerLeft: null,
+            headerRight: null,
           }}
         />
       </Stack>

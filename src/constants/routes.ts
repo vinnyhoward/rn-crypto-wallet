@@ -18,6 +18,8 @@ export interface Routes {
   sendSol: string;
   sendConfirmation: string;
   settings: string;
+  camera: string;
+  accounts: string;
 }
 
 export const ROUTES: Routes = {
@@ -40,4 +42,6 @@ export const ROUTES: Routes = {
   sendSol: "/token/send/solana",
   sendConfirmation: "/token/send/send-confirmation",
   settings: "/(app)/settings/settings-modal",
+  camera: "/(app)/camera",
+  accounts: "/(app)/accounts/accounts-modal",
 };

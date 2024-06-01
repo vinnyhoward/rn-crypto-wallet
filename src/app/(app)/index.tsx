@@ -28,7 +28,7 @@ import { formatDollar, formatDollarRaw } from "../../utils/formatDollars";
 import { getSolanaBalance } from "../../utils/solanaHelpers";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import SendIcon from "../../assets/svg/send.svg";
-import ReceiveIcon from "../../assets/svg/qr-code.svg";
+import ReceiveIcon from "../../assets/svg/receive.svg";
 import CryptoInfoCard from "../../components/CryptoInfoCard/CryptoInfoCard";
 import SolanaIcon from "../../assets/svg/solana.svg";
 import EthereumPlainIcon from "../../assets/svg/ethereum_plain.svg";
@@ -41,8 +41,7 @@ const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
   justify-content: flex-start;
   padding: ${(props) => props.theme.spacing.medium};
-  margin-top: ${(props) =>
-    Platform.OS === "android" && props.theme.spacing.huge};
+  margin-top: ${(props) => props.theme.spacing.huge};
 `;
 
 const BalanceContainer = styled.View<{ theme: ThemeType }>`

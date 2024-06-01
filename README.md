@@ -68,6 +68,7 @@ __Note__: The security architecture for this project is currently in a developme
 production but it'd be fun to add)
 - [ ] UI improvements - loaders, animation, etc
 - [ ] Refactor repeating styled components and some logic
+- [ ] Pagination for long lists
 
 ## Prerequisites
 
