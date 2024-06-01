@@ -48,7 +48,7 @@ const BalanceContainer = styled.View<{ theme: ThemeType }>`
   display: flex;
   flex-direction: row;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 25px;
   margin-bottom: ${(props) => props.theme.spacing.huge};
 `;
 
