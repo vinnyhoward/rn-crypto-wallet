@@ -1,10 +1,9 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import { View, RefreshControl, FlatList, Dimensions } from "react-native";
+import { View, RefreshControl, FlatList } from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useDispatch, useSelector } from "react-redux";
 import { router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
-import { Image } from "expo-image";
 import styled, { useTheme } from "styled-components/native";
 import { ROUTES } from "../../constants/routes";
 import type { ThemeType } from "../../styles/theme";
@@ -39,17 +38,11 @@ const ContentContainer = styled.View<{ theme: ThemeType }>`
   margin-top: ${(props) => props.theme.spacing.huge};
 `;
 
-const EmptyContainer = styled.View<{ theme: ThemeType }>`
-  flex: 1;
-  justify-content: flex-start;
-  padding: ${(props) => props.theme.spacing.medium};
-`;
-
 const BalanceContainer = styled.View<{ theme: ThemeType }>`
   display: flex;
   flex-direction: row;
   justify-content: center;
-  margin-top: 25px;
+  margin-top: 7.5px;
   margin-bottom: ${(props) => props.theme.spacing.huge};
 `;
 
@@ -81,7 +74,7 @@ const CardView = styled.View<{ theme: ThemeType }>`
 
 const SectionTitle = styled.Text<{ theme: ThemeType }>`
   font-family: ${(props) => props.theme.fonts.families.openBold};
-  font-size: ${(props) => props.theme.fonts.sizes.title};
+  font-size: ${(props) => props.theme.fonts.sizes.header};
   color: ${(props) => props.theme.fonts.colors.primary};
   margin-bottom: ${(props) => props.theme.spacing.medium};
   margin-left: ${(props) => props.theme.spacing.small};
@@ -125,22 +118,6 @@ const ErrorText = styled.Text<{ theme: ThemeType }>`
   color: ${(props) => props.theme.colors.white};
 `;
 
-export const ExpoImage = styled(Image)`
-  flex: 1;
-  width: 100%;
-`;
-
-const containerWidth = Dimensions.get("window").width * 0.8;
-export const ImageContainer = styled.View<{ theme: ThemeType }>`
-  flex: 1;
-  width: ${containerWidth}px;
-  height: 215px;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  margin-top: 25px;
-`;
-
 export default function Index() {
   const dispatch = useDispatch<AppDispatch>();
   const sheetRef = useRef<BottomSheet>(null);
@@ -170,7 +147,7 @@ export default function Index() {
     (state: RootState) => state.wallet.solana.status === "failed"
   );
 
-  const snapPoints = useMemo(() => ["10%", "33%", "66%", "90%"], []);
+  const snapPoints = useMemo(() => ["10%", "33%", "68%", "90%"], []);
 
   const prices = useSelector((state: RootState) => state.price.data);
   const solPrice = prices?.solana?.usd;
@@ -355,20 +332,10 @@ export default function Index() {
                   btnText="Receive"
                 />
               </ActionContainer>
-              <SectionTitle>All Transactions</SectionTitle>
+              <SectionTitle>Recent Activity</SectionTitle>
             </>
           }
-          ListEmptyComponent={
-            <EmptyContainer>
-              <InfoBanner />
-              {/* <ImageContainer>
-                <ExpoImage
-                  source={require("../../assets/images/wallet.png")}
-                  contentFit="cover"
-                />
-              </ImageContainer> */}
-            </EmptyContainer>
-          }
+          ListEmptyComponent={<InfoBanner />}
         />
       </ContentContainer>
       <BottomSheet

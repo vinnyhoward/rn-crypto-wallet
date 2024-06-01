@@ -33,7 +33,7 @@ const RightContainer = styled.View<ThemeComponent>``;
 
 const HeaderText = styled.Text<ThemeComponent>`
   font-family: ${(props) => props.theme.fonts.families.openBold};
-  font-size: 20px;
+  font-size: ${(props) => props.theme.fonts.sizes.header};
   color: ${(props) => props.theme.colors.white};
 `;
 
