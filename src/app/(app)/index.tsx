@@ -1,11 +1,5 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import {
-  View,
-  RefreshControl,
-  Platform,
-  FlatList,
-  Dimensions,
-} from "react-native";
+import { View, RefreshControl, FlatList, Dimensions } from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useDispatch, useSelector } from "react-redux";
 import { router } from "expo-router";
@@ -36,12 +30,19 @@ import EthereumIcon from "../../assets/svg/ethereum.svg";
 import { FETCH_PRICES_INTERVAL } from "../../constants/price";
 import { TICKERS } from "../../constants/tickers";
 import { SafeAreaContainer } from "../../components/Styles/Layout.styles";
+import InfoBanner from "../../components/InfoBanner/InfoBanner";
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
   justify-content: flex-start;
   padding: ${(props) => props.theme.spacing.medium};
   margin-top: ${(props) => props.theme.spacing.huge};
+`;
+
+const EmptyContainer = styled.View<{ theme: ThemeType }>`
+  flex: 1;
+  justify-content: flex-start;
+  padding: ${(props) => props.theme.spacing.medium};
 `;
 
 const BalanceContainer = styled.View<{ theme: ThemeType }>`
@@ -136,6 +137,8 @@ export const ImageContainer = styled.View<{ theme: ThemeType }>`
   height: 215px;
   justify-content: center;
   align-items: center;
+  position: relative;
+  margin-top: 25px;
 `;
 
 export default function Index() {
@@ -356,14 +359,15 @@ export default function Index() {
             </>
           }
           ListEmptyComponent={
-            <ContentContainer>
-              <ImageContainer>
+            <EmptyContainer>
+              <InfoBanner />
+              {/* <ImageContainer>
                 <ExpoImage
                   source={require("../../assets/images/wallet.png")}
                   contentFit="cover"
                 />
-              </ImageContainer>
-            </ContentContainer>
+              </ImageContainer> */}
+            </EmptyContainer>
           }
         />
       </ContentContainer>
