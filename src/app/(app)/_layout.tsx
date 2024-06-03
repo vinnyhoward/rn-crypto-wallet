@@ -1,6 +1,6 @@
 global.Buffer = require("buffer").Buffer;
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Redirect, Stack, router } from "expo-router";
 import { useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
@@ -8,8 +8,6 @@ import * as SplashScreen from "expo-splash-screen";
 import Toast from "react-native-toast-message";
 import type { RootState } from "../../store";
 import { ROUTES } from "../../constants/routes";
-import SettingsIcon from "../../assets/svg/settings.svg";
-import QRCodeIcon from "../../assets/svg/qr-code.svg";
 import LeftIcon from "../../assets/svg/left-arrow.svg";
 import CloseIcon from "../../assets/svg/close.svg";
 import { getPhrase, clearStorage } from "../../hooks/use-storage-state";
@@ -30,8 +28,6 @@ export default function AppLayout() {
   const [seedPhraseConfirmed, setSeedPhraseConfirmed] =
     useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-
-  const snapPoints = useMemo(() => ["10%", "33%", "66%", "90%"], []);
 
   const walletsExist = ethWallet.address && solWallet.address;
   useEffect(() => {
