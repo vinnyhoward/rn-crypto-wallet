@@ -9,7 +9,7 @@ import {
   formatEther,
   parseEther,
 } from "ethers";
-import { mnemonicToSeedSync } from "bip39";
+import { mnemonicToSeedSync, validateMnemonic } from "bip39";
 import { Keypair } from "@solana/web3.js";
 import { Alchemy, Network } from "alchemy-sdk";
 import { truncateBalance } from "./truncateBalance";
@@ -41,6 +41,10 @@ export const webSocketProvider = new WebSocketProvider(ethWebSocketUrl);
 export function restoreWalletFromPhrase(mnemonicPhrase: string) {
   if (!mnemonicPhrase) {
     throw new Error("Mnemonic phrase cannot be empty.");
+  }
+
+  if (!validateMnemonic(mnemonicPhrase)) {
+    throw new Error("Invalid mnemonic phrase ");
   }
 
   try {
@@ -261,5 +265,26 @@ export const fetchNFTs = async (address: string) => {
   } catch (err) {
     console.error("Error fetching nfts:", err);
     throw new Error("Failed to fetch nfts: " + err.message);
+  }
+};
+
+export const deriveEthPrivateKeysFromPhrase = async (
+  mnemonicPhrase: string
+) => {
+  if (!mnemonicPhrase) {
+    throw new Error("Empty mnemonic phrase ");
+  }
+
+  if (!validateMnemonic(mnemonicPhrase)) {
+    throw new Error("Invalid mnemonic phrase ");
+  }
+
+  try {
+    const ethWallet = Wallet.fromPhrase(mnemonicPhrase);
+    return ethWallet.privateKey;
+  } catch (error) {
+    throw new Error(
+      "Failed to derive wallet from mnemonic: " + (error as Error).message
+    );
   }
 };

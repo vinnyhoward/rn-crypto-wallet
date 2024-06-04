@@ -5,12 +5,7 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import styled from "styled-components/native";
 import { createWallet } from "../../utils/etherHelpers";
-import { uint8ArrayToBase64 } from "../../utils/uint8ArrayToBase64";
-import {
-  savePrivateKeys,
-  savePhrase,
-  saveWallet,
-} from "../../hooks/use-storage-state";
+import { savePhrase } from "../../hooks/use-storage-state";
 import Button from "../../components/Button/Button";
 import { ThemeType } from "../../styles/theme";
 import {
@@ -94,32 +89,21 @@ export default function WalletSetup() {
     const wallets = await createWallet();
 
     if (Object.keys(wallets).length > 0) {
-      saveWallet(JSON.stringify(wallets));
       setLoading(false);
-      const etherAddress = wallets.ethereumWallet.address;
       const masterMnemonicPhrase = wallets.ethereumWallet.mnemonic.phrase;
-      const ethPrivateKey = wallets.ethereumWallet.privateKey;
+
+      const etherAddress = wallets.ethereumWallet.address;
       const etherPublicKey = wallets.ethereumWallet.publicKey;
 
-      const solPrivateKeyBase64 = uint8ArrayToBase64(
-        wallets.solanaWallet.secretKey
-      );
       const solanaAddress = wallets.solanaWallet.publicKey.toBase58();
       const solanaPublicKey = wallets.solanaWallet.publicKey.toBase58();
 
-      const masterPrivateKeys = {
-        ethereum: ethPrivateKey,
-        solana: solPrivateKeyBase64,
-      };
-
       try {
-        await savePrivateKeys(JSON.stringify(masterPrivateKeys));
+        await savePhrase(masterMnemonicPhrase);
       } catch (e) {
         console.error("Failed to save private key", e);
         throw e;
       }
-
-      await savePhrase(masterMnemonicPhrase);
 
       dispatch(saveEthereumAddress(etherAddress));
       dispatch(saveEthereumPublicKey(etherPublicKey));

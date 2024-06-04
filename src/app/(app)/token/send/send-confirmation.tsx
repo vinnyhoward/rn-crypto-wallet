@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, Platform } from "react-native";
+import { Platform } from "react-native";
 import { StackActions } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
 import {
@@ -20,14 +20,15 @@ import Button from "../../../../components/Button/Button";
 import {
   calculateGasAndAmounts,
   sendTransaction,
+  deriveEthPrivateKeysFromPhrase,
 } from "../../../../utils/etherHelpers";
 import {
   sendSolanaTransaction,
   calculateSolanaTransactionFee,
+  deriveSolPrivateKeysFromPhrase,
 } from "../../../../utils/solanaHelpers";
-import { getPrivateKeys } from "../../../../hooks/use-storage-state";
+import { getPhrase } from "../../../../hooks/use-storage-state";
 import type { RootState } from "../../../../store";
-import { base64ToUint8Array } from "../../../../utils/base64ToUint8Array";
 import { BalanceContainer } from "../../../../components/Styles/Layout.styles";
 import { SafeAreaContainer } from "../../../../components/Styles/Layout.styles";
 
@@ -122,17 +123,15 @@ export default function SendConfirmationPage() {
   const chainBalance = `${amount} ${ticker}`;
 
   const handleSubmit = async () => {
-    const stringifiedPrivateKeys = await getPrivateKeys();
-    const privateKeys = JSON.parse(stringifiedPrivateKeys);
-    const ethPrivateKey = privateKeys.ethereum;
-    const solPrivateKey = base64ToUint8Array(privateKeys.solana);
+    const seedPhrase = await getPhrase();
+    const ethPrivateKey = await deriveEthPrivateKeysFromPhrase(seedPhrase);
+    const solPrivateKey = await deriveSolPrivateKeysFromPhrase(seedPhrase);
 
     if (chainName === "ethereum") {
       try {
         setLoading(true);
         setBtnDisabled(true);
         const response = await sendTransaction(address, ethPrivateKey, amount);
-
         if (response) {
           rootNavigation.dispatch(StackActions.popToTop());
           const dynamicUrl = `/token/${chainName}`;
@@ -151,7 +150,6 @@ export default function SendConfirmationPage() {
       try {
         setLoading(true);
         setBtnDisabled(true);
-
         const response = await sendSolanaTransaction(
           solPrivateKey,
           address,

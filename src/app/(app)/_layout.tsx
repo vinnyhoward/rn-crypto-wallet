@@ -48,9 +48,9 @@ export default function AppLayout() {
     loadSeedPhraseConfirmation();
   }, []);
 
-  if (!loading) {
-    SplashScreen.hideAsync();
-  }
+  // if (!loading) {
+  SplashScreen.hideAsync();
+  // }
 
   if (!seedPhraseConfirmed && !loading && walletsExist) {
     return <Redirect href={ROUTES.seedPhrase} />;

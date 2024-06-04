@@ -7,7 +7,10 @@ import {
   sendAndConfirmTransaction,
   Keypair,
 } from "@solana/web3.js";
+import { validateMnemonic, mnemonicToSeedSync } from "bip39";
 import { TransactionObject } from "../types";
+import { uint8ArrayToBase64 } from "./uint8ArrayToBase64";
+import { base64ToUint8Array } from "./base64ToUint8Array";
 
 const { EXPO_PUBLIC_ALCHEMY_SOL_URL, EXPO_PUBLIC_ALCHEMY_SOL_API_KEY } =
   process.env;
@@ -190,3 +193,34 @@ export function extractTransactionDetails(
     asset: "SOL",
   };
 }
+
+export const deriveSolPrivateKeysFromPhrase = async (
+  mnemonicPhrase: string
+) => {
+  if (!mnemonicPhrase) {
+    throw new Error("Empty mnemonic phrase ");
+  }
+
+  if (!validateMnemonic(mnemonicPhrase)) {
+    throw new Error("Invalid mnemonic phrase ");
+  }
+
+  try {
+    const seedBuffer = mnemonicToSeedSync(mnemonicPhrase);
+    const seed = new Uint8Array(
+      seedBuffer.buffer,
+      seedBuffer.byteOffset,
+      seedBuffer.byteLength
+    ).slice(0, 32);
+
+    const solWallet = Keypair.fromSeed(seed);
+    const solPrivateKeyBase64 = uint8ArrayToBase64(solWallet.secretKey);
+    const solPrivateKey = base64ToUint8Array(solPrivateKeyBase64);
+
+    return solPrivateKey;
+  } catch (error) {
+    throw new Error(
+      "Failed to derive wallet from mnemonic: " + (error as Error).message
+    );
+  }
+};

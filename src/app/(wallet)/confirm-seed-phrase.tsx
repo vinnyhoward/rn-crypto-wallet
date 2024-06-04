@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native";
 import { router } from "expo-router";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
-import { getPhrase, removePhrase } from "../../hooks/use-storage-state";
+import { getPhrase } from "../../hooks/use-storage-state";
 import { ThemeType } from "../../styles/theme";
 import Button from "../../components/Button/Button";
 import Bubble from "../../components/Bubble/Bubble";
@@ -90,7 +90,6 @@ export default function Page() {
     const originalSeedPhrase = await getPhrase();
 
     if (selectedWords.join(" ") === originalSeedPhrase) {
-      await removePhrase();
       router.push({
         pathname: ROUTES.walletCreatedSuccessfully,
         params: { successState: "CREATED_WALLET" },

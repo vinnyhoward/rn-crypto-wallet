@@ -74,66 +74,6 @@ export function useStorageState(key: string): UseStateHook<string> {
   return [state, setValue];
 }
 
-export async function saveWallet(key: string): Promise<void> {
-  try {
-    const encryptedData = await generateKeyAndEncryptData(key);
-    await SecureStore.setItemAsync("wallet", JSON.stringify(encryptedData));
-  } catch (error) {
-    console.error("Failed to save the wallet securely.", error);
-  }
-}
-
-export async function getWallet() {
-  try {
-    const encryptedDataString = await SecureStore.getItemAsync("wallet");
-    const encryptedData: EncryptedData = JSON.parse(encryptedDataString);
-    if (encryptedDataString) {
-      const wallet = await generateKeyAndDecryptData(encryptedData);
-      return wallet;
-    } else {
-      console.error("No encrypted wallet found.");
-      return null;
-    }
-  } catch (error) {
-    console.error("Failed to retrieve the wallet.", error);
-    return null;
-  }
-}
-
-export async function removeWallet(): Promise<void> {
-  try {
-    await SecureStore.deleteItemAsync("wallet");
-  } catch (error) {
-    console.error("Failed to remove the wallet securely.", error);
-  }
-}
-
-export async function savePrivateKeys(value: string): Promise<void> {
-  try {
-    const encryptedData = await generateKeyAndEncryptData(value);
-    await SecureStore.setItemAsync("privateKey", JSON.stringify(encryptedData));
-  } catch (error) {
-    console.error("Failed to save the private key securely.", error);
-  }
-}
-
-export async function getPrivateKeys(): Promise<string | null> {
-  try {
-    const encryptedDataString = await SecureStore.getItemAsync("privateKey");
-    const encryptedData: EncryptedData = JSON.parse(encryptedDataString);
-    if (encryptedDataString) {
-      const privateKeyString = await generateKeyAndDecryptData(encryptedData);
-
-      return privateKeyString;
-    } else {
-      console.error("No encrypted private key found.");
-      return null;
-    }
-  } catch (error) {
-    console.error("Failed to retrieve the private key.", error);
-    return null;
-  }
-}
 export async function removePhrase(): Promise<void> {
   try {
     await SecureStore.deleteItemAsync("phrase");
@@ -158,7 +98,7 @@ export async function getPhrase(): Promise<string | null> {
     const encryptedData: EncryptedData = JSON.parse(encryptedDataString);
     if (encryptedDataString) {
       const phrase = await generateKeyAndDecryptData(encryptedData);
-      return phrase;
+      return JSON.parse(phrase).trim();
     } else {
       return null;
     }

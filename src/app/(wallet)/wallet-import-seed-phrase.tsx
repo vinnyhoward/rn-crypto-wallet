@@ -15,9 +15,7 @@ import {
 } from "../../store/walletSlice";
 import Button from "../../components/Button/Button";
 import { ROUTES } from "../../constants/routes";
-import { savePrivateKeys } from "../../hooks/use-storage-state";
-import { removePhrase } from "../../hooks/use-storage-state";
-import { uint8ArrayToBase64 } from "../../utils/uint8ArrayToBase64";
+import { savePhrase } from "../../hooks/use-storage-state";
 import { Title, Subtitle } from "../../components/Styles/Text.styles";
 import {
   ErrorTextCenter,
@@ -76,34 +74,26 @@ export default function Page() {
   const handleVerifySeedPhrase = async () => {
     const errorText =
       "Looks like the seed phrase is incorrect. Please try again.";
-    if (textValue.split(" ").length !== 12) {
+    const phraseTextValue = textValue.trimEnd();
+    if (phraseTextValue.split(" ").length !== 12) {
       setError(errorText);
       return;
     }
     setLoading(true);
 
-    const importedWallets = restoreWalletFromPhrase(textValue);
+    const importedWallets = restoreWalletFromPhrase(phraseTextValue);
     if (Object.keys(importedWallets).length > 0) {
       setLoading(false);
-      const ethPrivateKey = importedWallets.ethereumWallet.privateKey;
       const etherAddress = importedWallets.ethereumWallet.address;
       const etherPublicKey = importedWallets.ethereumWallet.publicKey;
 
-      const solPrivateKeyBase64 = uint8ArrayToBase64(
-        importedWallets.solanaWallet.secretKey
-      );
       const solanaAddress = importedWallets.solanaWallet.publicKey.toBase58();
       const solanaPublicKey = importedWallets.solanaWallet.publicKey.toBase58();
 
-      const masterPrivateKeys = {
-        ethereum: ethPrivateKey,
-        solana: solPrivateKeyBase64,
-      };
-
       try {
-        await savePrivateKeys(JSON.stringify(masterPrivateKeys));
+        await savePhrase(JSON.stringify(phraseTextValue));
       } catch (e) {
-        console.error("Failed to save private key", e);
+        console.error("Failed to save mnemonic key", e);
         throw e;
       }
 
@@ -112,8 +102,6 @@ export default function Page() {
 
       dispatch(saveSolanaAddress(solanaAddress));
       dispatch(saveSolanaPublicKey(solanaPublicKey));
-
-      removePhrase();
 
       router.push({
         pathname: ROUTES.walletCreatedSuccessfully,
