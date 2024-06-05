@@ -40,10 +40,10 @@ export default function AppLayout() {
         clearStorage();
         router.replace(ROUTES.walletSetup);
       }
-      setLoading(false);
     };
 
     loadSeedPhraseConfirmation();
+    setLoading(false);
   }, []);
 
   if (!loading) {

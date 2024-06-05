@@ -151,8 +151,14 @@ export const walletSlice = createSlice({
     saveEthereumAddress: (state, action: PayloadAction<string>) => {
       state.ethereum.activeAddress.address = action.payload;
     },
+    saveAllEthereumAddresses: (state, action: PayloadAction<AddressInfo[]>) => {
+      state.ethereum.allAddresses = action.payload;
+    },
     saveSolanaAddress: (state, action: PayloadAction<string>) => {
       state.solana.activeAddress.address = action.payload;
+    },
+    saveAllSolanaAddresses: (state, action: PayloadAction<AddressInfo[]>) => {
+      state.solana.allAddresses = action.payload;
     },
     saveEthereumPublicKey: (state, action: PayloadAction<string>) => {
       state.ethereum.activeAddress.publicKey = action.payload;
@@ -269,8 +275,10 @@ export const {
   withdrawEthereum,
   addEthereumTransaction,
   saveEthereumAddress,
+  saveAllEthereumAddresses,
   saveEthereumPublicKey,
   depositSolana,
+  saveAllSolanaAddresses,
   withdrawSolana,
   addSolanaTransaction,
   saveSolanaAddress,

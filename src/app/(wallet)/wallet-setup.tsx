@@ -84,10 +84,10 @@ export default function WalletSetup() {
   const [loading, setLoading] = useState(false);
 
   const walletSetup = async () => {
-    setLoading(true);
-    const wallets = await createWallet();
+    try {
+      setLoading(true);
+      const wallets = await createWallet();
 
-    if (Object.keys(wallets).length > 0) {
       setLoading(false);
       const masterMnemonicPhrase = wallets.ethereumWallet.mnemonic.phrase;
 
@@ -108,6 +108,9 @@ export default function WalletSetup() {
         pathname: ROUTES.seedPhrase,
         params: { phrase: masterMnemonicPhrase },
       });
+    } catch (err) {
+      setLoading(false);
+      console.error("Failed to create wallet", err);
     }
   };
 
@@ -130,7 +133,12 @@ export default function WalletSetup() {
         </TextContainer>
       </ContentContainer>
       <ButtonContainer>
-        <Button loading={loading} onPress={walletSetup} title="Create Wallet" />
+        <Button
+          loading={loading}
+          disabled={loading}
+          onPress={walletSetup}
+          title="Create Wallet"
+        />
         <SecondaryButtonContainer
           onPress={() => router.push(ROUTES.walletImportOptions)}
         >

@@ -5,13 +5,19 @@ import { router } from "expo-router";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
-import { restoreWalletFromPhrase } from "../../utils/etherHelpers";
+import {
+  restoreWalletFromPhrase,
+  findNextUnusedIndex,
+  collectedUsedAddresses,
+} from "../../utils/etherHelpers";
 import { ThemeType } from "../../styles/theme";
 import {
   saveEthereumAddress,
   saveEthereumPublicKey,
   saveSolanaAddress,
   saveSolanaPublicKey,
+  saveAllEthereumAddresses,
+  saveAllSolanaAddresses,
 } from "../../store/walletSlice";
 import Button from "../../components/Button/Button";
 import { ROUTES } from "../../constants/routes";
@@ -72,6 +78,7 @@ export default function Page() {
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleVerifySeedPhrase = async () => {
+    setLoading(true);
     const errorText =
       "Looks like the seed phrase is incorrect. Please try again.";
     const phraseTextValue = textValue.trimEnd();
@@ -79,25 +86,31 @@ export default function Page() {
       setError(errorText);
       return;
     }
-    setLoading(true);
 
     const importedWallets = restoreWalletFromPhrase(phraseTextValue);
-    if (Object.keys(importedWallets).length > 0) {
-      setLoading(false);
+    try {
       const etherAddress = importedWallets.ethereumWallet.address;
       const etherPublicKey = importedWallets.ethereumWallet.publicKey;
 
       const solanaAddress = importedWallets.solanaWallet.publicKey.toBase58();
       const solanaPublicKey = importedWallets.solanaWallet.publicKey.toBase58();
 
-      try {
-        await savePhrase(JSON.stringify(phraseTextValue));
-      } catch (e) {
-        console.error("Failed to save mnemonic key", e);
-        throw e;
-      }
+      const unusedIndex = await findNextUnusedIndex(phraseTextValue);
+      const usedAddresses = await collectedUsedAddresses(
+        phraseTextValue,
+        unusedIndex
+      );
+      const transformedUnusedAddresses = usedAddresses.map((info) => {
+        return {
+          address: info.address,
+          publicKey: info.publicKey,
+        };
+      });
+
+      await savePhrase(JSON.stringify(phraseTextValue));
 
       dispatch(saveEthereumAddress(etherAddress));
+      dispatch(saveAllEthereumAddresses(transformedUnusedAddresses));
       dispatch(saveEthereumPublicKey(etherPublicKey));
 
       dispatch(saveSolanaAddress(solanaAddress));
@@ -107,9 +120,10 @@ export default function Page() {
         pathname: ROUTES.walletCreatedSuccessfully,
         params: { successState: "IMPORTED_WALLET" },
       });
-    } else {
+    } catch (err) {
+      setError("Failed to import wallet");
+      console.error("Failed to import wallet", err);
       setLoading(false);
-      setError(errorText);
     }
   };
 
@@ -146,6 +160,7 @@ export default function Page() {
       <ButtonContainer>
         <Button
           loading={loading}
+          disabled={loading}
           color={theme.colors.white}
           backgroundColor={theme.colors.primary}
           onPress={handleVerifySeedPhrase}

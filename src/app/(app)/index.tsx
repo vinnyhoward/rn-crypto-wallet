@@ -148,7 +148,10 @@ export default function Index() {
   const failedSolStatus = useSelector(
     (state: RootState) => state.wallet.solana.status === "failed"
   );
-
+  const test = useSelector(
+    (state: RootState) => state.wallet.ethereum.allAddresses
+  );
+  console.log("test:", test);
   const snapPoints = useMemo(() => ["10%", "33%", "68%", "90%"], []);
 
   const prices = useSelector((state: RootState) => state.price.data);
