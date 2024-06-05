@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
-import { getPhrase } from "../../hooks/use-storage-state";
+import { savePhrase } from "../../hooks/use-storage-state";
 import { ThemeType } from "../../styles/theme";
 import Button from "../../components/Button/Button";
 import Bubble from "../../components/Bubble/Bubble";
@@ -65,7 +65,12 @@ const ConfirmSeedContainer = styled.View<{ theme: ThemeType }>`
 
 export default function Page() {
   const theme = useTheme();
-  const [seedPhrase, setSeedPhrase] = useState<string[]>([]);
+  const { phrase } = useLocalSearchParams();
+  const seedPhraseParams = phrase
+    ? (phrase as string).split(",").sort(() => 0.5 - Math.random())
+    : [];
+
+  const [seedPhrase, setSeedPhrase] = useState<string[]>(seedPhraseParams);
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
   const [error, setError] = useState<string>("");
 
@@ -87,9 +92,13 @@ export default function Page() {
       return;
     }
 
-    const originalSeedPhrase = await getPhrase();
-
-    if (selectedWords.join(" ") === originalSeedPhrase) {
+    if (selectedWords.join(",") === phrase) {
+      try {
+        await savePhrase(phrase);
+      } catch (e) {
+        console.error("Failed to save private key", e);
+        throw e;
+      }
       router.push({
         pathname: ROUTES.walletCreatedSuccessfully,
         params: { successState: "CREATED_WALLET" },
@@ -98,19 +107,6 @@ export default function Page() {
       setError("Looks like the seed phrase is incorrect. Please try again.");
     }
   };
-
-  useEffect(() => {
-    const fetchSeedPhrase = async () => {
-      const storedSeedPhrase: string = await getPhrase();
-      if (!storedSeedPhrase) router.replace(ROUTES.walletSetup);
-      const randomizedSeedPhrase = storedSeedPhrase
-        .split(" ")
-        .sort(() => 0.5 - Math.random());
-      setSeedPhrase(randomizedSeedPhrase);
-    };
-
-    fetchSeedPhrase();
-  }, []);
 
   return (
     <SafeAreaContainer>

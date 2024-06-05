@@ -85,7 +85,6 @@ export async function removePhrase(): Promise<void> {
 export async function savePhrase(phrase: string): Promise<void> {
   try {
     const encryptedData = await generateKeyAndEncryptData(phrase);
-
     await SecureStore.setItemAsync("phrase", JSON.stringify(encryptedData));
   } catch (error) {
     console.error("Failed to save the phrase securely.", error);
@@ -98,7 +97,7 @@ export async function getPhrase(): Promise<string | null> {
     const encryptedData: EncryptedData = JSON.parse(encryptedDataString);
     if (encryptedDataString) {
       const phrase = await generateKeyAndDecryptData(encryptedData);
-      return JSON.parse(phrase).trim();
+      return phrase;
     } else {
       return null;
     }

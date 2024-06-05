@@ -184,6 +184,7 @@ export default function SendConfirmationPage() {
         const totalCostPlusGasUsd = formatDollar(
           parseFloat(totalCost) * chainPrice
         );
+
         setTransactionFeeEstimate(gasEstimateUsd);
         setTotalCost(totalCostPlusGasUsd);
 

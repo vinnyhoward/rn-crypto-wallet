@@ -97,6 +97,5 @@ export type AppThunk<ReturnType = void> = ThunkAction<
 //     return currentState.wallet.solana.transactions !== previousState.wallet.solana.transactions
 //   },
 //   effect: async (_action, listenerApi) => {
-
 //   },
 // });

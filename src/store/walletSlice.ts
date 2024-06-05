@@ -11,21 +11,31 @@ import {
 } from "../utils/solanaHelpers";
 import { truncateBalance } from "../utils/truncateBalance";
 
-interface CryptoWallet {
-  balance: number;
-  transactionMetadata: {
-    paginationKey: string | string[] | undefined;
-    transactions: Transaction[];
-  };
-  status: "idle" | "loading" | "failed";
+interface AddressInfo {
   address: string;
   publicKey: string;
-  failedNetworkRequest: boolean;
 }
 
-export interface WalletState {
-  ethereum: CryptoWallet;
-  solana: CryptoWallet;
+interface ActiveAddressState {
+  address: string;
+  publicKey: string;
+  balance: number;
+  transactionMetadata: {
+    paginationKey: undefined | string | string[];
+    transactions: Transaction[];
+  };
+}
+
+interface NetworkState {
+  activeAddress: ActiveAddressState;
+  allAddresses: AddressInfo[];
+  failedNetworkRequest: boolean;
+  status: "idle" | "loading" | "failed" | "success";
+}
+
+interface WalletState {
+  ethereum: NetworkState;
+  solana: NetworkState;
 }
 
 export interface Transaction {
@@ -41,26 +51,32 @@ export interface Transaction {
 
 const initialState: WalletState = {
   ethereum: {
-    balance: 0,
-    transactionMetadata: {
-      paginationKey: undefined,
-      transactions: [],
+    activeAddress: {
+      address: "",
+      publicKey: "",
+      balance: 0,
+      transactionMetadata: {
+        paginationKey: undefined,
+        transactions: [],
+      },
     },
+    allAddresses: [],
     failedNetworkRequest: false,
     status: "idle",
-    address: "",
-    publicKey: "",
   },
   solana: {
-    balance: 0,
-    transactionMetadata: {
-      paginationKey: undefined,
-      transactions: [],
+    activeAddress: {
+      address: "",
+      publicKey: "",
+      balance: 0,
+      transactionMetadata: {
+        paginationKey: undefined,
+        transactions: [],
+      },
     },
+    allAddresses: [],
     failedNetworkRequest: false,
     status: "idle",
-    address: "",
-    publicKey: "",
   },
 };
 
@@ -133,48 +149,52 @@ export const walletSlice = createSlice({
   initialState,
   reducers: {
     saveEthereumAddress: (state, action: PayloadAction<string>) => {
-      state.ethereum.address = action.payload;
+      state.ethereum.activeAddress.address = action.payload;
     },
     saveSolanaAddress: (state, action: PayloadAction<string>) => {
-      state.solana.address = action.payload;
+      state.solana.activeAddress.address = action.payload;
     },
     saveEthereumPublicKey: (state, action: PayloadAction<string>) => {
-      state.ethereum.publicKey = action.payload;
+      state.ethereum.activeAddress.publicKey = action.payload;
     },
     saveSolanaPublicKey: (state, action: PayloadAction<string>) => {
-      state.solana.publicKey = action.payload;
+      state.solana.activeAddress.publicKey = action.payload;
     },
     depositEthereum: (state, action: PayloadAction<number>) => {
-      state.ethereum.balance += action.payload;
+      state.ethereum.activeAddress.balance += action.payload;
     },
     withdrawEthereum: (state, action: PayloadAction<number>) => {
-      if (state.ethereum.balance >= action.payload) {
-        state.ethereum.balance -= action.payload;
+      if (state.ethereum.activeAddress.balance >= action.payload) {
+        state.ethereum.activeAddress.balance -= action.payload;
       } else {
         console.warn("Not enough Ethereum balance");
       }
     },
     depositSolana: (state, action: PayloadAction<number>) => {
-      state.solana.balance += action.payload;
+      state.solana.activeAddress.balance += action.payload;
     },
     withdrawSolana: (state, action: PayloadAction<number>) => {
-      if (state.solana.balance >= action.payload) {
-        state.solana.balance -= action.payload;
+      if (state.solana.activeAddress.balance >= action.payload) {
+        state.solana.activeAddress.balance -= action.payload;
       } else {
         console.warn("Not enough Solana balance");
       }
     },
     addEthereumTransaction: (state, action: PayloadAction<Transaction>) => {
-      state.ethereum.transactionMetadata.transactions.push(action.payload);
+      state.ethereum.activeAddress.transactionMetadata.transactions.push(
+        action.payload
+      );
     },
     addSolanaTransaction: (state, action: PayloadAction<Transaction>) => {
-      state.solana.transactionMetadata.transactions.push(action.payload);
+      state.solana.activeAddress.transactionMetadata.transactions.push(
+        action.payload
+      );
     },
     updateEthereumBalance: (state, action: PayloadAction<string>) => {
-      state.ethereum.balance = parseFloat(action.payload);
+      state.ethereum.activeAddress.balance = parseFloat(action.payload);
     },
     updateSolanaBalance: (state, action: PayloadAction<number>) => {
-      state.solana.balance = action.payload;
+      state.solana.activeAddress.balance = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -183,7 +203,9 @@ export const walletSlice = createSlice({
         state.ethereum.status = "loading";
       })
       .addCase(fetchEthereumBalance.fulfilled, (state, action) => {
-        state.ethereum.balance = parseFloat(truncateBalance(action.payload));
+        state.ethereum.activeAddress.balance = parseFloat(
+          truncateBalance(action.payload)
+        );
         state.ethereum.status = "idle";
       })
       .addCase(fetchEthereumBalance.rejected, (state, action) => {
@@ -196,9 +218,9 @@ export const walletSlice = createSlice({
       .addCase(fetchEthereumTransactions.fulfilled, (state, action) => {
         if (action.payload) {
           state.ethereum.failedNetworkRequest = false;
-          state.ethereum.transactionMetadata.transactions =
+          state.ethereum.activeAddress.transactionMetadata.transactions =
             action.payload.transferHistory;
-          state.ethereum.transactionMetadata.paginationKey =
+          state.ethereum.activeAddress.transactionMetadata.paginationKey =
             action.payload.paginationKey;
         } else {
           state.ethereum.failedNetworkRequest = true;
@@ -213,7 +235,9 @@ export const walletSlice = createSlice({
         state.solana.status = "loading";
       })
       .addCase(fetchSolanaBalance.fulfilled, (state, action) => {
-        state.solana.balance = parseFloat(truncateBalance(action.payload));
+        state.solana.activeAddress.balance = parseFloat(
+          truncateBalance(action.payload)
+        );
         state.solana.status = "idle";
       })
       .addCase(fetchSolanaBalance.rejected, (state, action) => {
@@ -226,7 +250,8 @@ export const walletSlice = createSlice({
       .addCase(fetchSolanaTransactions.fulfilled, (state, action) => {
         if (action.payload) {
           state.solana.failedNetworkRequest = false;
-          state.solana.transactionMetadata.transactions = action.payload;
+          state.solana.activeAddress.transactionMetadata.transactions =
+            action.payload;
         } else {
           state.solana.failedNetworkRequest = true;
         }

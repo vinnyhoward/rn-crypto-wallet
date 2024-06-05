@@ -25,39 +25,29 @@ export default function AppLayout() {
   const theme = useTheme();
   const ethWallet = useSelector((state: RootState) => state.wallet.ethereum);
   const solWallet = useSelector((state: RootState) => state.wallet.solana);
-  const [seedPhraseConfirmed, setSeedPhraseConfirmed] =
-    useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const walletsExist = ethWallet.address && solWallet.address;
+  const walletsExist =
+    ethWallet.activeAddress.address !== "" &&
+    solWallet.activeAddress.address !== "";
+
   useEffect(() => {
     const loadSeedPhraseConfirmation = async () => {
       const phrase = await getPhrase();
-      if (!phrase && !ethWallet.address && !solWallet.address) {
+
+      if (!phrase || !walletsExist) {
         clearPersistedState();
         clearStorage();
-        setLoading(false);
         router.replace(ROUTES.walletSetup);
       }
-      if (!phrase && ethWallet.address && solWallet.address) {
-        setSeedPhraseConfirmed(true);
-        setLoading(false);
-      }
+      setLoading(false);
     };
 
     loadSeedPhraseConfirmation();
   }, []);
 
-  // if (!loading) {
-  SplashScreen.hideAsync();
-  // }
-
-  if (!seedPhraseConfirmed && !loading && walletsExist) {
-    return <Redirect href={ROUTES.seedPhrase} />;
-  }
-
-  if (!seedPhraseConfirmed && !loading && !walletsExist) {
-    return <Redirect href={ROUTES.walletSetup} />;
+  if (!loading) {
+    SplashScreen.hideAsync();
   }
 
   return (

@@ -5,7 +5,6 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import styled from "styled-components/native";
 import { createWallet } from "../../utils/etherHelpers";
-import { savePhrase } from "../../hooks/use-storage-state";
 import Button from "../../components/Button/Button";
 import { ThemeType } from "../../styles/theme";
 import {
@@ -97,13 +96,7 @@ export default function WalletSetup() {
 
       const solanaAddress = wallets.solanaWallet.publicKey.toBase58();
       const solanaPublicKey = wallets.solanaWallet.publicKey.toBase58();
-
-      try {
-        await savePhrase(masterMnemonicPhrase);
-      } catch (e) {
-        console.error("Failed to save private key", e);
-        throw e;
-      }
+      console.log("masterMnemonicPhrase:", masterMnemonicPhrase);
 
       dispatch(saveEthereumAddress(etherAddress));
       dispatch(saveEthereumPublicKey(etherPublicKey));

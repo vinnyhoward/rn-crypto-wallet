@@ -8,6 +8,8 @@ import {
   WebSocketProvider,
   formatEther,
   parseEther,
+  HDNodeWallet,
+  Mnemonic,
 } from "ethers";
 import { mnemonicToSeedSync, validateMnemonic } from "bip39";
 import { Keypair } from "@solana/web3.js";
@@ -288,3 +290,37 @@ export const deriveEthPrivateKeysFromPhrase = async (
     );
   }
 };
+
+export async function findNextUnusedIndex(phrase: string) {
+  let currentIndex = 0;
+  const mnemonic = Mnemonic.fromPhrase(phrase);
+
+  while (true) {
+    const path = `m/44'/60'/0'/0/${currentIndex}`;
+    const wallet = HDNodeWallet.fromMnemonic(mnemonic, path);
+
+    const transactions = await fetchTransactions(wallet.address);
+    if (transactions.transferHistory.length === 0) {
+      break;
+    }
+    currentIndex++;
+  }
+
+  return currentIndex;
+}
+
+export async function collectedUsedAddresses(
+  phrase: string,
+  unusedIndex: number
+) {
+  const mnemonic = Mnemonic.fromPhrase(phrase);
+  const addressesUsed = [];
+
+  for (let i = 0; i < unusedIndex; i++) {
+    const path = `m/44'/60'/0'/0/${i}`;
+    const wallet = HDNodeWallet.fromMnemonic(mnemonic, path);
+    addressesUsed.push(wallet);
+  }
+
+  return addressesUsed;
+}

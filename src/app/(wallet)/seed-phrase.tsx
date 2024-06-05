@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView } from "react-native";
 import * as Clipboard from "expo-clipboard";
-import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
-import { getPhrase } from "../../hooks/use-storage-state";
 import { ThemeType } from "../../styles/theme";
 import Copy from "../../assets/svg/copy.svg";
 import Button from "../../components/Button/Button";
@@ -68,9 +67,8 @@ const LogoContainer = styled.View``;
 export default function Page() {
   const theme = useTheme();
   const { phrase } = useLocalSearchParams();
-  const seedPhraseParams = phrase ? (phrase as string).split(" ") : [];
+  const seedPhrase = phrase ? (phrase as string).split(" ") : [];
   const [buttonText, setButtonText] = useState("Copy to clipboard");
-  const [seedPhrase, setSeedPhrase] = useState<string[]>(seedPhraseParams);
 
   const handleCopy = async () => {
     await Clipboard.setStringAsync(seedPhrase.join(" "));
@@ -79,15 +77,6 @@ export default function Page() {
       setButtonText("Copy to clipboard");
     }, 4000);
   };
-
-  const getSeedPhraseFromStorage = async () => {
-    const phrase = await getPhrase();
-    setSeedPhrase(phrase.split(" "));
-  };
-
-  useFocusEffect(() => {
-    getSeedPhraseFromStorage();
-  });
 
   return (
     <SafeAreaContainer>
@@ -117,7 +106,12 @@ export default function Page() {
         <Button
           color={theme.colors.white}
           backgroundColor={theme.colors.primary}
-          onPress={() => router.push(ROUTES.confirmSeedPhrase)}
+          onPress={() =>
+            router.push({
+              pathname: ROUTES.confirmSeedPhrase,
+              params: { phrase: seedPhrase },
+            })
+          }
           title="Ok, I saved it"
         />
       </ButtonContainer>
