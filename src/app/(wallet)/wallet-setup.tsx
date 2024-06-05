@@ -96,7 +96,6 @@ export default function WalletSetup() {
 
       const solanaAddress = wallets.solanaWallet.publicKey.toBase58();
       const solanaPublicKey = wallets.solanaWallet.publicKey.toBase58();
-      console.log("masterMnemonicPhrase:", masterMnemonicPhrase);
 
       dispatch(saveEthereumAddress(etherAddress));
       dispatch(saveEthereumPublicKey(etherPublicKey));

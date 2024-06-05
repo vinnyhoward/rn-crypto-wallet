@@ -291,7 +291,7 @@ export const deriveEthPrivateKeysFromPhrase = async (
   }
 };
 
-export async function findNextUnusedIndex(phrase: string) {
+export async function findNextUnusedEthWalletIndex(phrase: string) {
   let currentIndex = 0;
   const mnemonic = Mnemonic.fromPhrase(phrase);
 
@@ -303,13 +303,13 @@ export async function findNextUnusedIndex(phrase: string) {
     if (transactions.transferHistory.length === 0) {
       break;
     }
-    currentIndex++;
+    currentIndex += 1;
   }
 
   return currentIndex;
 }
 
-export async function collectedUsedAddresses(
+export async function collectedUsedEthAddresses(
   phrase: string,
   unusedIndex: number
 ) {

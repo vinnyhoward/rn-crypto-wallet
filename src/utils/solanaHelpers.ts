@@ -224,3 +224,68 @@ export const deriveSolPrivateKeysFromPhrase = async (
     );
   }
 };
+
+// export async function findNextUnusedSolWalletIndex(mnemonicPhrase: string) {
+//   if (!mnemonicPhrase) {
+//     throw new Error("Empty mnemonic phrase ");
+//   }
+
+//   console.log("mnemonic phrase:", mnemonicPhrase);
+//   if (!validateMnemonic(mnemonicPhrase)) {
+//     throw new Error("Invalid mnemonic phrase ");
+//   }
+
+//   const seed = mnemonicToSeedSync(mnemonicPhrase);
+//   const curve = slip10.Curve.Ed25519;
+//   // const seed = new Uint8Array(
+//   //   seedBuffer.buffer,
+//   //   seedBuffer.byteOffset,
+//   //   seedBuffer.byteLength
+//   // ).slice(0, 32);
+
+//   let currentIndex = 0;
+//   while (true) {
+//     const path = `m/44'/501'/${currentIndex}'/0'`;
+//     const { key } = slip10.derivePath(curve, seed, path);
+//     const keypair = Keypair.fromSecretKey(key);
+//     const publicKey = keypair.publicKey;
+//     const signatures = await connection.getSignaturesForAddress(publicKey, {
+//       limit: 1,
+//     });
+
+//     if (signatures.length === 0) {
+//       break;
+//     }
+//     currentIndex += 1;
+//   }
+
+//   return currentIndex;
+// }
+
+// findNextUnusedSolWalletIndex(
+//   ""
+// )
+//   .then((data) => console.log("data:", data))
+//   .catch(console.error);
+
+// export async function collectedUsedAddresses(
+//   mnemonicPhrase: string,
+//   unusedIndex: number
+// ) {
+//   const seedBuffer = mnemonicToSeedSync(mnemonicPhrase);
+//   const seed = new Uint8Array(
+//     seedBuffer.buffer,
+//     seedBuffer.byteOffset,
+//     seedBuffer.byteLength
+//   ).slice(0, 32);
+
+//   const keyPairsUsed = [];
+
+//   for (let i = 0; i < unusedIndex; i++) {
+//     const path = `m/44'/501'/${i}'/0'`;
+//     const keypair = Keypair.fromSeed(seed);
+//     keyPairsUsed.push(keypair);
+//   }
+
+//   return addressesUsed;
+// }

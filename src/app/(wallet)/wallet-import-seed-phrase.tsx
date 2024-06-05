@@ -7,8 +7,8 @@ import styled from "styled-components/native";
 import { useTheme } from "styled-components";
 import {
   restoreWalletFromPhrase,
-  findNextUnusedIndex,
-  collectedUsedAddresses,
+  findNextUnusedEthWalletIndex,
+  collectedUsedEthAddresses,
 } from "../../utils/etherHelpers";
 import { ThemeType } from "../../styles/theme";
 import {
@@ -95,8 +95,8 @@ export default function Page() {
       const solanaAddress = importedWallets.solanaWallet.publicKey.toBase58();
       const solanaPublicKey = importedWallets.solanaWallet.publicKey.toBase58();
 
-      const unusedIndex = await findNextUnusedIndex(phraseTextValue);
-      const usedAddresses = await collectedUsedAddresses(
+      const unusedIndex = await findNextUnusedEthWalletIndex(phraseTextValue);
+      const usedAddresses = await collectedUsedEthAddresses(
         phraseTextValue,
         unusedIndex
       );
