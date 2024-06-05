@@ -36,6 +36,12 @@ __Network Configuration Assurance__:It is crucial to understand that as long as 
 __Note__: The security architecture for this project is currently in a developmental phase and has not yet been fully implemented. It is intended solely for development and testing purposes, with plans to enhance security features in future updates.
 
 ## Roadmap
+
+#### Current Focus
+HD Wallets and Account Management
+- Implementing functionality for creating multiple wallets using HD wallets.
+- Developing account switching features to easily navigate between multiple wallet accounts.
+
 #### Wallet Functionality
 - [x] Create wallet
 - [x] View seed phrase
@@ -57,18 +63,19 @@ __Note__: The security architecture for this project is currently in a developme
 - [x] List transactions transactions on Solana
 
 ### Other wallet actions
-- [x] Scan QR code to share address or send crypto
+- [x] Scan QR code to share addresses or send cryptocurrency
 
 ### Security
-- [x] Improve security and management of private keys (this wallet will never be 
-- [ ] Add biometrics screen and offer biometrics for wallet
+- [x] Enhanced security and management of private keys
+Note: This wallet is not intended for production but includes robust security features for educational purposes.
+
+- [ ] Implement biometric authentication to add an additional layer of security
 
 #### Nice to haves
-- [x] Android ui bugs
-production but it'd be fun to add)
-- [ ] UI improvements - loaders, animation, etc
-- [ ] Refactor repeating styled components and some logic
-- [ ] Pagination for long lists
+- [x] Resolve Android UI bugs
+- [ ] Improve user interface with loaders, animations, etc.
+- [ ] Refactor repetitive styled components and streamline logic
+- [ ] Add pagination for transaction lists to improve navigation in long lists
 
 ## Prerequisites
 
