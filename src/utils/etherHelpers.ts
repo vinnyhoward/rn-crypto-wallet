@@ -301,3 +301,13 @@ export async function collectedUsedEthAddresses(
 
   return addressesUsed;
 }
+
+export async function importAllActiveEthAddresses(mnemonicPhrase: string) {
+  const unusedAddressIndex = await findNextUnusedEthWalletIndex(mnemonicPhrase);
+  const usedAddresses = await collectedUsedEthAddresses(
+    mnemonicPhrase,
+    unusedAddressIndex
+  );
+
+  return usedAddresses;
+}

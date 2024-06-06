@@ -5,12 +5,8 @@ import { router } from "expo-router";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
-import {
-  restoreEthWalletFromPhrase,
-  findNextUnusedEthWalletIndex,
-  collectedUsedEthAddresses,
-} from "../../utils/etherHelpers";
-import { restoreSolWalletFromPhrase } from "../../utils/solanaHelpers";
+import { importAllActiveEthAddresses } from "../../utils/etherHelpers";
+import { importAllActiveSolAddresses } from "../../utils/solanaHelpers";
 import { ThemeType } from "../../styles/theme";
 import {
   saveEthereumAddress,
@@ -88,34 +84,45 @@ export default function Page() {
       return;
     }
 
-    const importedEthWallets = restoreEthWalletFromPhrase(phraseTextValue);
-    const importedSolWallets = restoreSolWalletFromPhrase(phraseTextValue);
+    setError("");
     try {
-      const etherAddress = importedEthWallets.address;
-      const etherPublicKey = importedEthWallets.publicKey;
-
-      const solanaAddress = importedSolWallets.publicKey.toBase58();
-      const solanaPublicKey = importedSolWallets.publicKey.toBase58();
-
-      const unusedIndex = await findNextUnusedEthWalletIndex(phraseTextValue);
-      const usedAddresses = await collectedUsedEthAddresses(
-        phraseTextValue,
-        unusedIndex
+      const importedEthWallets = await importAllActiveEthAddresses(
+        phraseTextValue
       );
-      const transformedUnusedAddresses = usedAddresses.map((info) => {
+      const importedSolWallets = await importAllActiveSolAddresses(
+        phraseTextValue
+      );
+      const firstEthWallet = importedEthWallets[0];
+      const firstSolWallet = importedSolWallets[0];
+
+      const etherAddress = firstEthWallet.address;
+      const etherPublicKey = firstEthWallet.publicKey;
+
+      const solanaAddress = firstSolWallet.publicKey.toBase58();
+      const solanaPublicKey = firstSolWallet.publicKey.toBase58();
+
+      const transformedActiveEthAddresses = importedEthWallets.map((info) => {
         return {
           address: info.address,
           publicKey: info.publicKey,
         };
       });
 
+      const transformedActiveSolAddresses = importedSolWallets.map((info) => {
+        return {
+          address: info.publicKey.toBase58(),
+          publicKey: info.publicKey.toBase58(),
+        };
+      });
+
       await savePhrase(JSON.stringify(phraseTextValue));
 
       dispatch(saveEthereumAddress(etherAddress));
-      dispatch(saveAllEthereumAddresses(transformedUnusedAddresses));
+      dispatch(saveAllEthereumAddresses(transformedActiveEthAddresses));
       dispatch(saveEthereumPublicKey(etherPublicKey));
 
       dispatch(saveSolanaAddress(solanaAddress));
+      dispatch(saveAllSolanaAddresses(transformedActiveSolAddresses));
       dispatch(saveSolanaPublicKey(solanaPublicKey));
 
       router.push({

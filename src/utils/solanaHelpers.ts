@@ -281,3 +281,13 @@ export async function collectedUsedAddresses(
 
   return keyPairsUsed;
 }
+
+export async function importAllActiveSolAddresses(mnemonicPhrase: string) {
+  const unusedAddressIndex = await findNextUnusedSolWalletIndex(mnemonicPhrase);
+  const usedAddresses = await collectedUsedAddresses(
+    mnemonicPhrase,
+    unusedAddressIndex
+  );
+
+  return usedAddresses;
+}

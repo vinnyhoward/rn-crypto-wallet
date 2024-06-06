@@ -148,6 +148,7 @@ export default function Index() {
   const failedSolStatus = useSelector(
     (state: RootState) => state.wallet.solana.status === "failed"
   );
+
   const snapPoints = useMemo(() => ["10%", "33%", "68%", "90%"], []);
 
   const prices = useSelector((state: RootState) => state.price.data);
