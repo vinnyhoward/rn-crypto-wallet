@@ -108,7 +108,7 @@ export default function SendConfirmationPage() {
 
   const prices = useSelector((state: RootState) => state.price.data);
   const walletAddress = useSelector(
-    (state: RootState) => state.wallet[chainName].address
+    (state: RootState) => state.wallet[chainName].activeAddress.address
   );
 
   const solPrice = prices.solana.usd;
@@ -124,10 +124,9 @@ export default function SendConfirmationPage() {
 
   const handleSubmit = async () => {
     const seedPhrase = await getPhrase();
-    const ethPrivateKey = await deriveEthPrivateKeysFromPhrase(seedPhrase);
-    const solPrivateKey = await deriveSolPrivateKeysFromPhrase(seedPhrase);
 
     if (chainName === "ethereum") {
+      const ethPrivateKey = await deriveEthPrivateKeysFromPhrase(seedPhrase);
       try {
         setLoading(true);
         setBtnDisabled(true);
@@ -147,6 +146,7 @@ export default function SendConfirmationPage() {
     }
 
     if (chainName === "solana") {
+      const solPrivateKey = await deriveSolPrivateKeysFromPhrase(seedPhrase);
       try {
         setLoading(true);
         setBtnDisabled(true);

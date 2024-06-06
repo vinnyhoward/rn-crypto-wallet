@@ -1,4 +1,11 @@
+// Inject node globals into React Native global scope.
+
 global.Buffer = require("buffer").Buffer;
+
+// @ts-ignore
+global.location = {
+  protocol: "file:",
+};
 
 import { useState, useEffect } from "react";
 import { Redirect, Stack, router } from "expo-router";

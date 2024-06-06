@@ -97,7 +97,7 @@ export async function getPhrase(): Promise<string | null> {
     const encryptedData: EncryptedData = JSON.parse(encryptedDataString);
     if (encryptedDataString) {
       const phrase = await generateKeyAndDecryptData(encryptedData);
-      return phrase;
+      return JSON.parse(phrase);
     } else {
       return null;
     }

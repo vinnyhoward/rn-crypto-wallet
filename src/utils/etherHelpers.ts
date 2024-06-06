@@ -40,7 +40,7 @@ const alchemy = new Alchemy(config);
 export const ethProvider = new JsonRpcProvider(ethereumUrl);
 export const webSocketProvider = new WebSocketProvider(ethWebSocketUrl);
 
-export function restoreWalletFromPhrase(mnemonicPhrase: string) {
+export function restoreEthWalletFromPhrase(mnemonicPhrase: string) {
   if (!mnemonicPhrase) {
     throw new Error("Mnemonic phrase cannot be empty.");
   }
@@ -51,18 +51,7 @@ export function restoreWalletFromPhrase(mnemonicPhrase: string) {
 
   try {
     const ethWallet = Wallet.fromPhrase(mnemonicPhrase);
-    const seedBuffer = mnemonicToSeedSync(mnemonicPhrase);
-    const seed = new Uint8Array(
-      seedBuffer.buffer,
-      seedBuffer.byteOffset,
-      seedBuffer.byteLength
-    ).slice(0, 32);
-
-    const solWallet = Keypair.fromSeed(seed);
-    return {
-      ethereumWallet: ethWallet,
-      solanaWallet: solWallet,
-    };
+    return ethWallet;
   } catch (error) {
     throw new Error(
       "Failed to restore wallet from mnemonic: " + (error as Error).message
@@ -70,23 +59,10 @@ export function restoreWalletFromPhrase(mnemonicPhrase: string) {
   }
 }
 
-export const createWallet = async () => {
+export const createEthWallet = async () => {
   try {
     const ethereumWallet = Wallet.createRandom();
-
-    const mnemonic = ethereumWallet.mnemonic.phrase;
-    const seedBuffer = mnemonicToSeedSync(mnemonic);
-    const seed = new Uint8Array(
-      seedBuffer.buffer,
-      seedBuffer.byteOffset,
-      seedBuffer.byteLength
-    ).slice(0, 32);
-    const solanaWallet = Keypair.fromSeed(seed);
-
-    return {
-      ethereumWallet: ethereumWallet,
-      solanaWallet,
-    };
+    return ethereumWallet;
   } catch (error) {
     throw new Error("Failed to create wallet: " + (error as Error).message);
   }
@@ -273,6 +249,7 @@ export const fetchNFTs = async (address: string) => {
 export const deriveEthPrivateKeysFromPhrase = async (
   mnemonicPhrase: string
 ) => {
+  console.log("mnemonic phrase", mnemonicPhrase);
   if (!mnemonicPhrase) {
     throw new Error("Empty mnemonic phrase ");
   }

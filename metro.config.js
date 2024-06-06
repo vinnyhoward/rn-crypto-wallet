@@ -13,6 +13,9 @@ module.exports = (() => {
     ...resolver,
     assetExts: resolver.assetExts.filter((ext) => ext !== "svg"),
     sourceExts: [...resolver.sourceExts, "svg"],
+    extraNodeModules: {
+      stream: require.resolve("readable-stream"),
+    },
   };
 
   return config;

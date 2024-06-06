@@ -8,6 +8,7 @@ import {
   Keypair,
 } from "@solana/web3.js";
 import { validateMnemonic, mnemonicToSeedSync } from "bip39";
+import { derivePath } from "ed25519-hd-key";
 import { TransactionObject } from "../types";
 import { uint8ArrayToBase64 } from "./uint8ArrayToBase64";
 import { base64ToUint8Array } from "./base64ToUint8Array";
@@ -18,7 +19,15 @@ const customRpcUrl =
   EXPO_PUBLIC_ALCHEMY_SOL_URL + EXPO_PUBLIC_ALCHEMY_SOL_API_KEY;
 const connection = new Connection(customRpcUrl, "confirmed");
 
-export const getSolanaBalance = async (publicKeyString: string) => {
+export function restoreSolWalletFromPhrase(mnemonicPhrase: string) {
+  const seed = mnemonicToSeedSync(mnemonicPhrase, "");
+  const path = `m/44'/501'/0'/0'`;
+  const keypair = Keypair.fromSeed(derivePath(path, seed.toString("hex")).key);
+
+  return keypair;
+}
+
+export async function getSolanaBalance(publicKeyString: string) {
   try {
     const publicKey = new PublicKey(publicKeyString);
     const balance = await connection.getBalance(publicKey);
@@ -28,7 +37,7 @@ export const getSolanaBalance = async (publicKeyString: string) => {
     console.error("Error fetching Solana balance:", error);
     throw error;
   }
-};
+}
 
 const fetchTransactionsSequentially = async (signatures: any[]) => {
   const transactions = [];
@@ -197,10 +206,10 @@ export function extractTransactionDetails(
 export const deriveSolPrivateKeysFromPhrase = async (
   mnemonicPhrase: string
 ) => {
+  console.log("mnemonic phrase", mnemonicPhrase);
   if (!mnemonicPhrase) {
     throw new Error("Empty mnemonic phrase ");
   }
-
   if (!validateMnemonic(mnemonicPhrase)) {
     throw new Error("Invalid mnemonic phrase ");
   }
@@ -225,67 +234,50 @@ export const deriveSolPrivateKeysFromPhrase = async (
   }
 };
 
-// export async function findNextUnusedSolWalletIndex(mnemonicPhrase: string) {
-//   if (!mnemonicPhrase) {
-//     throw new Error("Empty mnemonic phrase ");
-//   }
+export async function findNextUnusedSolWalletIndex(mnemonicPhrase: string) {
+  if (!mnemonicPhrase) {
+    throw new Error("Empty mnemonic phrase ");
+  }
 
-//   console.log("mnemonic phrase:", mnemonicPhrase);
-//   if (!validateMnemonic(mnemonicPhrase)) {
-//     throw new Error("Invalid mnemonic phrase ");
-//   }
+  if (!validateMnemonic(mnemonicPhrase)) {
+    throw new Error("Invalid mnemonic phrase ");
+  }
 
-//   const seed = mnemonicToSeedSync(mnemonicPhrase);
-//   const curve = slip10.Curve.Ed25519;
-//   // const seed = new Uint8Array(
-//   //   seedBuffer.buffer,
-//   //   seedBuffer.byteOffset,
-//   //   seedBuffer.byteLength
-//   // ).slice(0, 32);
+  const seed = mnemonicToSeedSync(mnemonicPhrase, "");
+  let currentIndex = 0;
+  while (true) {
+    const path = `m/44'/501'/${currentIndex}'/0'`;
+    const keypair = Keypair.fromSeed(
+      derivePath(path, seed.toString("hex")).key
+    );
+    const publicKey = keypair.publicKey;
+    const signatures = await connection.getSignaturesForAddress(publicKey, {
+      limit: 1,
+    });
 
-//   let currentIndex = 0;
-//   while (true) {
-//     const path = `m/44'/501'/${currentIndex}'/0'`;
-//     const { key } = slip10.derivePath(curve, seed, path);
-//     const keypair = Keypair.fromSecretKey(key);
-//     const publicKey = keypair.publicKey;
-//     const signatures = await connection.getSignaturesForAddress(publicKey, {
-//       limit: 1,
-//     });
+    if (signatures.length === 0) {
+      break;
+    }
+    currentIndex += 1;
+  }
 
-//     if (signatures.length === 0) {
-//       break;
-//     }
-//     currentIndex += 1;
-//   }
+  return currentIndex;
+}
 
-//   return currentIndex;
-// }
+export async function collectedUsedAddresses(
+  mnemonicPhrase: string,
+  unusedIndex: number
+) {
+  const seed = mnemonicToSeedSync(mnemonicPhrase, "");
+  const keyPairsUsed = [];
 
-// findNextUnusedSolWalletIndex(
-//   ""
-// )
-//   .then((data) => console.log("data:", data))
-//   .catch(console.error);
+  for (let i = 0; i < unusedIndex; i++) {
+    const path = `m/44'/501'/${i}'/0'`;
+    const keypair = Keypair.fromSeed(
+      derivePath(path, seed.toString("hex")).key
+    );
+    keyPairsUsed.push(keypair);
+  }
 
-// export async function collectedUsedAddresses(
-//   mnemonicPhrase: string,
-//   unusedIndex: number
-// ) {
-//   const seedBuffer = mnemonicToSeedSync(mnemonicPhrase);
-//   const seed = new Uint8Array(
-//     seedBuffer.buffer,
-//     seedBuffer.byteOffset,
-//     seedBuffer.byteLength
-//   ).slice(0, 32);
-
-//   const keyPairsUsed = [];
-
-//   for (let i = 0; i < unusedIndex; i++) {
-//     const path = `m/44'/501'/${i}'/0'`;
-//     const keypair = Keypair.fromSeed(seed);
-//     keyPairsUsed.push(keypair);
-//   }
-
-//   return addressesUsed;
-// }
+  return keyPairsUsed;
+}

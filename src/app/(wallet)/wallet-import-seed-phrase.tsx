@@ -6,10 +6,11 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
 import {
-  restoreWalletFromPhrase,
+  restoreEthWalletFromPhrase,
   findNextUnusedEthWalletIndex,
   collectedUsedEthAddresses,
 } from "../../utils/etherHelpers";
+import { restoreSolWalletFromPhrase } from "../../utils/solanaHelpers";
 import { ThemeType } from "../../styles/theme";
 import {
   saveEthereumAddress,
@@ -87,13 +88,14 @@ export default function Page() {
       return;
     }
 
-    const importedWallets = restoreWalletFromPhrase(phraseTextValue);
+    const importedEthWallets = restoreEthWalletFromPhrase(phraseTextValue);
+    const importedSolWallets = restoreSolWalletFromPhrase(phraseTextValue);
     try {
-      const etherAddress = importedWallets.ethereumWallet.address;
-      const etherPublicKey = importedWallets.ethereumWallet.publicKey;
+      const etherAddress = importedEthWallets.address;
+      const etherPublicKey = importedEthWallets.publicKey;
 
-      const solanaAddress = importedWallets.solanaWallet.publicKey.toBase58();
-      const solanaPublicKey = importedWallets.solanaWallet.publicKey.toBase58();
+      const solanaAddress = importedSolWallets.publicKey.toBase58();
+      const solanaPublicKey = importedSolWallets.publicKey.toBase58();
 
       const unusedIndex = await findNextUnusedEthWalletIndex(phraseTextValue);
       const usedAddresses = await collectedUsedEthAddresses(

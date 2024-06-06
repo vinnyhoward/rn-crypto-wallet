@@ -103,7 +103,7 @@ export default function ReceivePage() {
   const chainName = receive as string;
   const navigation = useNavigation();
   const tokenAddress = useSelector(
-    (state: RootState) => state.wallet[chainName].address
+    (state: RootState) => state.wallet[chainName].activeAddress.address
   );
   const [isAmountInputFocused, setIsAmountInputFocused] = useState(false);
   const [buttonText, setButtonText] = useState("Copy");
@@ -141,7 +141,6 @@ export default function ReceivePage() {
         <ReceiveTextInputContainer>
           <ReceiveTextInput
             isAmountInputFocused={isAmountInputFocused}
-            placeholder="Amount"
             value={truncateWalletAddress(tokenAddress, 8, 8)}
             editable={false}
             onEndEditing={() => setIsAmountInputFocused(false)}

@@ -4,7 +4,8 @@ import { useDispatch } from "react-redux";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import styled from "styled-components/native";
-import { createWallet } from "../../utils/etherHelpers";
+import { createEthWallet } from "../../utils/etherHelpers";
+import { restoreSolWalletFromPhrase } from "../../utils/solanaHelpers";
 import Button from "../../components/Button/Button";
 import { ThemeType } from "../../styles/theme";
 import {
@@ -86,16 +87,15 @@ export default function WalletSetup() {
   const walletSetup = async () => {
     try {
       setLoading(true);
-      const wallets = await createWallet();
+      const ethWallet = await createEthWallet();
+      const masterMnemonicPhrase = ethWallet.mnemonic.phrase;
+      const solWallet = restoreSolWalletFromPhrase(masterMnemonicPhrase);
 
-      setLoading(false);
-      const masterMnemonicPhrase = wallets.ethereumWallet.mnemonic.phrase;
+      const etherAddress = ethWallet.address;
+      const etherPublicKey = ethWallet.publicKey;
 
-      const etherAddress = wallets.ethereumWallet.address;
-      const etherPublicKey = wallets.ethereumWallet.publicKey;
-
-      const solanaAddress = wallets.solanaWallet.publicKey.toBase58();
-      const solanaPublicKey = wallets.solanaWallet.publicKey.toBase58();
+      const solanaAddress = solWallet.publicKey.toBase58();
+      const solanaPublicKey = solWallet.publicKey.toBase58();
 
       dispatch(saveEthereumAddress(etherAddress));
       dispatch(saveEthereumPublicKey(etherPublicKey));
@@ -103,6 +103,7 @@ export default function WalletSetup() {
       dispatch(saveSolanaAddress(solanaAddress));
       dispatch(saveSolanaPublicKey(solanaPublicKey));
 
+      setLoading(false);
       router.push({
         pathname: ROUTES.seedPhrase,
         params: { phrase: masterMnemonicPhrase },

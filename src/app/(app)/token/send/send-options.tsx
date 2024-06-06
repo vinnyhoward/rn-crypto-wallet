@@ -27,10 +27,10 @@ export default function SendOptions() {
   const theme = useTheme();
   const router = useRouter();
   const ethBalance = useSelector(
-    (state: RootState) => state.wallet.ethereum.balance
+    (state: RootState) => state.wallet.ethereum.activeAddress.balance
   );
   const solBalance = useSelector(
-    (state: RootState) => state.wallet.solana.balance
+    (state: RootState) => state.wallet.solana.activeAddress.balance
   );
   const prices = useSelector((state: RootState) => state.price.data);
   const solPrice = prices.solana.usd;

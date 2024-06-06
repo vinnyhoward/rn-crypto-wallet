@@ -174,10 +174,10 @@ export default function SendPage() {
   const ticker = TICKERS[chainName];
 
   const tokenBalance = useSelector(
-    (state: RootState) => state.wallet[chainName].balance
+    (state: RootState) => state.wallet[chainName].activeAddress.balance
   );
   const address = useSelector(
-    (state: RootState) => state.wallet[chainName].address
+    (state: RootState) => state.wallet[chainName].activeAddress.address
   );
   const prices = useSelector((state: RootState) => state.price.data);
   const solPrice = prices.solana.usd;
