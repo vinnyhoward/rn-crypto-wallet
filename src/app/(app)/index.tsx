@@ -214,16 +214,6 @@ export default function Index() {
     const isEthereum =
       item.asset.toLowerCase() === TICKERS.ethereum.toLowerCase();
     const Icon = isSolana ? SolanaIcon : EthereumPlainIcon;
-    if (failedEthStatus || failedSolStatus) {
-      return (
-        <ErrorContainer>
-          <ErrorText>
-            There seems to be a network error, please try again later
-          </ErrorText>
-        </ErrorContainer>
-      );
-    }
-
     const sign = item.direction === "received" ? "+" : "-";
     if (isSolana) {
       return (
@@ -337,7 +327,19 @@ export default function Index() {
               <SectionTitle>Recent Activity</SectionTitle>
             </>
           }
-          ListEmptyComponent={<InfoBanner />}
+          ListEmptyComponent={
+            <>
+              {failedEthStatus || failedSolStatus ? (
+                <ErrorContainer>
+                  <ErrorText>
+                    There seems to be a network error, please try again later
+                  </ErrorText>
+                </ErrorContainer>
+              ) : (
+                <InfoBanner />
+              )}
+            </>
+          }
         />
       </ContentContainer>
       <BottomSheet

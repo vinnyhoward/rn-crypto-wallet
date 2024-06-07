@@ -234,7 +234,10 @@ export const deriveSolPrivateKeysFromPhrase = async (
   }
 };
 
-export async function findNextUnusedSolWalletIndex(mnemonicPhrase: string) {
+export async function findNextUnusedSolWalletIndex(
+  mnemonicPhrase: string,
+  indexOffset: number = 0
+) {
   if (!mnemonicPhrase) {
     throw new Error("Empty mnemonic phrase ");
   }
@@ -244,7 +247,7 @@ export async function findNextUnusedSolWalletIndex(mnemonicPhrase: string) {
   }
 
   const seed = mnemonicToSeedSync(mnemonicPhrase, "");
-  let currentIndex = 0;
+  let currentIndex = indexOffset;
   while (true) {
     const path = `m/44'/501'/${currentIndex}'/0'`;
     const keypair = Keypair.fromSeed(
@@ -261,17 +264,18 @@ export async function findNextUnusedSolWalletIndex(mnemonicPhrase: string) {
     currentIndex += 1;
   }
 
-  return currentIndex;
+  return currentIndex > 0 ? currentIndex + 1 : 0;
 }
 
 export async function collectedUsedAddresses(
   mnemonicPhrase: string,
   unusedIndex: number
 ) {
+  const startingIndex = unusedIndex > 0 ? unusedIndex - 1 : unusedIndex;
   const seed = mnemonicToSeedSync(mnemonicPhrase, "");
   const keyPairsUsed = [];
 
-  for (let i = 0; i < unusedIndex; i++) {
+  for (let i = 0; i < 5; i++) {
     const path = `m/44'/501'/${i}'/0'`;
     const keypair = Keypair.fromSeed(
       derivePath(path, seed.toString("hex")).key
@@ -291,3 +295,23 @@ export async function importAllActiveSolAddresses(mnemonicPhrase: string) {
 
   return usedAddresses;
 }
+
+export const createSolWalletByIndex = async (
+  phrase: string,
+  indexOffset: number = 0
+) => {
+  try {
+    const seed = mnemonicToSeedSync(phrase, "");
+
+    const path = `m/44'/501'/${indexOffset}'/0'`;
+    const keypair = Keypair.fromSeed(
+      derivePath(path, seed.toString("hex")).key
+    );
+
+    return keypair;
+  } catch (error) {
+    throw new Error(
+      "failed to create Solana wallet by index: " + (error as Error).message
+    );
+  }
+};

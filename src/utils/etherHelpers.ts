@@ -11,8 +11,7 @@ import {
   HDNodeWallet,
   Mnemonic,
 } from "ethers";
-import { mnemonicToSeedSync, validateMnemonic } from "bip39";
-import { Keypair } from "@solana/web3.js";
+import { validateMnemonic } from "bip39";
 import { Alchemy, Network } from "alchemy-sdk";
 import { truncateBalance } from "./truncateBalance";
 
@@ -67,10 +66,6 @@ export const createEthWallet = async () => {
     throw new Error("Failed to create wallet: " + (error as Error).message);
   }
 };
-
-export function validateEthereumAddress(address: string) {
-  return isAddress(address);
-}
 
 interface SendTransactionResponse {
   gasEstimate: string;
@@ -268,8 +263,19 @@ export const deriveEthPrivateKeysFromPhrase = async (
   }
 };
 
-export async function findNextUnusedEthWalletIndex(phrase: string) {
-  let currentIndex = 0;
+export async function findNextUnusedEthWalletIndex(
+  phrase: string,
+  indexOffset: number = 0
+) {
+  if (!phrase) {
+    throw new Error("Empty mnemonic phrase ");
+  }
+
+  if (!validateMnemonic(phrase)) {
+    throw new Error("Invalid mnemonic phrase ");
+  }
+
+  let currentIndex = indexOffset;
   const mnemonic = Mnemonic.fromPhrase(phrase);
 
   while (true) {
@@ -283,17 +289,18 @@ export async function findNextUnusedEthWalletIndex(phrase: string) {
     currentIndex += 1;
   }
 
-  return currentIndex;
+  return currentIndex > 0 ? currentIndex + 1 : 0;
 }
 
 export async function collectedUsedEthAddresses(
   phrase: string,
   unusedIndex: number
 ) {
+  const startingIndex = unusedIndex > 0 ? unusedIndex - 1 : unusedIndex;
   const mnemonic = Mnemonic.fromPhrase(phrase);
   const addressesUsed = [];
 
-  for (let i = 0; i < unusedIndex; i++) {
+  for (let i = 0; i < startingIndex; i++) {
     const path = `m/44'/60'/0'/0/${i}`;
     const wallet = HDNodeWallet.fromMnemonic(mnemonic, path);
     addressesUsed.push(wallet);
@@ -310,4 +317,25 @@ export async function importAllActiveEthAddresses(mnemonicPhrase: string) {
   );
 
   return usedAddresses;
+}
+
+export const createEthWalletByIndex = async (
+  phrase: string,
+  indexOffset: number = 0
+) => {
+  try {
+    const mnemonic = Mnemonic.fromPhrase(phrase);
+    const path = `m/44'/60'/0'/0/${indexOffset}`;
+    const wallet = HDNodeWallet.fromMnemonic(mnemonic, path);
+
+    return wallet;
+  } catch (error) {
+    throw new Error(
+      "failed to create Ethereum wallet by index: " + (error as Error).message
+    );
+  }
+};
+
+export function validateEthereumAddress(address: string) {
+  return isAddress(address);
 }
