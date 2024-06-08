@@ -43,5 +43,5 @@ export const ROUTES: Routes = {
   sendConfirmation: "/token/send/send-confirmation",
   settings: "/(app)/settings/settings-modal",
   camera: "/(app)/camera",
-  accounts: "/(app)/accounts/accounts-modal",
+  accounts: "/(app)/accounts/accounts",
 };

@@ -11,29 +11,29 @@ import {
 } from "../utils/solanaHelpers";
 import { truncateBalance } from "../utils/truncateBalance";
 
-interface AddressInfo {
-  address: string;
-  publicKey: string;
-}
-
-interface ActiveAddressState {
+export interface AddressState {
+  accountName: string;
+  derivationPath: string;
   address: string;
   publicKey: string;
   balance: number;
-  transactionMetadata: {
-    paginationKey: undefined | string | string[];
-    transactions: Transaction[];
-  };
+  transactionMetadata?: transactionMetadata;
 }
 
-interface NetworkState {
-  activeAddress: ActiveAddressState;
-  allAddresses: AddressInfo[];
+export interface transactionMetadata {
+  paginationKey: undefined | string | string[];
+  transactions: Transaction[];
+}
+
+export interface NetworkState {
+  activeAddress: AddressState;
+  inactiveAddresses: AddressState[];
   failedNetworkRequest: boolean;
   status: "idle" | "loading" | "failed" | "success";
 }
 
-interface WalletState {
+export interface WalletState {
+  activeAccountName: string;
   ethereum: NetworkState;
   solana: NetworkState;
 }
@@ -50,8 +50,11 @@ export interface Transaction {
 }
 
 const initialState: WalletState = {
+  activeAccountName: "",
   ethereum: {
     activeAddress: {
+      accountName: "",
+      derivationPath: "",
       address: "",
       publicKey: "",
       balance: 0,
@@ -60,12 +63,14 @@ const initialState: WalletState = {
         transactions: [],
       },
     },
-    allAddresses: [],
+    inactiveAddresses: [],
     failedNetworkRequest: false,
     status: "idle",
   },
   solana: {
     activeAddress: {
+      accountName: "",
+      derivationPath: "",
       address: "",
       publicKey: "",
       balance: 0,
@@ -74,7 +79,7 @@ const initialState: WalletState = {
         transactions: [],
       },
     },
-    allAddresses: [],
+    inactiveAddresses: [],
     failedNetworkRequest: false,
     status: "idle",
   },
@@ -148,23 +153,37 @@ export const walletSlice = createSlice({
   name: "wallet",
   initialState,
   reducers: {
-    saveEthereumAddress: (state, action: PayloadAction<string>) => {
-      state.ethereum.activeAddress.address = action.payload;
+    saveEthereumAccountDetails: (
+      state,
+      action: PayloadAction<AddressState>
+    ) => {
+      state.ethereum.activeAddress = {
+        ...action.payload,
+        transactionMetadata: {
+          paginationKey: undefined,
+          transactions: [],
+        },
+      };
+      state.activeAccountName = "Account 1";
     },
-    saveAllEthereumAddresses: (state, action: PayloadAction<AddressInfo[]>) => {
-      state.ethereum.allAddresses = action.payload;
+    saveSolanaAccountDetails: (state, action: PayloadAction<AddressState>) => {
+      state.solana.activeAddress = {
+        ...action.payload,
+        transactionMetadata: {
+          paginationKey: undefined,
+          transactions: [],
+        },
+      };
+      state.activeAccountName = "Account 1";
     },
-    saveSolanaAddress: (state, action: PayloadAction<string>) => {
-      state.solana.activeAddress.address = action.payload;
+    saveAllEthereumAddresses: (
+      state,
+      action: PayloadAction<AddressState[]>
+    ) => {
+      state.ethereum.inactiveAddresses = action.payload;
     },
-    saveAllSolanaAddresses: (state, action: PayloadAction<AddressInfo[]>) => {
-      state.solana.allAddresses = action.payload;
-    },
-    saveEthereumPublicKey: (state, action: PayloadAction<string>) => {
-      state.ethereum.activeAddress.publicKey = action.payload;
-    },
-    saveSolanaPublicKey: (state, action: PayloadAction<string>) => {
-      state.solana.activeAddress.publicKey = action.payload;
+    saveAllSolanaAddresses: (state, action: PayloadAction<AddressState[]>) => {
+      state.solana.inactiveAddresses = action.payload;
     },
     depositEthereum: (state, action: PayloadAction<number>) => {
       state.ethereum.activeAddress.balance += action.payload;
@@ -201,6 +220,9 @@ export const walletSlice = createSlice({
     },
     updateSolanaBalance: (state, action: PayloadAction<number>) => {
       state.solana.activeAddress.balance = action.payload;
+    },
+    resetState: (state) => {
+      state = initialState;
     },
   },
   extraReducers: (builder) => {
@@ -274,17 +296,16 @@ export const {
   depositEthereum,
   withdrawEthereum,
   addEthereumTransaction,
-  saveEthereumAddress,
   saveAllEthereumAddresses,
-  saveEthereumPublicKey,
   depositSolana,
   saveAllSolanaAddresses,
   withdrawSolana,
   addSolanaTransaction,
-  saveSolanaAddress,
-  saveSolanaPublicKey,
   updateEthereumBalance,
   updateSolanaBalance,
+  saveEthereumAccountDetails,
+  saveSolanaAccountDetails,
+  resetState,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;

@@ -50,7 +50,6 @@ const fetchTransactionsSequentially = async (signatures: any[]) => {
       transactions.push(transaction);
     } catch (error) {
       if (error.message.includes("429")) {
-        console.log("Rate limit hit, slowing down requests");
         await new Promise((resolve) => setTimeout(resolve, 250));
       } else {
         console.error("Failed to fetch transaction:", error);
@@ -206,7 +205,6 @@ export function extractTransactionDetails(
 export const deriveSolPrivateKeysFromPhrase = async (
   mnemonicPhrase: string
 ) => {
-  console.log("mnemonic phrase", mnemonicPhrase);
   if (!mnemonicPhrase) {
     throw new Error("Empty mnemonic phrase ");
   }
@@ -275,12 +273,19 @@ export async function collectedUsedAddresses(
   const seed = mnemonicToSeedSync(mnemonicPhrase, "");
   const keyPairsUsed = [];
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i <= startingIndex; i++) {
     const path = `m/44'/501'/${i}'/0'`;
     const keypair = Keypair.fromSeed(
       derivePath(path, seed.toString("hex")).key
     );
-    keyPairsUsed.push(keypair);
+    const normalizedKeyPair = {
+      publicKey: keypair.publicKey.toBase58(),
+    };
+    const keypairWithDetails = {
+      ...normalizedKeyPair,
+      derivationPath: path,
+    };
+    keyPairsUsed.push(keypairWithDetails);
   }
 
   return keyPairsUsed;

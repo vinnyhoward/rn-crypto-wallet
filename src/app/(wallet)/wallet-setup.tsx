@@ -9,11 +9,10 @@ import { restoreSolWalletFromPhrase } from "../../utils/solanaHelpers";
 import Button from "../../components/Button/Button";
 import { ThemeType } from "../../styles/theme";
 import {
-  saveEthereumAddress,
-  saveEthereumPublicKey,
-  saveSolanaAddress,
-  saveSolanaPublicKey,
+  saveEthereumAccountDetails,
+  saveSolanaAccountDetails,
 } from "../../store/walletSlice";
+import type { AddressState } from "../../store/walletSlice";
 import { ROUTES } from "../../constants/routes";
 
 export const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
@@ -91,17 +90,24 @@ export default function WalletSetup() {
       const masterMnemonicPhrase = ethWallet.mnemonic.phrase;
       const solWallet = restoreSolWalletFromPhrase(masterMnemonicPhrase);
 
-      const etherAddress = ethWallet.address;
-      const etherPublicKey = ethWallet.publicKey;
+      const ethereumAccount: AddressState = {
+        accountName: "Account 1",
+        derivationPath: `m/44'/60'/0'/0/0`,
+        address: ethWallet.address,
+        publicKey: ethWallet.publicKey,
+        balance: 0,
+      };
 
-      const solanaAddress = solWallet.publicKey.toBase58();
-      const solanaPublicKey = solWallet.publicKey.toBase58();
+      const solanaAccount: AddressState = {
+        accountName: "Account 1",
+        derivationPath: `m/44'/501'/0'/0'`,
+        address: solWallet.publicKey.toBase58(),
+        publicKey: solWallet.publicKey.toBase58(),
+        balance: 0,
+      };
 
-      dispatch(saveEthereumAddress(etherAddress));
-      dispatch(saveEthereumPublicKey(etherPublicKey));
-
-      dispatch(saveSolanaAddress(solanaAddress));
-      dispatch(saveSolanaPublicKey(solanaPublicKey));
+      dispatch(saveEthereumAccountDetails(ethereumAccount));
+      dispatch(saveSolanaAccountDetails(solanaAccount));
 
       setLoading(false);
       router.push({

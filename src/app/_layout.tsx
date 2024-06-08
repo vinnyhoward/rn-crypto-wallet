@@ -17,6 +17,7 @@ import {
 import { clearStorage } from "../hooks/use-storage-state";
 import Theme from "../styles/theme";
 import { store, persistor, clearPersistedState } from "../store";
+import { resetState } from "../store/walletSlice";
 import { ROUTES } from "../constants/routes";
 import LeftIcon from "../assets/svg/left-arrow.svg";
 
@@ -41,6 +42,7 @@ export default function RootLayout() {
     if (navigation.canGoBack()) {
       navigation.goBack();
     } else {
+      resetState();
       clearStorage();
       clearPersistedState();
       router.replace(ROUTES.walletSetup);

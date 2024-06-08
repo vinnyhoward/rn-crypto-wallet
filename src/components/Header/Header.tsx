@@ -1,6 +1,8 @@
 import React from "react";
 import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store";
 import { ThemeType } from "../../styles/theme";
 import SettingsIcon from "../../assets/svg/settings.svg";
 import QRCodeIcon from "../../assets/svg/qr-code.svg";
@@ -47,6 +49,9 @@ const Header: React.FC<{
   route: any;
 }> = ({ navigation, options, route }) => {
   const theme = useTheme();
+  const activeAccountName = useSelector(
+    (state: RootState) => state.wallet.activeAccountName
+  );
   return (
     <Container>
       <LeftContainer>
@@ -55,7 +60,7 @@ const Header: React.FC<{
         </IconTouchContainer>
       </LeftContainer>
       <CenterContainer onPress={() => router.push(ROUTES.accounts)}>
-        <HeaderText>Account 1</HeaderText>
+        <HeaderText>{activeAccountName}</HeaderText>
         <DownArrowIcon width={30} height={30} fill={theme.colors.white} />
       </CenterContainer>
       <RightContainer>

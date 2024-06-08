@@ -8,7 +8,7 @@ global.location = {
 };
 
 import { useState, useEffect } from "react";
-import { Redirect, Stack, router } from "expo-router";
+import { Stack, router } from "expo-router";
 import { useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
 import * as SplashScreen from "expo-splash-screen";
@@ -197,14 +197,22 @@ export default function AppLayout() {
           }}
         />
         <Stack.Screen
-          name="accounts/accounts-modal"
+          name="accounts/accounts"
           options={{
-            headerShown: false,
+            headerShown: true,
             headerTransparent: true,
+            headerTitle: "Manage Wallets",
+            headerTitleStyle: {
+              color: "white",
+              fontSize: 18,
+            },
             gestureEnabled: true,
-            presentation: "modal",
-            headerLeft: null,
             headerRight: null,
+            headerLeft: () => (
+              <IconTouchContainer onPress={() => router.back()}>
+                <LeftIcon width={25} height={25} fill={theme.colors.primary} />
+              </IconTouchContainer>
+            ),
           }}
         />
       </Stack>

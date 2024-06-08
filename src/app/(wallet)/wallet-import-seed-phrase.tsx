@@ -9,13 +9,12 @@ import { importAllActiveEthAddresses } from "../../utils/etherHelpers";
 import { importAllActiveSolAddresses } from "../../utils/solanaHelpers";
 import { ThemeType } from "../../styles/theme";
 import {
-  saveEthereumAddress,
-  saveEthereumPublicKey,
-  saveSolanaAddress,
-  saveSolanaPublicKey,
+  saveEthereumAccountDetails,
+  saveSolanaAccountDetails,
   saveAllEthereumAddresses,
   saveAllSolanaAddresses,
 } from "../../store/walletSlice";
+import type { AddressState } from "../../store/walletSlice";
 import Button from "../../components/Button/Button";
 import { ROUTES } from "../../constants/routes";
 import { savePhrase } from "../../hooks/use-storage-state";
@@ -75,12 +74,13 @@ export default function Page() {
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleVerifySeedPhrase = async () => {
-    setLoading(true);
+    // setLoading(true);
     const errorText =
       "Looks like the seed phrase is incorrect. Please try again.";
     const phraseTextValue = textValue.trimEnd();
     if (phraseTextValue.split(" ").length !== 12) {
       setError(errorText);
+      setLoading(false);
       return;
     }
 
@@ -92,38 +92,39 @@ export default function Page() {
       const importedSolWallets = await importAllActiveSolAddresses(
         phraseTextValue
       );
-      const firstEthWallet = importedEthWallets[0];
-      const firstSolWallet = importedSolWallets[0];
 
-      const etherAddress = firstEthWallet.address;
-      const etherPublicKey = firstEthWallet.publicKey;
+      const transformedActiveEthAddresses: AddressState[] =
+        importedEthWallets.map((info, index) => {
+          return {
+            accountName: `Account ${index + 1}`,
+            derivationPath: info.derivationPath,
+            address: info.address,
+            publicKey: info.publicKey,
+            balance: 0,
+          };
+        });
 
-      const solanaAddress = firstSolWallet.publicKey.toBase58();
-      const solanaPublicKey = firstSolWallet.publicKey.toBase58();
+      const transformedActiveSolAddresses: AddressState[] =
+        importedSolWallets.map((info, index) => {
+          return {
+            accountName: `Account ${index + 1}`,
+            derivationPath: info.derivationPath,
+            address: info.publicKey,
+            publicKey: info.publicKey,
+            balance: 0,
+          };
+        });
 
-      const transformedActiveEthAddresses = importedEthWallets.map((info) => {
-        return {
-          address: info.address,
-          publicKey: info.publicKey,
-        };
-      });
-
-      const transformedActiveSolAddresses = importedSolWallets.map((info) => {
-        return {
-          address: info.publicKey.toBase58(),
-          publicKey: info.publicKey.toBase58(),
-        };
-      });
+      const firstEthWallet = transformedActiveEthAddresses[0];
+      const firstSolWallet = transformedActiveSolAddresses[0];
 
       await savePhrase(JSON.stringify(phraseTextValue));
 
-      dispatch(saveEthereumAddress(etherAddress));
+      dispatch(saveEthereumAccountDetails(firstEthWallet));
       dispatch(saveAllEthereumAddresses(transformedActiveEthAddresses));
-      dispatch(saveEthereumPublicKey(etherPublicKey));
 
-      dispatch(saveSolanaAddress(solanaAddress));
+      dispatch(saveSolanaAccountDetails(firstSolWallet));
       dispatch(saveAllSolanaAddresses(transformedActiveSolAddresses));
-      dispatch(saveSolanaPublicKey(solanaPublicKey));
 
       router.push({
         pathname: ROUTES.walletCreatedSuccessfully,

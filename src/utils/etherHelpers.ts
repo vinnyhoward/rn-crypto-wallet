@@ -234,7 +234,6 @@ export const fetchTransactions = async (
 export const fetchNFTs = async (address: string) => {
   try {
     const response = await alchemy.nft.getNftsForOwner(address);
-    console.log("nft response:", response);
   } catch (err) {
     console.error("Error fetching nfts:", err);
     throw new Error("Failed to fetch nfts: " + err.message);
@@ -244,7 +243,6 @@ export const fetchNFTs = async (address: string) => {
 export const deriveEthPrivateKeysFromPhrase = async (
   mnemonicPhrase: string
 ) => {
-  console.log("mnemonic phrase", mnemonicPhrase);
   if (!mnemonicPhrase) {
     throw new Error("Empty mnemonic phrase ");
   }
@@ -300,10 +298,14 @@ export async function collectedUsedEthAddresses(
   const mnemonic = Mnemonic.fromPhrase(phrase);
   const addressesUsed = [];
 
-  for (let i = 0; i < startingIndex; i++) {
+  for (let i = 0; i <= startingIndex; i++) {
     const path = `m/44'/60'/0'/0/${i}`;
     const wallet = HDNodeWallet.fromMnemonic(mnemonic, path);
-    addressesUsed.push(wallet);
+    const walletWithDetails = {
+      ...wallet,
+      derivationPath: path,
+    };
+    addressesUsed.push(walletWithDetails);
   }
 
   return addressesUsed;

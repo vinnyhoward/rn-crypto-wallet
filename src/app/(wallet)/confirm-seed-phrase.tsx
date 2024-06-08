@@ -94,7 +94,8 @@ export default function Page() {
 
     if (selectedWords.join(",") === phrase) {
       try {
-        await savePhrase(phrase);
+        const originalPhrase = JSON.stringify(phrase.split(",").join(" "));
+        await savePhrase(originalPhrase);
       } catch (e) {
         console.error("Failed to save private key", e);
         throw e;
