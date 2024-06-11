@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SafeAreaView, ScrollView } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { router, useLocalSearchParams } from "expo-router";
@@ -10,6 +10,7 @@ import Button from "../../components/Button/Button";
 import Bubble from "../../components/Bubble/Bubble";
 import { ROUTES } from "../../constants/routes";
 import { Title, Subtitle } from "../../components/Styles/Text.styles";
+import { getPhrase } from "../../hooks/use-storage-state";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -66,17 +67,28 @@ const LogoContainer = styled.View``;
 
 export default function Page() {
   const theme = useTheme();
-  const { phrase } = useLocalSearchParams();
-  const seedPhrase = phrase ? (phrase as string).split(" ") : [];
+  const { phrase, readOnly } = useLocalSearchParams();
+  const seedPhraseParams = phrase ? (phrase as string).split(" ") : [];
+  const [seedPhrase, setPhrase] = useState(seedPhraseParams);
   const [buttonText, setButtonText] = useState("Copy to clipboard");
 
   const handleCopy = async () => {
-    await Clipboard.setStringAsync(seedPhrase.join(" "));
+    await Clipboard.setStringAsync(seedPhraseParams.join(" "));
     setButtonText("Copied!");
     setTimeout(() => {
       setButtonText("Copy to clipboard");
     }, 4000);
   };
+
+  useEffect(() => {
+    const fetchPhrase = async () => {
+      const phraseStorage = await getPhrase();
+      setPhrase(phraseStorage.split(" "));
+    };
+    if (readOnly) {
+      fetchPhrase();
+    }
+  }, [readOnly]);
 
   return (
     <SafeAreaContainer>
@@ -102,19 +114,21 @@ export default function Page() {
           </SecondaryButtonContainer>
         </ContentContainer>
       </ScrollView>
-      <ButtonContainer>
-        <Button
-          color={theme.colors.white}
-          backgroundColor={theme.colors.primary}
-          onPress={() =>
-            router.push({
-              pathname: ROUTES.confirmSeedPhrase,
-              params: { phrase: seedPhrase },
-            })
-          }
-          title="Ok, I saved it"
-        />
-      </ButtonContainer>
+      {readOnly ? null : (
+        <ButtonContainer>
+          <Button
+            color={theme.colors.white}
+            backgroundColor={theme.colors.primary}
+            onPress={() =>
+              router.push({
+                pathname: ROUTES.confirmSeedPhrase,
+                params: { phrase: seedPhrase },
+              })
+            }
+            title="Ok, I saved it"
+          />
+        </ButtonContainer>
+      )}
     </SafeAreaContainer>
   );
 }
