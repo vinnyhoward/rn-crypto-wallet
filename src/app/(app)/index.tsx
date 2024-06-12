@@ -122,6 +122,7 @@ export default function Index() {
   const dispatch = useDispatch<AppDispatch>();
   const sheetRef = useRef<BottomSheet>(null);
   const theme = useTheme();
+  const walletState = useSelector((state: RootState) => state.wallet);
   const ethWalletAddress = useSelector(
     (state: RootState) => state.wallet.ethereum.activeAddress.address
   );
@@ -274,6 +275,7 @@ export default function Index() {
     setTransactions(mergedAndSortedTransactions);
   }, [solTransactions, ethTransactions, ethWalletAddress, solWalletAddress]);
 
+  console.log("accounts:", walletState);
   return (
     <SafeAreaContainer>
       <ContentContainer>

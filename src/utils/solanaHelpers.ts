@@ -291,14 +291,26 @@ export async function collectedUsedAddresses(
   return keyPairsUsed;
 }
 
-export async function importAllActiveSolAddresses(mnemonicPhrase: string) {
-  const unusedAddressIndex = await findNextUnusedSolWalletIndex(mnemonicPhrase);
-  const usedAddresses = await collectedUsedAddresses(
-    mnemonicPhrase,
-    unusedAddressIndex
-  );
-
-  return usedAddresses;
+export async function importAllActiveSolAddresses(
+  mnemonicPhrase: string,
+  offsetIndex?: number
+) {
+  if (offsetIndex) {
+    const usedAddresses = await collectedUsedAddresses(
+      mnemonicPhrase,
+      offsetIndex
+    );
+    return usedAddresses;
+  } else {
+    const unusedAddressIndex = await findNextUnusedSolWalletIndex(
+      mnemonicPhrase
+    );
+    const usedAddresses = await collectedUsedAddresses(
+      mnemonicPhrase,
+      unusedAddressIndex
+    );
+    return usedAddresses;
+  }
 }
 
 export const createSolWalletByIndex = async (

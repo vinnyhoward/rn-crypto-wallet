@@ -5,8 +5,14 @@ import { router } from "expo-router";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
-import { importAllActiveEthAddresses } from "../../utils/etherHelpers";
-import { importAllActiveSolAddresses } from "../../utils/solanaHelpers";
+import {
+  importAllActiveEthAddresses,
+  findNextUnusedEthWalletIndex,
+} from "../../utils/etherHelpers";
+import {
+  importAllActiveSolAddresses,
+  findNextUnusedSolWalletIndex,
+} from "../../utils/solanaHelpers";
 import { ThemeType } from "../../styles/theme";
 import {
   saveEthereumAccountDetails,
@@ -86,11 +92,23 @@ export default function Page() {
 
     setError("");
     try {
+      // Logic is needed to find the crypto currency with the highest amount of accounts created
+      // and using that index to create the same amount of addresses via hd wallets
+      let highestIndex = 0;
+      const unusedEthIndex = await findNextUnusedEthWalletIndex(
+        phraseTextValue
+      );
+      const unusedSolIndex = await findNextUnusedSolWalletIndex(
+        phraseTextValue
+      );
+      highestIndex = Math.max(unusedEthIndex, unusedSolIndex);
       const importedEthWallets = await importAllActiveEthAddresses(
         phraseTextValue
       );
+
       const importedSolWallets = await importAllActiveSolAddresses(
-        phraseTextValue
+        phraseTextValue,
+        highestIndex
       );
 
       const transformedActiveEthAddresses: AddressState[] =

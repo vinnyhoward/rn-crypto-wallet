@@ -311,14 +311,26 @@ export async function collectedUsedEthAddresses(
   return addressesUsed;
 }
 
-export async function importAllActiveEthAddresses(mnemonicPhrase: string) {
-  const unusedAddressIndex = await findNextUnusedEthWalletIndex(mnemonicPhrase);
-  const usedAddresses = await collectedUsedEthAddresses(
-    mnemonicPhrase,
-    unusedAddressIndex
-  );
-
-  return usedAddresses;
+export async function importAllActiveEthAddresses(
+  mnemonicPhrase: string,
+  offsetIndex?: number
+) {
+  if (offsetIndex) {
+    const usedAddresses = await collectedUsedEthAddresses(
+      mnemonicPhrase,
+      offsetIndex
+    );
+    return usedAddresses;
+  } else {
+    const unusedAddressIndex = await findNextUnusedEthWalletIndex(
+      mnemonicPhrase
+    );
+    const usedAddresses = await collectedUsedEthAddresses(
+      mnemonicPhrase,
+      unusedAddressIndex
+    );
+    return usedAddresses;
+  }
 }
 
 export const createEthWalletByIndex = async (
