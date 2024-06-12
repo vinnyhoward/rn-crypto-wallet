@@ -1,21 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FlatList } from "react-native";
 import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
-import { useDispatch, useSelector } from "react-redux";
-import { clearPersistedState } from "../../../store";
-import type { RootState, AppDispatch } from "../../../store";
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "../../../store";
 import type { AddressState } from "../../../store/walletSlice";
-import { clearStorage } from "../../../hooks/use-storage-state";
-import { savePhrase } from "../../../hooks/use-storage-state";
-import { createEthWalletByIndex } from "../../../utils/etherHelpers";
-import { createSolWalletByIndex } from "../../../utils/solanaHelpers";
+import { setActiveAccount } from "../../../store/walletSlice";
 import { ROUTES } from "../../../constants/routes";
 import { ThemeType } from "../../../styles/theme";
-import ClearIcon from "../../../assets/svg/clear.svg";
-import CloseIcon from "../../../assets/svg/close.svg";
 import RightArrowIcon from "../../../assets/svg/right-arrow.svg";
 import PhraseIcon from "../../../assets/svg/phrase.svg";
+import EditIcon from "../../../assets/svg/edit.svg";
 import { SafeAreaContainer } from "../../../components/Styles/Layout.styles";
 import Button from "../../../components/Button/Button";
 
@@ -25,15 +20,38 @@ const ContentContainer = styled.View<{ theme: ThemeType }>`
   padding: ${({ theme }) => theme.spacing.medium};
 `;
 
-const WalletContainer = styled.View<{ theme: ThemeType; isLast: boolean }>`
-  justify-content: center;
-  background-color: ${({ theme }) => theme.colors.lightDark};
+const WalletContainer = styled.TouchableOpacity<{
+  theme: ThemeType;
+  isLast: boolean;
+  isActiveAccount: boolean;
+}>`
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: ${({ theme, isActiveAccount }) =>
+    isActiveAccount ? "rgba(136, 120, 244, 0.3)" : theme.colors.lightDark};
   padding: ${({ theme }) => theme.spacing.medium};
   border-bottom-left-radius: ${({ theme, isLast }) =>
     isLast ? theme.borderRadius.large : "0px"};
   border-bottom-right-radius: ${({ theme, isLast }) =>
     isLast ? theme.borderRadius.large : "0px"};
-  border: 1px solid ${({ theme }) => theme.colors.dark};
+  border: 1px solid
+    ${({ theme, isActiveAccount }) =>
+      isActiveAccount ? "rgba(136, 120, 244, 0.6)" : theme.colors.dark};
+`;
+
+const AccountDetails = styled.View`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const EditIconContainer = styled.TouchableOpacity`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
 `;
 
 const WalletPhraseContainer = styled.TouchableOpacity<{ theme: ThemeType }>`
@@ -79,27 +97,30 @@ const PhraseTextContent = styled.View`
 interface WalletPairs {
   id: string;
   accountName: string;
+  isActiveAccount: boolean;
   walletDetails: {
     ethereum: AddressState | {};
     solana: AddressState | {};
   };
 }
 
-interface WalletPairsFlatList {
-  item: WalletPairs;
-}
-
 function compileInactiveAddresses(
   ethAcc: AddressState[],
-  solAcc: AddressState[]
+  solAcc: AddressState[],
+  activeEthAddress: string,
+  activeSolAddress: string
 ) {
   const mergedWalletPairs: WalletPairs[] = [];
   const highestAccAmount = Math.max(ethAcc.length, solAcc.length);
 
   for (let i = 0; i < highestAccAmount; i++) {
+    const isActiveAccount =
+      ethAcc[i].address === activeEthAddress &&
+      solAcc[i].address === activeSolAddress;
     mergedWalletPairs.push({
       id: `${i}-${ethAcc[i].address}`,
       accountName: ethAcc[i]?.accountName || solAcc[i].accountName,
+      isActiveAccount,
       walletDetails: {
         ethereum: ethAcc[i] ?? {},
         solana: solAcc[i] ?? {},
@@ -111,6 +132,12 @@ function compileInactiveAddresses(
 }
 
 const AccountsIndex = () => {
+  const activeEthAddress = useSelector(
+    (state: RootState) => state.wallet.ethereum.activeAddress.address
+  );
+  const activeSolAddress = useSelector(
+    (state: RootState) => state.wallet.solana.activeAddress.address
+  );
   const ethAccounts = useSelector(
     (state: RootState) => state.wallet.ethereum.inactiveAddresses
   );
@@ -119,23 +146,68 @@ const AccountsIndex = () => {
   );
 
   const theme = useTheme();
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [accounts] = useState(
-    compileInactiveAddresses(ethAccounts, solAccounts)
+  const [accounts, setAccounts] = useState(
+    compileInactiveAddresses(
+      ethAccounts,
+      solAccounts,
+      activeEthAddress,
+      activeSolAddress
+    )
   );
 
   const walletSetup = async () => {
     setLoading(true);
   };
 
+  const setNextActiveAccounts = (
+    ethereum: AddressState,
+    solana: AddressState
+  ) => {
+    const nextActiveAddress = {
+      solana,
+      ethereum,
+    };
+
+    dispatch(setActiveAccount(nextActiveAddress));
+  };
+
   const renderItem = ({ item, index }) => {
     return (
-      <WalletContainer isLast={index === accounts.length - 1}>
-        <AccountTitle>{item.accountName}</AccountTitle>
-        <PriceText>$0.00</PriceText>
+      <WalletContainer
+        onPress={() =>
+          setNextActiveAccounts(
+            item.walletDetails.ethereum,
+            item.walletDetails.solana
+          )
+        }
+        isActiveAccount={item.isActiveAccount}
+        isLast={index === accounts.length - 1}
+      >
+        <AccountDetails>
+          <AccountTitle>{item.accountName}</AccountTitle>
+          <PriceText>$0.00</PriceText>
+        </AccountDetails>
+        <EditIconContainer>
+          <EditIcon width={20} height={20} fill={theme.colors.white} />
+        </EditIconContainer>
       </WalletContainer>
     );
   };
+
+  useEffect(() => {
+    if (activeEthAddress && activeSolAddress) {
+      setAccounts(
+        compileInactiveAddresses(
+          ethAccounts,
+          solAccounts,
+          activeEthAddress,
+          activeSolAddress
+        )
+      );
+    }
+  }, [activeEthAddress, activeSolAddress]);
 
   return (
     <>

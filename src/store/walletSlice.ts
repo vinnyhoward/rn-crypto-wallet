@@ -25,7 +25,7 @@ export interface transactionMetadata {
   transactions: Transaction[];
 }
 
-export interface NetworkState {
+export interface AccountState {
   activeAddress: AddressState;
   inactiveAddresses: AddressState[];
   failedNetworkRequest: boolean;
@@ -34,8 +34,13 @@ export interface NetworkState {
 
 export interface WalletState {
   activeAccountName: string;
-  ethereum: NetworkState;
-  solana: NetworkState;
+  ethereum: AccountState;
+  solana: AccountState;
+}
+
+export interface ActiveAccountDetails {
+  ethereum: AddressState;
+  solana: AddressState;
 }
 
 export interface Transaction {
@@ -221,6 +226,23 @@ export const walletSlice = createSlice({
     updateSolanaBalance: (state, action: PayloadAction<number>) => {
       state.solana.activeAddress.balance = action.payload;
     },
+    setActiveAccount: (state, action: PayloadAction<ActiveAccountDetails>) => {
+      state.activeAccountName = action.payload.ethereum.accountName;
+      state.solana.activeAddress = {
+        ...action.payload.solana,
+        transactionMetadata: {
+          paginationKey: undefined,
+          transactions: [],
+        },
+      };
+      state.ethereum.activeAddress = {
+        ...action.payload.ethereum,
+        transactionMetadata: {
+          paginationKey: undefined,
+          transactions: [],
+        },
+      };
+    },
     resetState: (state) => {
       state = initialState;
     },
@@ -306,6 +328,7 @@ export const {
   saveEthereumAccountDetails,
   saveSolanaAccountDetails,
   resetState,
+  setActiveAccount,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;

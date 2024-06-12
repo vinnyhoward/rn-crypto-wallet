@@ -263,16 +263,18 @@ export default function Index() {
   }, [dispatch]);
 
   useEffect(() => {
+    console.log("fetching prices...");
     updatePrices();
-  }, [ethBalance, solBalance]);
+  }, [ethBalance, solBalance, ethWalletAddress, solWalletAddress]);
 
   useEffect(() => {
+    console.log("fetching transactions...");
     const mergedAndSortedTransactions = [
       ...solTransactions,
       ...ethTransactions,
     ].sort((a, b) => b.blockTime - a.blockTime);
     setTransactions(mergedAndSortedTransactions);
-  }, [solTransactions, ethTransactions]);
+  }, [solTransactions, ethTransactions, ethWalletAddress, solWalletAddress]);
 
   return (
     <SafeAreaContainer>
