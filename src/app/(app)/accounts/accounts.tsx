@@ -3,6 +3,10 @@ import { FlatList } from "react-native";
 import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import { useSelector, useDispatch } from "react-redux";
+import * as ethers from "ethers";
+import { formatDollar } from "../../../utils/formatDollars";
+import { ethProvider } from "../../../utils/etherHelpers";
+import { getSolanaBalance } from "../../../utils/solanaHelpers";
 import type { RootState } from "../../../store";
 import type { AddressState } from "../../../store/walletSlice";
 import { setActiveAccount } from "../../../store/walletSlice";
@@ -104,6 +108,35 @@ interface WalletPairs {
   };
 }
 
+async function compileAddressesConcurrently(
+  ethAcc: AddressState[],
+  solAcc: AddressState[]
+) {
+  const ethereumBalancePromise = ethAcc.map(async (account: AddressState) => {
+    const balance = await ethProvider.getBalance(account.address);
+    return {
+      ...account,
+      balance: parseFloat(ethers.formatEther(balance)),
+    };
+  });
+
+  const solanaBalancePromise = solAcc.map(async (account: AddressState) => {
+    const balance = await getSolanaBalance(account.address);
+    return {
+      ...account,
+      balance: balance,
+    };
+  });
+
+  const ethereum = await Promise.all(ethereumBalancePromise);
+  const solana = await Promise.all(solanaBalancePromise);
+
+  return {
+    ethereum,
+    solana,
+  };
+}
+
 function compileInactiveAddresses(
   ethAcc: AddressState[],
   solAcc: AddressState[],
@@ -144,18 +177,14 @@ const AccountsIndex = () => {
   const solAccounts = useSelector(
     (state: RootState) => state.wallet.solana.inactiveAddresses
   );
+  const prices = useSelector((state: RootState) => state.price.data);
+  const solPrice = prices?.solana?.usd;
+  const ethPrice = prices?.ethereum?.usd;
 
   const theme = useTheme();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [accounts, setAccounts] = useState(
-    compileInactiveAddresses(
-      ethAccounts,
-      solAccounts,
-      activeEthAddress,
-      activeSolAddress
-    )
-  );
+  const [accounts, setAccounts] = useState([]);
 
   const walletSetup = async () => {
     setLoading(true);
@@ -173,6 +202,12 @@ const AccountsIndex = () => {
     dispatch(setActiveAccount(nextActiveAddress));
   };
 
+  const calculateTotalPrice = (ethBalance: number, solBalance: number) => {
+    const ethUsd = ethPrice * ethBalance;
+    const solUsd = solPrice * solBalance;
+    return formatDollar(ethUsd + solUsd);
+  };
+
   const renderItem = ({ item, index }) => {
     return (
       <WalletContainer
@@ -187,7 +222,12 @@ const AccountsIndex = () => {
       >
         <AccountDetails>
           <AccountTitle>{item.accountName}</AccountTitle>
-          <PriceText>$0.00</PriceText>
+          <PriceText>
+            {calculateTotalPrice(
+              item.walletDetails.ethereum.balance,
+              item.walletDetails.solana.balance
+            )}
+          </PriceText>
         </AccountDetails>
         <EditIconContainer>
           <EditIcon width={20} height={20} fill={theme.colors.white} />
@@ -197,16 +237,24 @@ const AccountsIndex = () => {
   };
 
   useEffect(() => {
-    if (activeEthAddress && activeSolAddress) {
-      setAccounts(
-        compileInactiveAddresses(
-          ethAccounts,
-          solAccounts,
-          activeEthAddress,
-          activeSolAddress
-        )
+    const fetchBalances = async () => {
+      const updatedAccounts = await compileAddressesConcurrently(
+        ethAccounts,
+        solAccounts
       );
-    }
+
+      if (activeEthAddress && activeSolAddress) {
+        setAccounts(
+          compileInactiveAddresses(
+            updatedAccounts.ethereum,
+            updatedAccounts.solana,
+            activeEthAddress,
+            activeSolAddress
+          )
+        );
+      }
+    };
+    fetchBalances();
   }, [activeEthAddress, activeSolAddress]);
 
   return (
