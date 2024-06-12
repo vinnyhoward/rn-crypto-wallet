@@ -260,15 +260,13 @@ export default function Index() {
     const interval = setInterval(fetchAndUpdatePrices, FETCH_PRICES_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [dispatch]);
+  }, [dispatch, ethWalletAddress, solWalletAddress]);
 
   useEffect(() => {
-    console.log("fetching prices...");
     updatePrices();
   }, [ethBalance, solBalance, ethWalletAddress, solWalletAddress]);
 
   useEffect(() => {
-    console.log("fetching transactions...");
     const mergedAndSortedTransactions = [
       ...solTransactions,
       ...ethTransactions,
