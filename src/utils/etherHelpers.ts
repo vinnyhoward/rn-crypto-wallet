@@ -342,7 +342,10 @@ export const createEthWalletByIndex = async (
     const path = `m/44'/60'/0'/0/${indexOffset}`;
     const wallet = HDNodeWallet.fromMnemonic(mnemonic, path);
 
-    return wallet;
+    return {
+      ...wallet,
+      derivationPath: path,
+    };
   } catch (error) {
     throw new Error(
       "failed to create Ethereum wallet by index: " + (error as Error).message

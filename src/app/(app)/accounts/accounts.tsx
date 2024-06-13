@@ -5,11 +5,22 @@ import styled, { useTheme } from "styled-components/native";
 import { useSelector, useDispatch } from "react-redux";
 import * as ethers from "ethers";
 import { formatDollar } from "../../../utils/formatDollars";
-import { ethProvider } from "../../../utils/etherHelpers";
-import { getSolanaBalance } from "../../../utils/solanaHelpers";
+import {
+  ethProvider,
+  createEthWalletByIndex,
+} from "../../../utils/etherHelpers";
+import {
+  getSolanaBalance,
+  createSolWalletByIndex,
+} from "../../../utils/solanaHelpers";
+import { getPhrase } from "../../../hooks/use-storage-state";
 import type { RootState } from "../../../store";
 import type { AddressState } from "../../../store/walletSlice";
-import { setActiveAccount } from "../../../store/walletSlice";
+import {
+  setActiveAccount,
+  updateSolanaInactiveAddresses,
+  updateEthereumInactiveAddresses,
+} from "../../../store/walletSlice";
 import { ROUTES } from "../../../constants/routes";
 import { ThemeType } from "../../../styles/theme";
 import RightArrowIcon from "../../../assets/svg/right-arrow.svg";
@@ -171,10 +182,10 @@ const AccountsIndex = () => {
   const activeSolAddress = useSelector(
     (state: RootState) => state.wallet.solana.activeAddress.address
   );
-  const ethAccounts = useSelector(
+  const inactiveEthAccounts = useSelector(
     (state: RootState) => state.wallet.ethereum.inactiveAddresses
   );
-  const solAccounts = useSelector(
+  const inactiveSolAccounts = useSelector(
     (state: RootState) => state.wallet.solana.inactiveAddresses
   );
   const prices = useSelector((state: RootState) => state.price.data);
@@ -186,8 +197,35 @@ const AccountsIndex = () => {
   const [loading, setLoading] = useState(false);
   const [accounts, setAccounts] = useState([]);
 
-  const walletSetup = async () => {
+  const createNewWalletPair = async () => {
     setLoading(true);
+    try {
+      const nextEthIndex = inactiveEthAccounts.length;
+      const nextSolIndex = inactiveSolAccounts.length;
+      const phrase = await getPhrase();
+      const newEthWallet = await createEthWalletByIndex(phrase, nextEthIndex);
+      const newSolWallet = await createSolWalletByIndex(phrase, nextSolIndex);
+      const transformedEthWallet: AddressState = {
+        accountName: `Account ${nextEthIndex + 1}`,
+        derivationPath: newEthWallet.derivationPath,
+        address: newEthWallet.address,
+        publicKey: newEthWallet.publicKey,
+        balance: 0,
+      };
+      const transformedSolWallet: AddressState = {
+        accountName: `Account ${nextSolIndex + 1}`,
+        derivationPath: newSolWallet.derivationPath,
+        address: newSolWallet.address,
+        publicKey: newSolWallet.publicKey,
+        balance: 0,
+      };
+      dispatch(updateEthereumInactiveAddresses(transformedEthWallet));
+      dispatch(updateSolanaInactiveAddresses(transformedSolWallet));
+    } catch (err) {
+      console.error("Failed to create new wallet pair:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const setNextActiveAccounts = (
@@ -238,24 +276,32 @@ const AccountsIndex = () => {
 
   useEffect(() => {
     const fetchBalances = async () => {
-      const updatedAccounts = await compileAddressesConcurrently(
-        ethAccounts,
-        solAccounts
-      );
-
-      if (activeEthAddress && activeSolAddress) {
-        setAccounts(
-          compileInactiveAddresses(
-            updatedAccounts.ethereum,
-            updatedAccounts.solana,
-            activeEthAddress,
-            activeSolAddress
-          )
+      try {
+        const { ethereum, solana } = await compileAddressesConcurrently(
+          inactiveEthAccounts,
+          inactiveSolAccounts
         );
+        if (ethereum && solana) {
+          setAccounts(
+            compileInactiveAddresses(
+              ethereum,
+              solana,
+              activeEthAddress,
+              activeSolAddress
+            )
+          );
+        }
+      } catch (err) {
+        console.error("Failed fetching balance:", err);
       }
     };
     fetchBalances();
-  }, [activeEthAddress, activeSolAddress]);
+  }, [
+    activeEthAddress,
+    activeSolAddress,
+    inactiveEthAccounts,
+    inactiveSolAccounts,
+  ]);
 
   return (
     <>
@@ -292,7 +338,7 @@ const AccountsIndex = () => {
           />
           <Button
             loading={loading}
-            onPress={walletSetup}
+            onPress={createNewWalletPair}
             title="Create Wallet"
             backgroundColor={theme.colors.primary}
           />

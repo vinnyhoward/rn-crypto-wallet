@@ -10,6 +10,7 @@ import {
   getSolanaBalance,
 } from "../utils/solanaHelpers";
 import { truncateBalance } from "../utils/truncateBalance";
+import { InputAccessoryView } from "react-native";
 
 export interface AddressState {
   accountName: string;
@@ -226,6 +227,18 @@ export const walletSlice = createSlice({
     updateSolanaBalance: (state, action: PayloadAction<number>) => {
       state.solana.activeAddress.balance = action.payload;
     },
+    updateSolanaInactiveAddresses: (
+      state,
+      action: PayloadAction<AddressState>
+    ) => {
+      state.solana.inactiveAddresses.push(action.payload);
+    },
+    updateEthereumInactiveAddresses: (
+      state,
+      action: PayloadAction<AddressState>
+    ) => {
+      state.ethereum.inactiveAddresses.push(action.payload);
+    },
     setActiveAccount: (state, action: PayloadAction<ActiveAccountDetails>) => {
       state.activeAccountName = action.payload.ethereum.accountName;
       state.solana.activeAddress = {
@@ -329,6 +342,8 @@ export const {
   saveSolanaAccountDetails,
   resetState,
   setActiveAccount,
+  updateSolanaInactiveAddresses,
+  updateEthereumInactiveAddresses,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;

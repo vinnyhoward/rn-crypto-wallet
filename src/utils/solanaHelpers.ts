@@ -325,7 +325,11 @@ export const createSolWalletByIndex = async (
       derivePath(path, seed.toString("hex")).key
     );
 
-    return keypair;
+    return {
+      publicKey: keypair.publicKey.toBase58(),
+      address: keypair.publicKey.toBase58(),
+      derivationPath: path,
+    };
   } catch (error) {
     throw new Error(
       "failed to create Solana wallet by index: " + (error as Error).message
