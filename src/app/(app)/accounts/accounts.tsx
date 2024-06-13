@@ -16,13 +16,13 @@ import {
 import { getPhrase } from "../../../hooks/use-storage-state";
 import type { RootState } from "../../../store";
 import type { AddressState } from "../../../store/walletSlice";
+import type { ThemeType } from "../../../styles/theme";
 import {
   setActiveAccount,
   updateSolanaInactiveAddresses,
   updateEthereumInactiveAddresses,
 } from "../../../store/walletSlice";
 import { ROUTES } from "../../../constants/routes";
-import { ThemeType } from "../../../styles/theme";
 import RightArrowIcon from "../../../assets/svg/right-arrow.svg";
 import PhraseIcon from "../../../assets/svg/phrase.svg";
 import EditIcon from "../../../assets/svg/edit.svg";
@@ -247,6 +247,10 @@ const AccountsIndex = () => {
   };
 
   const renderItem = ({ item, index }) => {
+    const balance = calculateTotalPrice(
+      item.walletDetails.ethereum.balance,
+      item.walletDetails.solana.balance
+    );
     return (
       <WalletContainer
         onPress={() =>
@@ -260,14 +264,20 @@ const AccountsIndex = () => {
       >
         <AccountDetails>
           <AccountTitle>{item.accountName}</AccountTitle>
-          <PriceText>
-            {calculateTotalPrice(
-              item.walletDetails.ethereum.balance,
-              item.walletDetails.solana.balance
-            )}
-          </PriceText>
+          <PriceText>{balance}</PriceText>
         </AccountDetails>
-        <EditIconContainer>
+        <EditIconContainer
+          onPress={() => {
+            router.push({
+              pathname: ROUTES.accountModal,
+              params: {
+                ethAddress: item.walletDetails.ethereum.address,
+                solAddress: item.walletDetails.solana.address,
+                balance,
+              },
+            });
+          }}
+        >
           <EditIcon width={20} height={20} fill={theme.colors.white} />
         </EditIconContainer>
       </WalletContainer>
