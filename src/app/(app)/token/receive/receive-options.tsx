@@ -112,10 +112,10 @@ const ReceiveCard: React.FC<ReceiveCardsProps> = ({
 
 export default function ReceiveOptionsPage() {
   const ethAddress = useSelector(
-    (state: RootState) => state.wallet.ethereum.address
+    (state: RootState) => state.wallet.ethereum.activeAddress.address
   );
   const solAddress = useSelector(
-    (state: RootState) => state.wallet.solana.address
+    (state: RootState) => state.wallet.solana.activeAddress.address
   );
 
   return (
