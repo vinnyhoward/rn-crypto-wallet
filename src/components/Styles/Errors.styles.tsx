@@ -16,7 +16,7 @@ export const ErrorContainer = styled.View<{ theme: ThemeType }>`
 export const ErrorText = styled.Text<{ theme: ThemeType }>`
   font-family: ${(props) => props.theme.fonts.families.openBold};
   font-size: ${(props) => props.theme.fonts.sizes.normal};
-  color: ${(props) => props.theme.colors.white};
+  color: ${(props) => props.theme.colors.error};
 `;
 
 export const ErrorTextContainer = styled.View<{ theme: ThemeType }>`

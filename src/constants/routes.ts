@@ -21,6 +21,7 @@ export interface Routes {
   camera: string;
   accounts: string;
   accountModal: string;
+  accountNameModal: string;
 }
 
 export const ROUTES: Routes = {
@@ -46,4 +47,5 @@ export const ROUTES: Routes = {
   camera: "/(app)/camera",
   accounts: "/(app)/accounts/accounts",
   accountModal: "/(app)/accounts/account-modal",
+  accountNameModal: "/(app)/accounts/account-name-modal",
 };

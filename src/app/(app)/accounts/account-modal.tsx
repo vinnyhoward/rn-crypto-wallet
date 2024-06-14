@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
-import { Dimensions, Keyboard } from "react-native";
+import { useEffect } from "react";
 import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import * as Clipboard from "expo-clipboard";
+import Toast from "react-native-toast-message";
 import { ROUTES } from "../../../constants/routes";
 import type { ThemeType } from "../../../styles/theme";
 import type { RootState } from "../../../store";
 import type { AddressState } from "../../../store/walletSlice";
-import ClearIcon from "../../../assets/svg/clear.svg";
-import CloseIcon from "../../../assets/svg/close.svg";
+import EditIcon from "../../../assets/svg/edit.svg";
 import SolanaIcon from "../../../assets/svg/solana.svg";
 import EthereumPlainIcon from "../../../assets/svg/ethereum_plain.svg";
+import CopyIcon from "../../../assets/svg/copy.svg";
 import { SafeAreaContainer } from "../../../components/Styles/Layout.styles";
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
@@ -22,8 +23,9 @@ const ContentContainer = styled.View<{ theme: ThemeType }>`
 const SectionTitle = styled.Text<{ theme: ThemeType }>`
   color: ${(props) => props.theme.fonts.colors.primary};
   font-family: ${(props) => props.theme.fonts.families.openBold};
-  font-size: ${(props) => props.theme.fonts.sizes.large};
+  font-size: ${(props) => props.theme.fonts.sizes.header};
   margin-bottom: ${(props) => props.theme.spacing.large};
+  margin-top: ${(props) => props.theme.spacing.medium};
   margin-left: ${(props) => props.theme.spacing.medium};
 `;
 
@@ -83,7 +85,7 @@ const CryptoName = styled.Text<{ theme: ThemeType }>`
   color: ${(props) => props.theme.colors.white};
   font-family: ${(props) => props.theme.fonts.families.openBold};
   font-size: ${(props) => props.theme.fonts.sizes.large};
-  margin-left: ${(props) => props.theme.spacing.medium};
+  margin-left: ${(props) => props.theme.spacing.small};
 `;
 
 const SectionCaption = styled.Text<{ theme: ThemeType }>`
@@ -94,43 +96,53 @@ const SectionCaption = styled.Text<{ theme: ThemeType }>`
   margin-bottom: ${(props) => props.theme.spacing.small};
 `;
 
-const AccountInput = styled.TextInput<{ theme: ThemeType }>`
-  justify-content: flex-start;
-  padding: ${(props) => props.theme.spacing.medium};
-  padding-left: ${(props) => props.theme.spacing.large};
-  /* margin: ${(props) => props.theme.spacing.large}; */
-  background-color: ${(props) => props.theme.colors.dark};
-  border-radius: ${(props) => props.theme.borderRadius.extraLarge};
-  width: ${(Dimensions.get("window").width - 80).toFixed(0)}px;
-  color: ${(props) => props.theme.colors.white};
-  font-size: ${(props) => props.theme.fonts.sizes.large};
-  font-family: ${(props) => props.theme.fonts.families.openRegular};
-  /* border: 1px solid ${(props) => props.theme.colors.lightGrey}; */
+const IconContainer = styled.View<{ theme: ThemeType }>`
+  margin-left: ${(props) => props.theme.spacing.medium};
 `;
 
-const SettingsIndex = () => {
+const Row = styled.View`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const Col = styled.View`
+  display: flex;
+  flex-direction: column;
+`;
+
+const IconOnPressView = styled.TouchableOpacity`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+`;
+
+const AccountsModalIndex = () => {
   const theme = useTheme();
   const navigation = useNavigation();
   const { ethAddress, solAddress, balance } = useLocalSearchParams();
   const ethereumAccount = useSelector((state: RootState) =>
     state.wallet.ethereum.inactiveAddresses.find(
-      (item) => item.address === ethAddress
+      (item: AddressState) => item.address === ethAddress
     )
   );
   const solanaAccount = useSelector((state: RootState) =>
     state.wallet.solana.inactiveAddresses.find(
-      (item) => item.address === solAddress
+      (item: AddressState) => item.address === solAddress
     )
   );
-  const [newAccountName, setNewAccountName] = useState(
-    ethereumAccount.accountName
-  );
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerTitle: ethereumAccount.accountName,
+  const handleCopy = async (path: string) => {
+    await Clipboard.setStringAsync(path);
+    Toast.show({
+      type: "success",
+      text1: `Copied!`,
     });
-  }, []);
+  };
 
   return (
     <>
@@ -139,22 +151,30 @@ const SettingsIndex = () => {
           <SectionTitle>Settings</SectionTitle>
           <AccountSettingsContainer>
             <AccountSection isTop>
-              <SectionCaption>Account Name</SectionCaption>
-              <AccountInput
-                autoCapitalize="none"
-                multiline
-                returnKeyType="done"
-                value={newAccountName}
-                readOnly={false}
-                onChangeText={setNewAccountName}
-                placeholder="Enter your seed phrase"
-                placeholderTextColor={theme.colors.grey}
-                blurOnSubmit
-                onSubmitEditing={() => Keyboard.dismiss()}
-              />
+              <Row>
+                <Col>
+                  <SectionCaption>Account Name</SectionCaption>
+                  <AccountDetailsText>
+                    {ethereumAccount.accountName}
+                  </AccountDetailsText>
+                </Col>
+                <IconOnPressView
+                  onPress={() =>
+                    router.push({
+                      pathname: ROUTES.accountNameModal,
+                      params: {
+                        ethAddress: ethereumAccount.address,
+                        solAddress: solanaAccount.address,
+                      },
+                    })
+                  }
+                >
+                  <EditIcon width={25} height={25} fill={theme.colors.white} />
+                </IconOnPressView>
+              </Row>
             </AccountSection>
             <AccountSection isBottom>
-              <SectionCaption>Balance</SectionCaption>
+              <SectionCaption>Total Balance</SectionCaption>
               <AccountDetailsText>{balance}</AccountDetailsText>
             </AccountSection>
           </AccountSettingsContainer>
@@ -162,26 +182,48 @@ const SettingsIndex = () => {
           <SectionTitle>Advanced Settings</SectionTitle>
           <AccountSettingsContainer>
             <CryptoSection isTop>
-              <EthereumPlainIcon width={25} height={25} fill="#14F195" />
+              <IconContainer>
+                <EthereumPlainIcon width={25} height={25} />
+              </IconContainer>
               <CryptoName>Ethereum</CryptoName>
             </CryptoSection>
             <AccountSection isBottom>
-              <SectionCaption>Derivation Path</SectionCaption>
-              <AccountDetailsText>
-                {ethereumAccount.derivationPath}
-              </AccountDetailsText>
+              <Row>
+                <Col>
+                  <SectionCaption>Derivation Path</SectionCaption>
+                  <AccountDetailsText>
+                    {ethereumAccount.derivationPath}
+                  </AccountDetailsText>
+                </Col>
+                <IconOnPressView
+                  onPress={() => handleCopy(ethereumAccount.derivationPath)}
+                >
+                  <CopyIcon width={25} height={25} fill={theme.colors.white} />
+                </IconOnPressView>
+              </Row>
             </AccountSection>
           </AccountSettingsContainer>
           <AccountSettingsContainer>
             <CryptoSection isTop>
-              <SolanaIcon width={25} height={25} fill="#14F195" />
+              <IconContainer>
+                <SolanaIcon width={25} height={25} />
+              </IconContainer>
               <CryptoName>Solana</CryptoName>
             </CryptoSection>
             <AccountSection isBottom>
-              <SectionCaption>Derivation Path</SectionCaption>
-              <AccountDetailsText>
-                {solanaAccount.derivationPath}
-              </AccountDetailsText>
+              <Row>
+                <Col>
+                  <SectionCaption>Derivation Path</SectionCaption>
+                  <AccountDetailsText>
+                    {solanaAccount.derivationPath}
+                  </AccountDetailsText>
+                </Col>
+                <IconOnPressView
+                  onPress={() => handleCopy(solanaAccount.derivationPath)}
+                >
+                  <CopyIcon width={25} height={25} fill={theme.colors.white} />
+                </IconOnPressView>
+              </Row>
             </AccountSection>
           </AccountSettingsContainer>
         </ContentContainer>
@@ -190,4 +232,4 @@ const SettingsIndex = () => {
   );
 };
 
-export default SettingsIndex;
+export default AccountsModalIndex;

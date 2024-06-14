@@ -230,6 +230,22 @@ export default function AppLayout() {
             ),
           }}
         />
+        <Stack.Screen
+          name="accounts/account-name-modal"
+          options={{
+            headerShown: true,
+            headerTitle: "Edit Account Name",
+            headerTitleStyle: {
+              color: theme.colors.white,
+            },
+            presentation: "modal",
+            headerLeft: () => (
+              <IconTouchContainer onPress={() => router.back()}>
+                <CloseIcon width={25} height={25} fill={theme.colors.primary} />
+              </IconTouchContainer>
+            ),
+          }}
+        />
       </Stack>
       <Toast position="top" topOffset={75} config={toastConfig} />
     </>

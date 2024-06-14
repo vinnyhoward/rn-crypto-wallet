@@ -239,6 +239,37 @@ export const walletSlice = createSlice({
     ) => {
       state.ethereum.inactiveAddresses.push(action.payload);
     },
+    updateAccountName: (
+      state,
+      action: PayloadAction<{
+        accountName: string;
+        ethAddress: string;
+        solAddress: string;
+      }>
+    ) => {
+      const ethAddressIndex = state.ethereum.inactiveAddresses.findIndex(
+        (item) => item.address === action.payload.ethAddress
+      );
+      if (ethAddressIndex !== -1) {
+        state.ethereum.inactiveAddresses[ethAddressIndex].accountName =
+          action.payload.accountName;
+      }
+
+      const solAddressIndex = state.solana.inactiveAddresses.findIndex(
+        (item) => item.address === action.payload.solAddress
+      );
+      if (solAddressIndex !== -1) {
+        state.solana.inactiveAddresses[solAddressIndex].accountName =
+          action.payload.accountName;
+      }
+      const isCurrentActiveAccountName =
+        state.ethereum.activeAddress.address === action.payload.ethAddress;
+
+      if (isCurrentActiveAccountName) {
+        state.activeAccountName = state.activeAccountName =
+          action.payload.accountName;
+      }
+    },
     setActiveAccount: (state, action: PayloadAction<ActiveAccountDetails>) => {
       state.activeAccountName = action.payload.ethereum.accountName;
       state.solana.activeAddress = {
@@ -344,6 +375,7 @@ export const {
   setActiveAccount,
   updateSolanaInactiveAddresses,
   updateEthereumInactiveAddresses,
+  updateAccountName,
 } = walletSlice.actions;
 
 export default walletSlice.reducer;

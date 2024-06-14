@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
@@ -52,6 +52,14 @@ const Header: React.FC<{
   const activeAccountName = useSelector(
     (state: RootState) => state.wallet.activeAccountName
   );
+
+  // useEffect(() => {
+  //   navigation.setOptions({
+  //     headerTitle: activeAccountName,
+  //   });
+  //   console.log(navigation);
+  // }, [activeAccountName]);
+
   return (
     <Container>
       <LeftContainer>
