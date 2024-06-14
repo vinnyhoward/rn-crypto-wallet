@@ -53,13 +53,6 @@ const Header: React.FC<{
     (state: RootState) => state.wallet.activeAccountName
   );
 
-  // useEffect(() => {
-  //   navigation.setOptions({
-  //     headerTitle: activeAccountName,
-  //   });
-  //   console.log(navigation);
-  // }, [activeAccountName]);
-
   return (
     <Container>
       <LeftContainer>

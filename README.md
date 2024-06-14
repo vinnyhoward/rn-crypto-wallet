@@ -38,16 +38,16 @@ __Note__: The security architecture for this project is currently in a developme
 ## Roadmap
 
 #### Current Focus
-HD Wallets and Account Management
-- Implementing functionality for creating multiple wallets using HD wallets.
-- Developing account switching features to easily navigate between multiple wallet accounts.
+TBA
 
 #### Wallet Functionality
 - [x] Create wallet
 - [x] View seed phrase
 - [x] Confirm seed phrase
 - [x] Import wallet
-- [ ] Switch accounts
+- [x] Switch accounts
+- [x] Manage and rename wallet account names
+- [x] Create new wallet under same phrase
 
 #### Wallet Balance
 - [x] View all asset net worth
@@ -68,7 +68,6 @@ HD Wallets and Account Management
 ### Security
 - [x] Enhanced security and management of private keys
 Note: This wallet is not intended for production but includes robust security features for educational purposes.
-
 - [ ] Implement biometric authentication to add an additional layer of security
 
 #### Nice to haves
