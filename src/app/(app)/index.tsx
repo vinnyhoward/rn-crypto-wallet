@@ -15,14 +15,17 @@ import {
   fetchEthereumTransactions,
   fetchSolanaTransactions,
 } from "../../store/walletSlice";
+import { useLoadingState } from "../../hooks/redux";
 import { capitalizeFirstLetter } from "../../utils/capitalizeFirstLetter";
 import { truncateWalletAddress } from "../../utils/truncateWalletAddress";
 import { formatDollar, formatDollarRaw } from "../../utils/formatDollars";
 import { getSolanaBalance } from "../../utils/solanaHelpers";
+import { placeholderArr } from "../../utils/placeholder";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import SendIcon from "../../assets/svg/send.svg";
 import ReceiveIcon from "../../assets/svg/receive.svg";
 import CryptoInfoCard from "../../components/CryptoInfoCard/CryptoInfoCard";
+import CryptoInfoCardSkeleton from "../../components/CryptoInfoCard/CryptoInfoCardSkeleton";
 import SolanaIcon from "../../assets/svg/solana.svg";
 import EthereumPlainIcon from "../../assets/svg/ethereum_plain.svg";
 import EthereumIcon from "../../assets/svg/ethereum.svg";
@@ -122,6 +125,8 @@ export default function Index() {
   const dispatch = useDispatch<AppDispatch>();
   const sheetRef = useRef<BottomSheet>(null);
   const theme = useTheme();
+  const isLoading = useLoadingState();
+
   const ethWalletAddress = useSelector(
     (state: RootState) => state.wallet.ethereum.activeAddress.address
   );
@@ -210,6 +215,9 @@ export default function Index() {
   };
 
   const renderItem = ({ item }) => {
+    if (isLoading) {
+      return <CryptoInfoCardSkeleton />;
+    }
     const isSolana = item.asset.toLowerCase() === TICKERS.solana.toLowerCase();
     const isEthereum =
       item.asset.toLowerCase() === TICKERS.ethereum.toLowerCase();
@@ -279,7 +287,7 @@ export default function Index() {
       <ContentContainer>
         <FlatList
           contentContainerStyle={{ gap: 10 }}
-          data={failedEthStatus && failedSolStatus ? [] : transactions}
+          data={isLoading ? placeholderArr(8) : transactions}
           renderItem={renderItem}
           keyExtractor={(item) => item.uniqueId}
           initialNumToRender={10}

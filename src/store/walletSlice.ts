@@ -10,7 +10,6 @@ import {
   getSolanaBalance,
 } from "../utils/solanaHelpers";
 import { truncateBalance } from "../utils/truncateBalance";
-import { InputAccessoryView } from "react-native";
 
 export interface AddressState {
   accountName: string;

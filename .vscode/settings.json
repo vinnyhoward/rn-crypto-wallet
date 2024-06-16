@@ -8,6 +8,7 @@
         "gorhom",
         "Keypair",
         "lamports",
+        "Moti",
         "nacl",
         "persistor",
         "qrcode",

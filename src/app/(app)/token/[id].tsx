@@ -13,8 +13,10 @@ import {
   fetchEthereumTransactions,
   fetchSolanaTransactions,
 } from "../../../store/walletSlice";
+import { useLoadingState } from "../../../hooks/redux";
 import { capitalizeFirstLetter } from "../../../utils/capitalizeFirstLetter";
 import { formatDollar } from "../../../utils/formatDollars";
+import { placeholderArr } from "../../../utils/placeholder";
 import { Chains, GenericTransaction } from "../../../types";
 import { truncateWalletAddress } from "../../../utils/truncateWalletAddress";
 // import { isCloseToBottom } from "../../../utils/isCloseToBottom";
@@ -25,6 +27,7 @@ import SolanaIcon from "../../../assets/svg/solana.svg";
 import EthereumIcon from "../../../assets/svg/ethereum_plain.svg";
 import TokenInfoCard from "../../../components/TokenInfoCard/TokenInfoCard";
 import CryptoInfoCard from "../../../components/CryptoInfoCard/CryptoInfoCard";
+import CryptoInfoCardSkeleton from "../../../components/CryptoInfoCard/CryptoInfoCardSkeleton";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 import { TICKERS } from "../../../constants/tickers";
 import { FETCH_PRICES_INTERVAL } from "../../../constants/price";
@@ -150,6 +153,7 @@ export default function Index() {
   const sheetRef = useRef<BottomSheet>(null);
   const { id } = useLocalSearchParams();
   const theme = useTheme();
+  const isStateLoading = useLoadingState();
   const chainName = id as string;
   const tokenAddress = useSelector(
     (state: RootState) => state.wallet[chainName].activeAddress.address
@@ -218,6 +222,9 @@ export default function Index() {
   };
 
   const renderItem = ({ item }) => {
+    if (isStateLoading) {
+      return <CryptoInfoCardSkeleton hideBackground={true} />;
+    }
     if (failedStatus) {
       return (
         <ErrorContainer>
@@ -419,19 +426,21 @@ export default function Index() {
               <BottomSectionTitle>Transaction History</BottomSectionTitle>
               <SortContainer>
                 <SortButton
-                  onPress={() => setFilter(FilterTypes.ALL)}
+                  onPress={() => !isStateLoading && setFilter(FilterTypes.ALL)}
                   highlighted={filter === FilterTypes.ALL}
                 >
                   <SortText>All</SortText>
                 </SortButton>
                 <SortButton
-                  onPress={() => setFilter(FilterTypes.RECEIVE)}
+                  onPress={() =>
+                    !isStateLoading && setFilter(FilterTypes.RECEIVE)
+                  }
                   highlighted={filter === FilterTypes.RECEIVE}
                 >
                   <SortText>Received</SortText>
                 </SortButton>
                 <SortButton
-                  onPress={() => setFilter(FilterTypes.SENT)}
+                  onPress={() => !isStateLoading && setFilter(FilterTypes.SENT)}
                   highlighted={filter === FilterTypes.SENT}
                 >
                   <SortText>Sent</SortText>
@@ -439,7 +448,7 @@ export default function Index() {
               </SortContainer>
             </>
           }
-          data={failedStatus ? [] : transactions}
+          data={isStateLoading ? placeholderArr(8) : transactions}
           renderItem={renderItem}
           keyExtractor={(item: GenericTransaction) => item.uniqueId}
           initialNumToRender={10}
