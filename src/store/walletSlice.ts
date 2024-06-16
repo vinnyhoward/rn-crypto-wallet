@@ -110,6 +110,26 @@ export const fetchEthereumBalance = createAsyncThunk<
   }
 );
 
+export const fetchEthereumBalanceInterval = createAsyncThunk<
+  string,
+  string,
+  {
+    state: RootState;
+    rejectValue: string;
+  }
+>(
+  "wallet/fetchEthereumBalanceInterval",
+  async (address: ethers.AddressLike, { rejectWithValue }) => {
+    try {
+      const balance = await ethProvider.getBalance(address);
+      return ethers.formatEther(balance);
+    } catch (error) {
+      console.error("error", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export interface FetchTransactionsArg {
   address: string;
   paginationKey?: string[] | string;
@@ -117,6 +137,19 @@ export interface FetchTransactionsArg {
 
 export const fetchEthereumTransactions = createAsyncThunk(
   "wallet/fetchEthereumTransactions",
+  async ({ address }: FetchTransactionsArg, { rejectWithValue }) => {
+    try {
+      const transactions = await fetchTransactions(address);
+      return transactions;
+    } catch (error) {
+      console.error("error", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchEthereumTransactionsInterval = createAsyncThunk(
+  "wallet/fetchEthereumTransactionsInterval",
   async ({ address }: FetchTransactionsArg, { rejectWithValue }) => {
     try {
       const transactions = await fetchTransactions(address);
@@ -141,8 +174,34 @@ export const fetchSolanaTransactions = createAsyncThunk(
   }
 );
 
+export const fetchSolanaTransactionsInterval = createAsyncThunk(
+  "wallet/fetchSolanaTransactionsInterval",
+  async (address: string, { rejectWithValue }): Promise<any> => {
+    try {
+      const transactions = await getTransactionsByWallet(address);
+      return transactions;
+    } catch (error) {
+      console.error("error", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const fetchSolanaBalance = createAsyncThunk(
   "wallet/fetchSolanaBalance",
+  async (tokenAddress: string, { rejectWithValue }): Promise<any> => {
+    try {
+      const currentSolBalance = await getSolanaBalance(tokenAddress);
+      return currentSolBalance;
+    } catch (error) {
+      console.error("error", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchSolanaBalanceInterval = createAsyncThunk(
+  "wallet/fetchSolanaBalanceInterval",
   async (tokenAddress: string, { rejectWithValue }): Promise<any> => {
     try {
       const currentSolBalance = await getSolanaBalance(tokenAddress);
@@ -305,6 +364,16 @@ export const walletSlice = createSlice({
         state.ethereum.status = "failed";
         console.error("Failed to fetch balance:", action.payload);
       })
+      .addCase(fetchEthereumBalanceInterval.fulfilled, (state, action) => {
+        state.ethereum.activeAddress.balance = parseFloat(
+          truncateBalance(action.payload)
+        );
+        state.ethereum.status = "idle";
+      })
+      .addCase(fetchEthereumBalanceInterval.rejected, (state, action) => {
+        state.ethereum.status = "failed";
+        console.error("Failed to fetch balance:", action.payload);
+      })
       .addCase(fetchEthereumTransactions.pending, (state) => {
         state.ethereum.status = "loading";
       })
@@ -324,6 +393,22 @@ export const walletSlice = createSlice({
         state.ethereum.status = "failed";
         console.error("Failed to fetch transactions:", action.payload);
       })
+      .addCase(fetchEthereumTransactionsInterval.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.ethereum.failedNetworkRequest = false;
+          state.ethereum.activeAddress.transactionMetadata.transactions =
+            action.payload.transferHistory;
+          state.ethereum.activeAddress.transactionMetadata.paginationKey =
+            action.payload.paginationKey;
+        } else {
+          state.ethereum.failedNetworkRequest = true;
+        }
+        state.ethereum.status = "idle";
+      })
+      .addCase(fetchEthereumTransactionsInterval.rejected, (state, action) => {
+        state.ethereum.status = "failed";
+        console.error("Failed to fetch transactions:", action.payload);
+      })
       .addCase(fetchSolanaBalance.pending, (state) => {
         state.solana.status = "loading";
       })
@@ -334,6 +419,16 @@ export const walletSlice = createSlice({
         state.solana.status = "idle";
       })
       .addCase(fetchSolanaBalance.rejected, (state, action) => {
+        state.solana.status = "failed";
+        console.error("Failed to fetch balance:", action.payload);
+      })
+      .addCase(fetchSolanaBalanceInterval.fulfilled, (state, action) => {
+        state.solana.activeAddress.balance = parseFloat(
+          truncateBalance(action.payload)
+        );
+        state.solana.status = "idle";
+      })
+      .addCase(fetchSolanaBalanceInterval.rejected, (state, action) => {
         state.solana.status = "failed";
         console.error("Failed to fetch balance:", action.payload);
       })
@@ -351,6 +446,20 @@ export const walletSlice = createSlice({
         state.solana.status = "idle";
       })
       .addCase(fetchSolanaTransactions.rejected, (state, action) => {
+        state.solana.status = "failed";
+        console.error("Failed to fetch transactions:", action.payload);
+      })
+      .addCase(fetchSolanaTransactionsInterval.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.solana.failedNetworkRequest = false;
+          state.solana.activeAddress.transactionMetadata.transactions =
+            action.payload;
+        } else {
+          state.solana.failedNetworkRequest = true;
+        }
+        state.solana.status = "idle";
+      })
+      .addCase(fetchSolanaTransactionsInterval.rejected, (state, action) => {
         state.solana.status = "failed";
         console.error("Failed to fetch transactions:", action.payload);
       });

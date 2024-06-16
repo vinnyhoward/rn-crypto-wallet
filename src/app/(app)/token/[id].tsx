@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import { View, ScrollView, RefreshControl, Platform } from "react-native";
+import { View, ScrollView, RefreshControl } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { router, useLocalSearchParams } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
@@ -12,6 +12,10 @@ import {
   fetchSolanaBalance,
   fetchEthereumTransactions,
   fetchSolanaTransactions,
+  fetchEthereumTransactionsInterval,
+  fetchSolanaTransactionsInterval,
+  fetchEthereumBalanceInterval,
+  fetchSolanaBalanceInterval,
 } from "../../../store/walletSlice";
 import { useLoadingState } from "../../../hooks/redux";
 import { capitalizeFirstLetter } from "../../../utils/capitalizeFirstLetter";
@@ -275,6 +279,20 @@ export default function Index() {
     }
   };
 
+  const fetchPricesInterval = async (currentTokenBalance: number) => {
+    if (chainName === Chains.Ethereum) {
+      dispatch(fetchEthereumTransactionsInterval({ address: tokenAddress }));
+      const usd = ethPrice * currentTokenBalance;
+      setUsdBalance(usd);
+    }
+
+    if (chainName === Chains.Solana) {
+      dispatch(fetchSolanaTransactionsInterval(tokenAddress));
+      const usd = solPrice * currentTokenBalance;
+      setUsdBalance(usd);
+    }
+  };
+
   const fetchTokenBalance = async () => {
     if (isSolana && tokenAddress) {
       dispatch(fetchSolanaBalance(tokenAddress));
@@ -285,9 +303,24 @@ export default function Index() {
     }
   };
 
+  const fetchTokenBalanceInterval = async () => {
+    if (isSolana && tokenAddress) {
+      dispatch(fetchSolanaBalanceInterval(tokenAddress));
+    }
+
+    if (isEthereum && tokenAddress) {
+      dispatch(fetchEthereumBalanceInterval(tokenAddress));
+    }
+  };
+
   const fetchAndUpdatePrices = async () => {
     await fetchTokenBalance();
     await fetchPrices(tokenBalance);
+  };
+
+  const fetchAndUpdatePricesInterval = async () => {
+    await fetchTokenBalanceInterval();
+    await fetchPricesInterval(tokenBalance);
   };
 
   const snapPoints = useMemo(() => ["38%", "66%", "90%"], []);
@@ -312,8 +345,10 @@ export default function Index() {
   };
 
   useEffect(() => {
-    fetchAndUpdatePrices();
-    const intervalId = setInterval(fetchAndUpdatePrices, FETCH_PRICES_INTERVAL);
+    const intervalId = setInterval(
+      fetchAndUpdatePricesInterval,
+      FETCH_PRICES_INTERVAL
+    );
 
     return () => {
       clearInterval(intervalId);
@@ -414,13 +449,6 @@ export default function Index() {
         }}
       >
         <BottomScrollFlatList
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor={theme.colors.white}
-            />
-          }
           ListHeaderComponent={
             <>
               <BottomSectionTitle>Transaction History</BottomSectionTitle>

@@ -11,9 +11,13 @@ import type { RootState, AppDispatch } from "../../store";
 import { fetchPrices } from "../../store/priceSlice";
 import {
   fetchEthereumBalance,
-  updateSolanaBalance,
+  fetchSolanaBalance,
   fetchEthereumTransactions,
   fetchSolanaTransactions,
+  fetchEthereumTransactionsInterval,
+  fetchSolanaTransactionsInterval,
+  fetchEthereumBalanceInterval,
+  fetchSolanaBalanceInterval,
 } from "../../store/walletSlice";
 import { useLoadingState } from "../../hooks/redux";
 import { capitalizeFirstLetter } from "../../utils/capitalizeFirstLetter";
@@ -176,18 +180,23 @@ export default function Index() {
     }, 2000);
   }, [dispatch]);
 
-  const fetchSolanaBalance = async () => {
-    const currentSolBalance = await getSolanaBalance(solWalletAddress);
-    dispatch(updateSolanaBalance(currentSolBalance));
-  };
-
   const fetchTokenBalances = useCallback(async () => {
     if (ethWalletAddress) {
       dispatch(fetchEthereumBalance(ethWalletAddress));
     }
 
     if (solWalletAddress) {
-      await fetchSolanaBalance();
+      dispatch(fetchSolanaBalance(solWalletAddress));
+    }
+  }, [ethBalance, solBalance, dispatch]);
+
+  const fetchTokenBalancesInterval = useCallback(async () => {
+    if (ethWalletAddress) {
+      dispatch(fetchEthereumBalanceInterval(ethWalletAddress));
+    }
+
+    if (solWalletAddress) {
+      dispatch(fetchSolanaBalanceInterval(solWalletAddress));
     }
   }, [ethBalance, solBalance, dispatch]);
 
@@ -257,15 +266,40 @@ export default function Index() {
     dispatch(fetchSolanaTransactions(solWalletAddress));
   };
 
-  const fetchAndUpdatePrices = async () => {
+  const fetchTransactionsInterval = async () => {
+    dispatch(fetchEthereumTransactionsInterval({ address: ethWalletAddress }));
+    dispatch(fetchSolanaTransactionsInterval(solWalletAddress));
+  };
+
+  const fetchBalanceAndPrice = async () => {
     await dispatch(fetchPrices());
     await fetchTokenBalances();
+  };
+
+  const fetchBalanceAndPriceInterval = async () => {
+    await dispatch(fetchPrices());
+    await fetchTokenBalancesInterval();
+  };
+
+  const fetchAndUpdatePrices = async () => {
+    await fetchBalanceAndPrice();
     await fetchTransactions();
+  };
+
+  const fetchAndUpdatePricesInternal = async () => {
+    await fetchBalanceAndPriceInterval();
+    await fetchTransactionsInterval();
   };
 
   useEffect(() => {
     fetchAndUpdatePrices();
-    const interval = setInterval(fetchAndUpdatePrices, FETCH_PRICES_INTERVAL);
+  }, [dispatch, ethWalletAddress, solWalletAddress]);
+
+  useEffect(() => {
+    const interval = setInterval(
+      fetchAndUpdatePricesInternal,
+      FETCH_PRICES_INTERVAL
+    );
 
     return () => clearInterval(interval);
   }, [dispatch, ethWalletAddress, solWalletAddress]);
