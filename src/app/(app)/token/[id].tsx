@@ -201,10 +201,14 @@ export default function Index() {
   const isEthereum = chainName === Chains.Ethereum;
   const Icon = isSolana ? SolanaIcon : EthereumIcon;
 
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
+  const fetchAndUpdatePrices = async () => {
     await fetchTokenBalance();
     await fetchPrices(tokenBalance);
+  };
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchAndUpdatePrices();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -311,11 +315,6 @@ export default function Index() {
     if (isEthereum && tokenAddress) {
       dispatch(fetchEthereumBalanceInterval(tokenAddress));
     }
-  };
-
-  const fetchAndUpdatePrices = async () => {
-    await fetchTokenBalance();
-    await fetchPrices(tokenBalance);
   };
 
   const fetchAndUpdatePricesInterval = async () => {

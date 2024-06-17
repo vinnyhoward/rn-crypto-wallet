@@ -23,7 +23,6 @@ import { useLoadingState } from "../../hooks/redux";
 import { capitalizeFirstLetter } from "../../utils/capitalizeFirstLetter";
 import { truncateWalletAddress } from "../../utils/truncateWalletAddress";
 import { formatDollar, formatDollarRaw } from "../../utils/formatDollars";
-import { getSolanaBalance } from "../../utils/solanaHelpers";
 import { placeholderArr } from "../../utils/placeholder";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import SendIcon from "../../assets/svg/send.svg";

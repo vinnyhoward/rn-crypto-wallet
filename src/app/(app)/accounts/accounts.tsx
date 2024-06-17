@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { FlatList } from "react-native";
+import { FlatList, Dimensions } from "react-native";
 import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import { useSelector, useDispatch } from "react-redux";
 import * as ethers from "ethers";
+import { MotiView } from "moti";
+import { Skeleton } from "moti/skeleton";
 import { formatDollar } from "../../../utils/formatDollars";
 import {
   ethProvider,
@@ -28,6 +30,7 @@ import PhraseIcon from "../../../assets/svg/phrase.svg";
 import EditIcon from "../../../assets/svg/edit.svg";
 import { SafeAreaContainer } from "../../../components/Styles/Layout.styles";
 import Button from "../../../components/Button/Button";
+import { placeholderArr } from "../../../utils/placeholder";
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
@@ -45,6 +48,25 @@ const WalletContainer = styled.TouchableOpacity<{
   background-color: ${({ theme, isActiveAccount }) =>
     isActiveAccount ? "rgba(136, 120, 244, 0.3)" : theme.colors.lightDark};
   padding: ${({ theme }) => theme.spacing.medium};
+  border-bottom-left-radius: ${({ theme, isLast }) =>
+    isLast ? theme.borderRadius.large : "0px"};
+  border-bottom-right-radius: ${({ theme, isLast }) =>
+    isLast ? theme.borderRadius.large : "0px"};
+  border: 1px solid
+    ${({ theme, isActiveAccount }) =>
+      isActiveAccount ? "rgba(136, 120, 244, 0.6)" : theme.colors.dark};
+`;
+
+const WalletSkeletonContainer = styled(MotiView)<{
+  theme: ThemeType;
+  isLast: boolean;
+  isActiveAccount: boolean;
+}>`
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: ${({ theme, isActiveAccount }) =>
+    isActiveAccount ? "rgba(136, 120, 244, 0.3)" : theme.colors.lightDark};
+  padding: ${({ theme }) => theme.spacing.large};
   border-bottom-left-radius: ${({ theme, isLast }) =>
     isLast ? theme.borderRadius.large : "0px"};
   border-bottom-right-radius: ${({ theme, isLast }) =>
@@ -188,17 +210,19 @@ const AccountsIndex = () => {
   const inactiveSolAccounts = useSelector(
     (state: RootState) => state.wallet.solana.inactiveAddresses
   );
+
   const prices = useSelector((state: RootState) => state.price.data);
   const solPrice = prices?.solana?.usd;
   const ethPrice = prices?.ethereum?.usd;
 
   const theme = useTheme();
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
+  const [walletCreationLoading, setWalletCreationLoading] = useState(false);
+  const [priceAndBalanceLoading, setPriceAndBalanceLoading] = useState(false);
   const [accounts, setAccounts] = useState([]);
 
   const createNewWalletPair = async () => {
-    setLoading(true);
+    setWalletCreationLoading(true);
     try {
       const nextEthIndex = inactiveEthAccounts.length;
       const nextSolIndex = inactiveSolAccounts.length;
@@ -224,7 +248,7 @@ const AccountsIndex = () => {
     } catch (err) {
       console.error("Failed to create new wallet pair:", err);
     } finally {
-      setLoading(false);
+      setWalletCreationLoading(false);
     }
   };
 
@@ -246,7 +270,38 @@ const AccountsIndex = () => {
     return formatDollar(ethUsd + solUsd);
   };
 
+  const width = Dimensions.get("window").width * 0.6;
   const renderItem = ({ item, index }) => {
+    if (priceAndBalanceLoading) {
+      return (
+        <WalletSkeletonContainer
+          isActiveAccount={false}
+          isLast={index === accounts.length - 1}
+        >
+          <Skeleton
+            height={35}
+            colors={[
+              theme.colors.grey,
+              theme.colors.dark,
+              theme.colors.dark,
+              theme.colors.grey,
+            ]}
+            width={width}
+          />
+          <Skeleton
+            height={35}
+            colors={[
+              theme.colors.grey,
+              theme.colors.dark,
+              theme.colors.dark,
+              theme.colors.grey,
+            ]}
+            width={50}
+          />
+        </WalletSkeletonContainer>
+      );
+    }
+
     const balance = calculateTotalPrice(
       item.walletDetails.ethereum.balance,
       item.walletDetails.solana.balance
@@ -286,6 +341,7 @@ const AccountsIndex = () => {
 
   useEffect(() => {
     const fetchBalances = async () => {
+      setPriceAndBalanceLoading(true);
       try {
         const { ethereum, solana } = await compileAddressesConcurrently(
           inactiveEthAccounts,
@@ -303,6 +359,8 @@ const AccountsIndex = () => {
         }
       } catch (err) {
         console.error("Failed fetching balance:", err);
+      } finally {
+        setPriceAndBalanceLoading(false);
       }
     };
     fetchBalances();
@@ -342,12 +400,14 @@ const AccountsIndex = () => {
                 />
               </WalletPhraseContainer>
             }
-            data={accounts}
+            data={priceAndBalanceLoading ? placeholderArr(3) : accounts}
             renderItem={renderItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) =>
+              priceAndBalanceLoading ? item.uniqueId : item.id
+            }
           />
           <Button
-            loading={loading}
+            loading={walletCreationLoading}
             onPress={createNewWalletPair}
             title="Create Wallet"
             backgroundColor={theme.colors.primary}
