@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, ScrollView } from "react-native";
+import { BlurView } from "expo-blur";
 import * as Clipboard from "expo-clipboard";
 import { router, useLocalSearchParams } from "expo-router";
 import styled from "styled-components/native";
@@ -61,6 +62,15 @@ export const SecondaryButtonText = styled.Text<{ theme: ThemeType }>`
   font-family: ${(props) => props.theme.fonts.families.openBold};
   font-size: ${(props) => props.theme.fonts.sizes.header};
   color: ${(props) => props.theme.fonts.colors.primary};
+`;
+
+export const BlurContainer = styled(BlurView)<{ theme: ThemeType }>`
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-right: ${(props) => props.theme.spacing.medium};
+  margin-left: ${(props) => props.theme.spacing.medium};
 `;
 
 const LogoContainer = styled.View``;

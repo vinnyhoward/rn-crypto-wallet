@@ -11,6 +11,8 @@ import { ThemeType } from "../../styles/theme";
 import {
   saveEthereumAccountDetails,
   saveSolanaAccountDetails,
+  saveAllEthereumAddresses,
+  saveAllSolanaAddresses,
 } from "../../store/walletSlice";
 import type { AddressState } from "../../store/walletSlice";
 import { ROUTES } from "../../constants/routes";
@@ -107,7 +109,10 @@ export default function WalletSetup() {
       };
 
       dispatch(saveEthereumAccountDetails(ethereumAccount));
+      dispatch(saveAllEthereumAddresses([ethereumAccount]));
+
       dispatch(saveSolanaAccountDetails(solanaAccount));
+      dispatch(saveAllSolanaAddresses([solanaAccount]));
 
       setLoading(false);
       router.push({
