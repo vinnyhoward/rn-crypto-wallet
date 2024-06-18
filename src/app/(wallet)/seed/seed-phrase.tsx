@@ -6,7 +6,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
 import { ThemeType } from "../../../styles/theme";
-import Copy from "../../../assets/svg/copy.svg";
+import CopyIcon from "../../../assets/svg/copy.svg";
 import Button from "../../../components/Button/Button";
 import Bubble from "../../../components/Bubble/Bubble";
 import { ROUTES } from "../../../constants/routes";
@@ -118,7 +118,7 @@ export default function Page() {
           </SeedPhraseContainer>
           <SecondaryButtonContainer onPress={handleCopy}>
             <LogoContainer>
-              <Copy fill={theme.colors.white} />
+              <CopyIcon fill={theme.colors.white} />
             </LogoContainer>
             <SecondaryButtonText>{buttonText}</SecondaryButtonText>
           </SecondaryButtonContainer>

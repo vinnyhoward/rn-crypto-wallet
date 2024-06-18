@@ -15,6 +15,7 @@ import {
   ErrorTextCenter,
   ErrorTextContainer,
 } from "../../../components/Styles/Errors.styles";
+import PasteIcon from "../../../assets/svg/paste.svg";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -58,19 +59,20 @@ const ConfirmSeedContainer = styled.View<{ theme: ThemeType }>`
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  padding: ${(props) => props.theme.spacing.small};
+  padding: ${(props) => props.theme.spacing.medium};
   background-color: ${(props) => props.theme.colors.dark};
   border-radius: ${(props) => props.theme.borderRadius.extraLarge};
-  height: 220px;
-  width: ${(Dimensions.get("window").width - 100).toFixed(0)}px;
+  height: 235px;
+  width: ${(Dimensions.get("window").width * 0.9).toFixed(0)}px;
 `;
 
 const SecondaryButtonContainer = styled.TouchableOpacity`
   padding: 10px 10px;
   border-radius: 5px;
+  flex-direction: row;
   align-items: center;
-  height: 60px;
   justify-content: center;
+  height: 60px;
   width: 100%;
   border-radius: ${(props) => props.theme.borderRadius.large};
   margin-bottom: ${(props) => props.theme.spacing.small};
@@ -81,6 +83,10 @@ const SecondaryButtonText = styled.Text<{ theme: ThemeType }>`
   font-family: ${(props) => props.theme.fonts.families.openBold};
   font-size: ${(props) => props.theme.fonts.sizes.large};
   color: ${(props) => props.theme.fonts.colors.primary};
+`;
+
+const IconContainer = styled.View`
+  margin-right: ${(props) => props.theme.spacing.small};
 `;
 
 export default function Page() {
@@ -163,6 +169,9 @@ export default function Page() {
             ))}
           </ConfirmSeedContainer>
           <SecondaryButtonContainer onPress={() => fetchCopiedText()}>
+            <IconContainer>
+              <PasteIcon fill={theme.colors.white} />
+            </IconContainer>
             <SecondaryButtonText>Paste Phrase</SecondaryButtonText>
           </SecondaryButtonContainer>
           <SeedPhraseContainer>
