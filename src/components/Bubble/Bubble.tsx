@@ -21,7 +21,7 @@ const BubbleContainer = styled.View<BubbleContainerProps>`
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  width: ${({ smallBubble }) => (smallBubble ? "80px" : "100px")};
+  width: ${({ smallBubble }) => (smallBubble ? "90px" : "100px")};
 `;
 
 const BubbleText = styled.Text<{ theme: ThemeType }>`

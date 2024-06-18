@@ -23,7 +23,6 @@ export const authenticate = createAsyncThunk<
       disableDeviceFallback: true,
       cancelLabel: "Cancel",
     });
-    console.log("result:", result);
 
     return result.success;
   } catch (error) {

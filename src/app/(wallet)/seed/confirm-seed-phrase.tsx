@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
+import * as Clipboard from "expo-clipboard";
 import { savePhrase } from "../../../hooks/use-storage-state";
 import { ThemeType } from "../../../styles/theme";
 import Button from "../../../components/Button/Button";
@@ -55,12 +56,31 @@ const ConfirmSeedContainer = styled.View<{ theme: ThemeType }>`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
   padding: ${(props) => props.theme.spacing.small};
-  margin: ${(props) => props.theme.spacing.large};
   background-color: ${(props) => props.theme.colors.dark};
   border-radius: ${(props) => props.theme.borderRadius.extraLarge};
   height: 220px;
-  width: ${(Dimensions.get("window").width - 80).toFixed(0)}px;
+  width: ${(Dimensions.get("window").width - 100).toFixed(0)}px;
+`;
+
+const SecondaryButtonContainer = styled.TouchableOpacity`
+  padding: 10px 10px;
+  border-radius: 5px;
+  align-items: center;
+  height: 60px;
+  justify-content: center;
+  width: 100%;
+  border-radius: ${(props) => props.theme.borderRadius.large};
+  margin-bottom: ${(props) => props.theme.spacing.small};
+  margin-top: ${(props) => props.theme.spacing.small};
+`;
+
+const SecondaryButtonText = styled.Text<{ theme: ThemeType }>`
+  font-family: ${(props) => props.theme.fonts.families.openBold};
+  font-size: ${(props) => props.theme.fonts.sizes.large};
+  color: ${(props) => props.theme.fonts.colors.primary};
 `;
 
 export default function Page() {
@@ -109,6 +129,16 @@ export default function Page() {
     }
   };
 
+  const fetchCopiedText = async () => {
+    const copiedText = await Clipboard.getStringAsync();
+    const phraseString = phrase as string;
+    const originalPhrase = phraseString.split(",").join(" ");
+    const isValid = copiedText === originalPhrase;
+    if (isValid) {
+      setSelectedWords(copiedText.split(" "));
+      setSeedPhrase([]);
+    }
+  };
   return (
     <SafeAreaContainer>
       <ScrollView contentContainerStyle={{ paddingVertical: 50 }}>
@@ -132,6 +162,9 @@ export default function Page() {
               />
             ))}
           </ConfirmSeedContainer>
+          <SecondaryButtonContainer onPress={() => fetchCopiedText()}>
+            <SecondaryButtonText>Paste Phrase</SecondaryButtonText>
+          </SecondaryButtonContainer>
           <SeedPhraseContainer>
             {seedPhrase.map((word, index) => (
               <Bubble

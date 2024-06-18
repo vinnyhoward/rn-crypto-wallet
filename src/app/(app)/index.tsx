@@ -374,7 +374,7 @@ export default function Index() {
           }
           ListEmptyComponent={
             <>
-              {failedEthStatus || failedSolStatus ? (
+              {failedEthStatus && failedSolStatus ? (
                 <ErrorContainer>
                   <ErrorText>
                     There seems to be a network error, please try again later
