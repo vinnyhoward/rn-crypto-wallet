@@ -10,6 +10,7 @@
         "lamports",
         "Moti",
         "nacl",
+        "passcode",
         "persistor",
         "qrcode",
         "reduxjs",

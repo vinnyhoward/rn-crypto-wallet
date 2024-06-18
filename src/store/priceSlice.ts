@@ -32,7 +32,7 @@ export interface CryptoPrices {
 export interface PriceState {
   data: CryptoPrices;
   lastUpdated: number;
-  status: string;
+  status: "idle" | "loading" | "rejected";
 }
 
 const initialState = {

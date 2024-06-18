@@ -14,6 +14,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import walletReducer from "./walletSlice";
 import priceReduce from "./priceSlice";
+import biometricsReducer from "./biometricsSlice";
 import { webSocketProvider } from "../utils/etherHelpers";
 import { formatEther } from "ethers";
 
@@ -25,6 +26,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   wallet: walletReducer,
   price: priceReduce,
+  biometrics: biometricsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
