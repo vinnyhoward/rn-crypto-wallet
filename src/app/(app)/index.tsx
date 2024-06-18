@@ -200,12 +200,14 @@ export default function Index() {
   }, [ethBalance, solBalance, dispatch]);
 
   const updatePrices = () => {
-    const ethUsd = ethPrice * ethBalance;
-    const solUsd = solPrice * solBalance;
+    if (ethWalletAddress && solWalletAddress) {
+      const ethUsd = ethPrice * ethBalance;
+      const solUsd = solPrice * solBalance;
 
-    setUsdBalance(ethUsd + solUsd);
-    setEthUsd(ethUsd);
-    setSolUsd(solUsd);
+      setUsdBalance(ethUsd + solUsd);
+      setEthUsd(ethUsd);
+      setSolUsd(solUsd);
+    }
   };
 
   const _handlePressButtonAsync = async (url: string) => {
@@ -286,8 +288,10 @@ export default function Index() {
   };
 
   const fetchAndUpdatePricesInternal = async () => {
-    await fetchBalanceAndPriceInterval();
-    await fetchTransactionsInterval();
+    if (solBalance && ethBalance) {
+      await fetchBalanceAndPriceInterval();
+      await fetchTransactionsInterval();
+    }
   };
 
   useEffect(() => {

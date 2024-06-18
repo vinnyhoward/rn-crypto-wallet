@@ -4,16 +4,16 @@ import { SafeAreaView } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
-import { savePhrase } from "../../hooks/use-storage-state";
-import { ThemeType } from "../../styles/theme";
-import Button from "../../components/Button/Button";
-import Bubble from "../../components/Bubble/Bubble";
-import { ROUTES } from "../../constants/routes";
-import { Title, Subtitle } from "../../components/Styles/Text.styles";
+import { savePhrase } from "../../../hooks/use-storage-state";
+import { ThemeType } from "../../../styles/theme";
+import Button from "../../../components/Button/Button";
+import Bubble from "../../../components/Bubble/Bubble";
+import { ROUTES } from "../../../constants/routes";
+import { Title, Subtitle } from "../../../components/Styles/Text.styles";
 import {
   ErrorTextCenter,
   ErrorTextContainer,
-} from "../../components/Styles/Errors.styles";
+} from "../../../components/Styles/Errors.styles";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;

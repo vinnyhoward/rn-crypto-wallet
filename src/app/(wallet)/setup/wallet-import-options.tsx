@@ -1,11 +1,11 @@
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
-import { ThemeType } from "../../styles/theme";
-import { ROUTES } from "../../constants/routes";
-import ImportWalletIcon from "../../assets/svg/import-wallet.svg";
-import { SafeAreaContainer } from "../../components/Styles/Layout.styles";
-import { Subtitle } from "../../components/Styles/Text.styles";
+import { ThemeType } from "../../../styles/theme";
+import { ROUTES } from "../../../constants/routes";
+import ImportWalletIcon from "../../../assets/svg/import-wallet.svg";
+import { SafeAreaContainer } from "../../../components/Styles/Layout.styles";
+import { Subtitle } from "../../../components/Styles/Text.styles";
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
@@ -109,7 +109,7 @@ export default function WalletSetup() {
       <ContentContainer>
         <ImageContainer>
           <ExpoImage
-            source={require("../../assets/images/import_wallet.png")}
+            source={require("../../../assets/images/import_wallet.png")}
             contentFit="cover"
           />
         </ImageContainer>

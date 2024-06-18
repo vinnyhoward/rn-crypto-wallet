@@ -5,13 +5,13 @@ import * as Clipboard from "expo-clipboard";
 import { router, useLocalSearchParams } from "expo-router";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
-import { ThemeType } from "../../styles/theme";
-import Copy from "../../assets/svg/copy.svg";
-import Button from "../../components/Button/Button";
-import Bubble from "../../components/Bubble/Bubble";
-import { ROUTES } from "../../constants/routes";
-import { Title, Subtitle } from "../../components/Styles/Text.styles";
-import { getPhrase } from "../../hooks/use-storage-state";
+import { ThemeType } from "../../../styles/theme";
+import Copy from "../../../assets/svg/copy.svg";
+import Button from "../../../components/Button/Button";
+import Bubble from "../../../components/Bubble/Bubble";
+import { ROUTES } from "../../../constants/routes";
+import { Title, Subtitle } from "../../../components/Styles/Text.styles";
+import { getPhrase } from "../../../hooks/use-storage-state";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;

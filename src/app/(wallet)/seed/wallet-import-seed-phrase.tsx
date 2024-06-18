@@ -8,27 +8,27 @@ import { useTheme } from "styled-components";
 import {
   importAllActiveEthAddresses,
   findNextUnusedEthWalletIndex,
-} from "../../utils/etherHelpers";
+} from "../../../utils/etherHelpers";
 import {
   importAllActiveSolAddresses,
   findNextUnusedSolWalletIndex,
-} from "../../utils/solanaHelpers";
-import { ThemeType } from "../../styles/theme";
+} from "../../../utils/solanaHelpers";
+import { ThemeType } from "../../../styles/theme";
 import {
   saveEthereumAccountDetails,
   saveSolanaAccountDetails,
   saveAllEthereumAddresses,
   saveAllSolanaAddresses,
-} from "../../store/walletSlice";
-import type { AddressState } from "../../store/walletSlice";
-import Button from "../../components/Button/Button";
-import { ROUTES } from "../../constants/routes";
-import { savePhrase } from "../../hooks/use-storage-state";
-import { Title, Subtitle } from "../../components/Styles/Text.styles";
+} from "../../../store/walletSlice";
+import type { AddressState } from "../../../store/walletSlice";
+import Button from "../../../components/Button/Button";
+import { ROUTES } from "../../../constants/routes";
+import { savePhrase } from "../../../hooks/use-storage-state";
+import { Title, Subtitle } from "../../../components/Styles/Text.styles";
 import {
   ErrorTextCenter,
   ErrorTextContainer,
-} from "../../components/Styles/Errors.styles";
+} from "../../../components/Styles/Errors.styles";
 
 const isAndroid = Platform.OS === "android";
 
@@ -72,15 +72,44 @@ const SeedTextInput = styled.TextInput<{ theme: ThemeType }>`
   border: 1px solid ${(props) => props.theme.colors.grey};
 `;
 
+const CaptionFeedback = styled.Text<{ theme: ThemeType }>`
+  font-family: ${(props) => props.theme.fonts.families.openBold};
+  font-size: ${(props) => props.theme.fonts.sizes.large};
+  color: ${(props) => props.theme.fonts.colors.primary};
+  margin-bottom: ${(props) => props.theme.spacing.large};
+  padding-left: ${(props) => props.theme.spacing.tiny};
+  padding-right: ${(props) => props.theme.spacing.tiny};
+  text-align: center;
+`;
+
+const captionsArr: string[] = [
+  "Hang tight! We're fetching your wallet details...",
+  "This might take a minute. Importing wallet securely...",
+  "Almost there! Syncing with the blockchain...",
+];
+
 export default function Page() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [textValue, setTextValue] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [captions, setCaptions] = useState<string>("");
+
+  const setCaptionsInterval = () => {
+    setCaptions(captionsArr[0]);
+    let interval: NodeJS.Timeout = setInterval(() => {
+      const randomIndex = Math.floor(Math.random() * captionsArr.length);
+      setCaptions(captionsArr[randomIndex]);
+    }, 8000);
+    return () => {
+      clearInterval(interval);
+      setCaptions("");
+    };
+  };
 
   const handleVerifySeedPhrase = async () => {
-    // setLoading(true);
+    setLoading(true);
     const errorText =
       "Looks like the seed phrase is incorrect. Please try again.";
     const phraseTextValue = textValue.trimEnd();
@@ -90,6 +119,7 @@ export default function Page() {
       return;
     }
 
+    const captionsInterval = setCaptionsInterval();
     setError("");
     try {
       // Logic is needed to find the crypto currency with the highest amount of accounts created
@@ -152,6 +182,8 @@ export default function Page() {
       setError("Failed to import wallet");
       console.error("Failed to import wallet", err);
       setLoading(false);
+    } finally {
+      captionsInterval();
     }
   };
 
@@ -186,6 +218,7 @@ export default function Page() {
         </ErrorTextContainer>
       )}
       <ButtonContainer>
+        {captions && <CaptionFeedback>{captions}</CaptionFeedback>}
         <Button
           loading={loading}
           disabled={loading}

@@ -3,9 +3,9 @@ import { SafeAreaView } from "react-native";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import styled from "styled-components/native";
-import Button from "../../components/Button/Button";
-import { ThemeType } from "../../styles/theme";
-import { ROUTES } from "../../constants/routes";
+import Button from "../../../components/Button/Button";
+import { ThemeType } from "../../../styles/theme";
+import { ROUTES } from "../../../constants/routes";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -76,7 +76,7 @@ export default function WalletCreationSuccessPage() {
       <ContentContainer>
         <ImageContainer>
           <ExpoImage
-            source={require("../../assets/images/wallet_success.png")}
+            source={require("../../../assets/images/wallet_success.png")}
             contentFit="cover"
           />
         </ImageContainer>

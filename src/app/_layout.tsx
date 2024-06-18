@@ -73,7 +73,7 @@ export default function RootLayout() {
                 options={{ headerShown: false }}
               />
               <Stack.Screen
-                name="(wallet)/seed-phrase"
+                name="(wallet)/seed/seed-phrase"
                 options={{
                   title: "Seed Phrase",
                   headerShown: true,
@@ -84,7 +84,7 @@ export default function RootLayout() {
                 }}
               />
               <Stack.Screen
-                name="(wallet)/confirm-seed-phrase"
+                name="(wallet)/seed/confirm-seed-phrase"
                 options={{
                   title: "Confirm Seed Phrase",
                   headerShown: true,
@@ -100,7 +100,7 @@ export default function RootLayout() {
                 }}
               />
               <Stack.Screen
-                name="(wallet)/wallet-created-successfully"
+                name="(wallet)/setup/wallet-created-successfully"
                 options={{
                   title: "Confirm Seed Phrase",
                   headerShown: false,
@@ -112,7 +112,7 @@ export default function RootLayout() {
                 }}
               />
               <Stack.Screen
-                name="(wallet)/wallet-import-options"
+                name="(wallet)/setup/wallet-import-options"
                 options={{
                   title: "Confirm Seed Phrase",
                   headerShown: true,
@@ -128,7 +128,7 @@ export default function RootLayout() {
                 }}
               />
               <Stack.Screen
-                name="(wallet)/wallet-import-seed-phrase"
+                name="(wallet)/seed/wallet-import-seed-phrase"
                 options={{
                   title: "Confirm Seed Phrase",
                   headerShown: true,

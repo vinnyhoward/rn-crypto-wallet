@@ -4,18 +4,18 @@ import { useDispatch } from "react-redux";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import styled from "styled-components/native";
-import { createEthWallet } from "../../utils/etherHelpers";
-import { restoreSolWalletFromPhrase } from "../../utils/solanaHelpers";
-import Button from "../../components/Button/Button";
-import { ThemeType } from "../../styles/theme";
+import { createEthWallet } from "../../../utils/etherHelpers";
+import { restoreSolWalletFromPhrase } from "../../../utils/solanaHelpers";
+import Button from "../../../components/Button/Button";
+import { ThemeType } from "../../../styles/theme";
 import {
   saveEthereumAccountDetails,
   saveSolanaAccountDetails,
   saveAllEthereumAddresses,
   saveAllSolanaAddresses,
-} from "../../store/walletSlice";
-import type { AddressState } from "../../store/walletSlice";
-import { ROUTES } from "../../constants/routes";
+} from "../../../store/walletSlice";
+import type { AddressState } from "../../../store/walletSlice";
+import { ROUTES } from "../../../constants/routes";
 
 export const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -130,7 +130,7 @@ export default function WalletSetup() {
       <ContentContainer>
         <ImageContainer>
           <ExpoImage
-            source={require("../../assets/images/wallet_alt.png")}
+            source={require("../../../assets/images/wallet_alt.png")}
             contentFit="cover"
           />
         </ImageContainer>

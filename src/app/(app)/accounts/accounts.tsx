@@ -370,7 +370,7 @@ const AccountsIndex = () => {
     inactiveEthAccounts,
     inactiveSolAccounts,
   ]);
-  console.log("accounts:", accounts);
+
   return (
     <>
       <SafeAreaContainer>
