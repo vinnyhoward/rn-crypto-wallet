@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
-import { View, RefreshControl, FlatList } from "react-native";
+import { View, RefreshControl, FlatList, Platform } from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useDispatch, useSelector } from "react-redux";
 import { router } from "expo-router";
@@ -41,14 +41,13 @@ const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
   justify-content: flex-start;
   padding: ${(props) => props.theme.spacing.medium};
-  margin-top: ${(props) => props.theme.spacing.huge};
+  margin-top: ${(props) =>
+    Platform.OS === "android" ? "40px" : props.theme.spacing.huge};
 `;
-
 const BalanceContainer = styled.View<{ theme: ThemeType }>`
   display: flex;
   flex-direction: row;
   justify-content: center;
-  margin-top: 7.5px;
   margin-bottom: ${(props) => props.theme.spacing.huge};
 `;
 
@@ -157,7 +156,7 @@ export default function Index() {
     (state: RootState) => state.wallet.solana.status === "failed"
   );
 
-  const snapPoints = useMemo(() => ["10%", "33%", "68%", "90%"], []);
+  const snapPoints = useMemo(() => ["10%", "33%", "69%", "88%"], []);
 
   const prices = useSelector((state: RootState) => state.price.data);
   const solPrice = prices?.solana?.usd;

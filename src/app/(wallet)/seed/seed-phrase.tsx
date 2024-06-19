@@ -102,7 +102,7 @@ export default function Page() {
 
   return (
     <SafeAreaContainer>
-      <ScrollView contentContainerStyle={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ paddingTop: 50 }}>
         <ContentContainer>
           <TextContainer>
             <Title>Secret Recovery Phrase</Title>

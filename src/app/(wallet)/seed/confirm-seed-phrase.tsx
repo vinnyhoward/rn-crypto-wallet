@@ -145,9 +145,10 @@ export default function Page() {
       setSeedPhrase([]);
     }
   };
+
   return (
     <SafeAreaContainer>
-      <ScrollView contentContainerStyle={{ paddingVertical: 50 }}>
+      <ScrollView contentContainerStyle={{ paddingTop: 50 }}>
         <ContentContainer>
           <TextContainer>
             <Title>Verify you saved it correctly</Title>

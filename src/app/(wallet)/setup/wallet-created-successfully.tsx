@@ -2,14 +2,15 @@ import { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import styled from "styled-components/native";
+import { View } from "moti";
+import styled, { useTheme } from "styled-components/native";
 import Button from "../../../components/Button/Button";
+import { LinearGradientBackground } from "../../../components/Styles/Gradient";
 import { ThemeType } from "../../../styles/theme";
 import { ROUTES } from "../../../constants/routes";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
-  background-color: ${(props) => props.theme.colors.primary};
   justify-content: flex-end;
 `;
 
@@ -48,7 +49,7 @@ const ExpoImage = styled(Image)`
   width: 100%;
 `;
 
-const ImageContainer = styled.View<{ theme: ThemeType }>`
+const ImageContainer = styled(View)<{ theme: ThemeType }>`
   flex: 1;
   width: 100%;
   justify-content: center;
@@ -57,6 +58,7 @@ const ImageContainer = styled.View<{ theme: ThemeType }>`
 
 export default function WalletCreationSuccessPage() {
   const { successState } = useLocalSearchParams();
+  const theme = useTheme();
   const [title, setTitle] = useState("Welcome Aboard!");
   const [subtitle, setSubtitle] = useState(
     "Your new digital wallet is ready! Dive into securing and exploring your financial future. Your crypto journey starts now."
@@ -72,26 +74,41 @@ export default function WalletCreationSuccessPage() {
   }, [successState]);
 
   return (
-    <SafeAreaContainer>
-      <ContentContainer>
-        <ImageContainer>
-          <ExpoImage
-            source={require("../../../assets/images/wallet_success.png")}
-            contentFit="cover"
-          />
-        </ImageContainer>
+    <LinearGradientBackground colors={theme.colors.primaryLinearGradient}>
+      <SafeAreaContainer>
+        <ContentContainer>
+          <ImageContainer
+            from={{
+              translateY: -25,
+            }}
+            animate={{
+              translateY: 50,
+            }}
+            transition={{
+              loop: true,
+              type: "timing",
+              duration: 3000,
+              delay: 100,
+            }}
+          >
+            <ExpoImage
+              source={require("../../../assets/images/wallet_success.png")}
+              contentFit="cover"
+            />
+          </ImageContainer>
 
-        <TextContainer>
-          <Title>{title}</Title>
-          <Subtitle>{subtitle}</Subtitle>
-        </TextContainer>
-      </ContentContainer>
-      <ButtonContainer>
-        <Button
-          onPress={() => router.replace(ROUTES.home)}
-          title="Continue to wallet"
-        />
-      </ButtonContainer>
-    </SafeAreaContainer>
+          <TextContainer>
+            <Title>{title}</Title>
+            <Subtitle>{subtitle}</Subtitle>
+          </TextContainer>
+        </ContentContainer>
+        <ButtonContainer>
+          <Button
+            onPress={() => router.replace(ROUTES.home)}
+            title="Continue to wallet"
+          />
+        </ButtonContainer>
+      </SafeAreaContainer>
+    </LinearGradientBackground>
   );
 }

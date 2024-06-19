@@ -15,7 +15,6 @@ export const Authenticator = {
     });
 
     if (result.success) {
-      console.log("Authenticated!");
       return true;
     }
     return false;

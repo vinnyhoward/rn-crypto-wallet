@@ -105,7 +105,7 @@ export default function Biometrics() {
     dispatch(authenticate());
     setCheckEnrollment(true);
   };
-  console.log(isEnrolled);
+
   return (
     <SafeAreaContainer>
       <ContentContainer>

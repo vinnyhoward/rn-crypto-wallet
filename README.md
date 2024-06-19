@@ -72,7 +72,7 @@ Note: This wallet is not intended for production but includes robust security fe
 
 #### Nice to haves
 - [x] Resolve Android UI bugs
-- [ ] Improve user interface with loaders, animations, etc.
+- [x] Improve user interface with loaders, animations, etc.
 - [ ] Refactor repetitive styled components and streamline logic
 - [ ] Add pagination for transaction lists to improve navigation in long lists
 

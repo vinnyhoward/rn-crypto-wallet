@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FlatList, Dimensions } from "react-native";
+import { FlatList, Dimensions, Platform } from "react-native";
 import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import { useSelector, useDispatch } from "react-redux";
@@ -34,8 +34,9 @@ import { placeholderArr } from "../../../utils/placeholder";
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
-  justify-content: space-between;
+  justify-content: center;
   padding: ${({ theme }) => theme.spacing.medium};
+  margin-top: ${(props) => (Platform.OS === "android" ? "80px" : "0px")};
 `;
 
 const WalletContainer = styled.TouchableOpacity<{
@@ -371,50 +372,49 @@ const AccountsIndex = () => {
     inactiveSolAccounts,
   ]);
 
+  const placeholderAmount = inactiveEthAccounts.length;
   return (
-    <>
-      <SafeAreaContainer>
-        <ContentContainer>
-          <FlatList
-            ListHeaderComponent={
-              <WalletPhraseContainer
-                onPress={() =>
-                  router.push({
-                    pathname: ROUTES.seedPhrase,
-                    params: { readOnly: "true" },
-                  })
-                }
-              >
-                <PhraseTextContent>
-                  <PhraseIcon
-                    width={25}
-                    height={25}
-                    fill={theme.colors.white}
-                  />
-                  <SectionTitle>Secret Recovery Phrase</SectionTitle>
-                </PhraseTextContent>
-                <RightArrowIcon
-                  width={25}
-                  height={25}
-                  fill={theme.colors.white}
-                />
-              </WalletPhraseContainer>
-            }
-            data={priceAndBalanceLoading ? placeholderArr(3) : accounts}
-            renderItem={renderItem}
-            keyExtractor={(item) =>
-              priceAndBalanceLoading ? item.uniqueId : item.id
-            }
-          />
-          <Button
-            loading={walletCreationLoading}
-            onPress={createNewWalletPair}
-            title="Create Wallet"
-            backgroundColor={theme.colors.primary}
-          />
-        </ContentContainer>
-      </SafeAreaContainer>
-    </>
+    <SafeAreaContainer>
+      <ContentContainer>
+        <FlatList
+          ListHeaderComponent={
+            <WalletPhraseContainer
+              onPress={() =>
+                router.push({
+                  pathname: ROUTES.seedPhrase,
+                  params: { readOnly: "true" },
+                })
+              }
+            >
+              <PhraseTextContent>
+                <PhraseIcon width={25} height={25} fill={theme.colors.white} />
+                <SectionTitle>Secret Recovery Phrase</SectionTitle>
+              </PhraseTextContent>
+              <RightArrowIcon
+                width={25}
+                height={25}
+                fill={theme.colors.white}
+              />
+            </WalletPhraseContainer>
+          }
+          data={
+            priceAndBalanceLoading
+              ? placeholderArr(placeholderAmount)
+              : accounts
+          }
+          renderItem={renderItem}
+          keyExtractor={(item) =>
+            priceAndBalanceLoading ? item.uniqueId : item.id
+          }
+        />
+        <Button
+          loading={walletCreationLoading}
+          onPress={createNewWalletPair}
+          title="Create Wallet"
+          backgroundColor={theme.colors.primary}
+        />
+      </ContentContainer>
+    </SafeAreaContainer>
   );
 };
 

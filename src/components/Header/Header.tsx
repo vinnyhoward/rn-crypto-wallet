@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { Platform } from "react-native";
 import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
@@ -19,7 +20,7 @@ const Container = styled.View<ThemeComponent>`
   align-items: center;
   padding-left: ${(props) => props.theme.spacing.medium};
   padding-right: ${(props) => props.theme.spacing.medium};
-  margin-top: 60px;
+  margin-top: ${Platform.OS === "android" ? "15px" : "60px"};
 `;
 
 const LeftContainer = styled.View<ThemeComponent>``;

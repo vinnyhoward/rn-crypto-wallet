@@ -59,7 +59,10 @@ const ButtonContainer = styled.View<{ theme: ThemeType }>`
   width: 100%;
 `;
 
-const SeedTextInput = styled.TextInput<{ theme: ThemeType }>`
+const SeedTextInput = styled.TextInput<{
+  theme: ThemeType;
+  isInputFocused: boolean;
+}>`
   justify-content: flex-start;
   padding: ${(props) => props.theme.spacing.large};
   margin: ${(props) => props.theme.spacing.large};
@@ -69,23 +72,45 @@ const SeedTextInput = styled.TextInput<{ theme: ThemeType }>`
   color: ${(props) => props.theme.colors.white};
   font-size: ${(props) => props.theme.fonts.sizes.large};\
   font-family: ${(props) => props.theme.fonts.families.openRegular};
-  border: 1px solid ${(props) => props.theme.colors.grey};
+  border: 1px solid
+    ${({ theme, isInputFocused }) =>
+      isInputFocused ? theme.colors.primary : theme.colors.grey};
 `;
 
-const CaptionFeedback = styled.Text<{ theme: ThemeType }>`
+export const InfoContainer = styled.View<{ theme: ThemeType }>`
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(136, 120, 244, 0.3);
+  border: 2px solid rgba(136, 120, 244, 0.6);
+  border-radius: ${(props) => props.theme.borderRadius.large};
+  padding: ${(props) => props.theme.spacing.large};
+  margin-bottom: ${(props) => props.theme.spacing.large};
+`;
+
+export const InfoTitle = styled.Text<{ theme: ThemeType }>`
   font-family: ${(props) => props.theme.fonts.families.openBold};
   font-size: ${(props) => props.theme.fonts.sizes.large};
-  color: ${(props) => props.theme.fonts.colors.primary};
-  margin-bottom: ${(props) => props.theme.spacing.large};
-  padding-left: ${(props) => props.theme.spacing.tiny};
-  padding-right: ${(props) => props.theme.spacing.tiny};
-  text-align: center;
+  color: ${(props) => props.theme.colors.white};
+  margin-bottom: 5px;
+`;
+
+export const InfoText = styled.Text<{ theme: ThemeType }>`
+  font-family: ${(props) => props.theme.fonts.families.openRegular};
+  font-size: ${(props) => props.theme.fonts.sizes.normal};
+  color: ${(props) => props.theme.colors.white};
 `;
 
 const captionsArr: string[] = [
-  "Hang tight! We're fetching your wallet details...",
-  "This might take a minute. Importing wallet securely...",
-  "Almost there! Syncing with the blockchain...",
+  "We're fetching your wallet details...",
+  "Importing wallet securely...",
+  "Syncing with the blockchain...",
+];
+
+const titleArr: string[] = [
+  "Hang tight!",
+  "This might take a minute.",
+  "Almost there!",
 ];
 
 export default function Page() {
@@ -95,15 +120,20 @@ export default function Page() {
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [captions, setCaptions] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
+  const [isInputFocused, setInputFocused] = useState(false);
 
   const setCaptionsInterval = () => {
+    setTitle(titleArr[0]);
     setCaptions(captionsArr[0]);
     let interval: NodeJS.Timeout = setInterval(() => {
       const randomIndex = Math.floor(Math.random() * captionsArr.length);
+      setTitle(titleArr[randomIndex]);
       setCaptions(captionsArr[randomIndex]);
     }, 8000);
     return () => {
       clearInterval(interval);
+      setTitle("");
       setCaptions("");
     };
   };
@@ -199,6 +229,7 @@ export default function Page() {
             </Subtitle>
           </TextContainer>
           <SeedTextInput
+            isInputFocused={isInputFocused}
             autoCapitalize="none"
             multiline
             returnKeyType="done"
@@ -207,6 +238,8 @@ export default function Page() {
             onChangeText={setTextValue}
             placeholder="Enter your seed phrase"
             placeholderTextColor={theme.colors.grey}
+            onFocus={() => setInputFocused(true)}
+            onEndEditing={() => setInputFocused(false)}
             blurOnSubmit
             onSubmitEditing={() => Keyboard.dismiss()}
           />
@@ -218,8 +251,14 @@ export default function Page() {
         </ErrorTextContainer>
       )}
       <ButtonContainer>
-        {captions && <CaptionFeedback>{captions}</CaptionFeedback>}
+        {title !== "" && captions !== "" && (
+          <InfoContainer>
+            <InfoTitle>{title}</InfoTitle>
+            <InfoText>{captions}</InfoText>
+          </InfoContainer>
+        )}
         <Button
+          linearGradient={theme.colors.primaryLinearGradient}
           loading={loading}
           disabled={loading}
           color={theme.colors.white}
