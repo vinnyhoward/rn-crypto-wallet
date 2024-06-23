@@ -26,7 +26,9 @@ const IconTouchContainer = styled.TouchableOpacity`
   padding: 10px;
 `;
 
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync()
+  .then((result) => console.log(`Prevent auto hide succeeded: ${result}`))
+  .catch(console.warn);
 
 export default function AppLayout() {
   const theme = useTheme();
@@ -54,7 +56,7 @@ export default function AppLayout() {
   }, []);
 
   if (!loading) {
-    SplashScreen.hideAsync();
+    // SplashScreen.hideAsync();
   }
 
   return (

@@ -35,47 +35,6 @@ __Network Configuration Assurance__:It is crucial to understand that as long as 
 
 __Note__: The security architecture for this project is currently in a developmental phase and has not yet been fully implemented. It is intended solely for development and testing purposes, with plans to enhance security features in future updates.
 
-## Roadmap
-
-#### Current Focus
-TBA
-
-#### Wallet Functionality
-- [x] Create wallet
-- [x] View seed phrase
-- [x] Confirm seed phrase
-- [x] Import wallet
-- [x] Switch accounts
-- [x] Manage and rename wallet account names
-- [x] Create new wallet under same phrase
-
-#### Wallet Balance
-- [x] View all asset net worth
-- [x] View Ethereum balance
-- [x] View Solana balance
-
-#### Ethereum Actions
-- [x] Send Ethereum
-- [x] List transactions on Ethereum
-
-#### Solana Actions
-- [x] Send Solana
-- [x] List transactions transactions on Solana
-
-### Other wallet actions
-- [x] Scan QR code to share addresses or send cryptocurrency
-
-### Security
-- [x] Enhanced security and management of private keys
-Note: This wallet is not intended for production but includes robust security features for educational purposes.
-- [ ] Implement biometric authentication to add an additional layer of security
-
-#### Nice to haves
-- [x] Resolve Android UI bugs
-- [x] Improve user interface with loaders, animations, etc.
-- [ ] Refactor repetitive styled components and streamline logic
-- [ ] Add pagination for transaction lists to improve navigation in long lists
-
 ## Prerequisites
 
 Before you begin, ensure you have the following installed:

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";

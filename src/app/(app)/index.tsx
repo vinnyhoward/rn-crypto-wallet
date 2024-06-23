@@ -282,8 +282,10 @@ export default function Index() {
   };
 
   const fetchAndUpdatePrices = async () => {
-    await fetchBalanceAndPrice();
-    await fetchTransactions();
+    if (ethWalletAddress && solWalletAddress) {
+      await fetchBalanceAndPrice();
+      await fetchTransactions();
+    }
   };
 
   const fetchAndUpdatePricesInternal = async () => {

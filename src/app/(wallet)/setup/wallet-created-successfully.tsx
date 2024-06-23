@@ -104,6 +104,7 @@ export default function WalletCreationSuccessPage() {
         </ContentContainer>
         <ButtonContainer>
           <Button
+            linearGradient={theme.colors.secondaryLinearGradient}
             onPress={() => router.replace(ROUTES.home)}
             title="Continue to wallet"
           />
