@@ -10,6 +10,7 @@
     "redux-devtools": "redux-devtools --open=electron --hostname=localhost --port=8000"
   },
   "dependencies": {
+    "@babel/preset-env": "^7.1.6",
     "@ethersproject/shims": "^5.7.0",
     "@expo-google-fonts/inter": "^0.2.3",
     "@expo-google-fonts/open-sans": "^0.2.3",
@@ -38,6 +39,7 @@
     "expo-linear-gradient": "~13.0.2",
     "expo-linking": "~6.3.1",
     "expo-local-authentication": "~14.0.1",
+    "expo-modules-autolinking": "^0.8.1",
     "expo-router": "~3.5.15",
     "expo-secure-store": "~13.0.1",
     "expo-splash-screen": "~0.27.5",
@@ -59,6 +61,7 @@
     "react-native-toast-message": "^2.2.0",
     "react-native-web": "~0.19.6",
     "react-redux": "^9.1.1",
+    "redux": "^4.0.0",
     "redux-persist": "^6.0.0",
     "styled-components": "^6.1.8",
     "typescript": "~5.3.3"

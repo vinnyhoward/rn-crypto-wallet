@@ -27,7 +27,7 @@ const IconTouchContainer = styled.TouchableOpacity`
 `;
 
 SplashScreen.preventAutoHideAsync()
-  .then((result) => console.log(`Prevent auto hide succeeded: ${result}`))
+  .then((result) => console.log(`Prevent auto hide succeeded 2: ${result}`))
   .catch(console.warn);
 
 export default function AppLayout() {
@@ -56,7 +56,7 @@ export default function AppLayout() {
   }, []);
 
   if (!loading) {
-    // SplashScreen.hideAsync();
+    SplashScreen.hideAsync();
   }
 
   return (

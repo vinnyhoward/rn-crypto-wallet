@@ -19,8 +19,13 @@ import {
   saveSolanaAccountDetails,
   saveAllEthereumAddresses,
   saveAllSolanaAddresses,
+  fetchEthereumBalance,
+  fetchSolanaBalance,
+  fetchSolanaTransactions,
+  fetchEthereumTransactions,
 } from "../../../store/walletSlice";
 import type { AddressState } from "../../../store/walletSlice";
+import type { AppDispatch } from "../../../store";
 import Button from "../../../components/Button/Button";
 import { ROUTES } from "../../../constants/routes";
 import { savePhrase } from "../../../hooks/use-storage-state";
@@ -115,7 +120,7 @@ const titleArr: string[] = [
 
 export default function Page() {
   const theme = useTheme();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [textValue, setTextValue] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -193,15 +198,19 @@ export default function Page() {
           };
         });
 
-      const firstEthWallet = transformedActiveEthAddresses[0];
-      const firstSolWallet = transformedActiveSolAddresses[0];
+      const firstEthWallet: AddressState = transformedActiveEthAddresses[0];
+      const firstSolWallet: AddressState = transformedActiveSolAddresses[0];
 
       await savePhrase(JSON.stringify(phraseTextValue));
 
       dispatch(saveEthereumAccountDetails(firstEthWallet));
+      dispatch(fetchEthereumBalance(firstEthWallet.address));
+      dispatch(fetchEthereumTransactions({ address: firstEthWallet.address }));
       dispatch(saveAllEthereumAddresses(transformedActiveEthAddresses));
 
       dispatch(saveSolanaAccountDetails(firstSolWallet));
+      dispatch(fetchSolanaBalance(firstSolWallet.address));
+      dispatch(fetchSolanaTransactions(firstSolWallet.address));
       dispatch(saveAllSolanaAddresses(transformedActiveSolAddresses));
 
       router.push({
