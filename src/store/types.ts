@@ -1,3 +1,10 @@
+export interface AccountState {
+  activeAddress: AddressState;
+  inactiveAddresses: AddressState[];
+  failedNetworkRequest: boolean;
+  status: "idle" | "loading" | "failed" | "success";
+}
+
 export interface AddressState {
   accountName: string;
   derivationPath: string;
@@ -28,4 +35,9 @@ export enum StatusTypes {
   LOADING = "loading",
   FAILED = "failed",
   SUCCESS = "success",
+}
+
+export interface FetchTransactionsArg {
+  address: string;
+  paginationKey?: string[] | string;
 }

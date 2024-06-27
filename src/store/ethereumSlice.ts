@@ -6,25 +6,23 @@ import * as ethers from "ethers";
 import { RootState } from "./index";
 import { fetchTransactions, ethProvider } from "../utils/etherHelpers";
 import { truncateBalance } from "../utils/truncateBalance";
-import type { AddressState, Transaction } from "./types";
+import type {
+  AddressState,
+  Transaction,
+  AccountState,
+  FetchTransactionsArg,
+} from "./types";
 
-export interface AccountState {
-  activeAddress: AddressState;
-  inactiveAddresses: AddressState[];
-  failedNetworkRequest: boolean;
-  status: "idle" | "loading" | "failed" | "success";
-}
-
-export interface WalletState {
+export interface EthereumWalletState {
   activeAccountName: string;
   ethereum: AccountState;
 }
 
-export interface ActiveAccountDetails {
+export interface EthereumActiveAccountDetails {
   ethereum: AddressState;
 }
 
-const initialState: WalletState = {
+const initialState: EthereumWalletState = {
   activeAccountName: "",
   ethereum: {
     activeAddress: {
@@ -83,11 +81,6 @@ export const fetchEthereumBalanceInterval = createAsyncThunk<
     }
   }
 );
-
-export interface FetchTransactionsArg {
-  address: string;
-  paginationKey?: string[] | string;
-}
 
 export const fetchEthereumTransactions = createAsyncThunk(
   "wallet/fetchEthereumTransactions",
@@ -186,7 +179,10 @@ export const walletSlice = createSlice({
           action.payload.accountName;
       }
     },
-    setActiveAccount: (state, action: PayloadAction<ActiveAccountDetails>) => {
+    setActiveAccount: (
+      state,
+      action: PayloadAction<EthereumActiveAccountDetails>
+    ) => {
       state.activeAccountName = action.payload.ethereum.accountName;
       state.ethereum.activeAddress = {
         ...action.payload.ethereum,

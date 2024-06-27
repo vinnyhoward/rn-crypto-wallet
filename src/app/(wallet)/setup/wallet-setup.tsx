@@ -5,7 +5,7 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { View } from "moti";
 import styled, { useTheme } from "styled-components/native";
-import { createEthWallet } from "../../../utils/etherHelpers";
+import ethService from "../../../services/EthereumService";
 import { restoreSolWalletFromPhrase } from "../../../utils/solanaHelpers";
 import Button from "../../../components/Button/Button";
 import { ThemeType } from "../../../styles/theme";
@@ -91,7 +91,7 @@ export default function WalletSetup() {
   const walletSetup = async () => {
     try {
       setLoading(true);
-      const ethWallet = await createEthWallet();
+      const ethWallet = await ethService.createWallet();
       const masterMnemonicPhrase = ethWallet.mnemonic.phrase;
       const solWallet = restoreSolWalletFromPhrase(masterMnemonicPhrase);
 
