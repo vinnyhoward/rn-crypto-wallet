@@ -1,11 +1,10 @@
 export const truncateWalletAddress = (
   address: string,
   end: number = 5,
-  offset: number = 4
+  offset: number = 5
 ): string => {
   if (!address) return "";
-  return `${address.slice(0, end)}...${address.slice(
-    address.length - offset,
-    address.length
-  )}`;
+  if (address.length <= end + offset) return address;
+
+  return `${address.slice(0, end)}...${address.slice(-offset)}`;
 };
