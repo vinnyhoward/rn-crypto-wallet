@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import * as Clipboard from "expo-clipboard";
 import Toast from "react-native-toast-message";
 import { ROUTES } from "../../../constants/routes";
@@ -122,7 +122,6 @@ const IconOnPressView = styled.TouchableOpacity`
 
 const AccountsModalIndex = () => {
   const theme = useTheme();
-  const navigation = useNavigation();
   const { ethAddress, solAddress, balance } = useLocalSearchParams();
   const ethereumAccount = useSelector((state: RootState) =>
     state.wallet.ethereum.inactiveAddresses.find(

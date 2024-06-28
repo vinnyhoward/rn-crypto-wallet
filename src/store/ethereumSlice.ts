@@ -4,7 +4,7 @@ import "@ethersproject/shims";
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import * as ethers from "ethers";
 import { RootState } from "./index";
-import { fetchTransactions, ethProvider } from "../utils/etherHelpers";
+import ethService from "../services/EthereumService";
 import { truncateBalance } from "../utils/truncateBalance";
 import type {
   AddressState,
@@ -53,7 +53,7 @@ export const fetchEthereumBalance = createAsyncThunk<
   "wallet/fetchEthereumBalance",
   async (address: ethers.AddressLike, { rejectWithValue }) => {
     try {
-      const balance = await ethProvider.getBalance(address);
+      const balance = await ethService.getBalance(address);
       return ethers.formatEther(balance);
     } catch (error) {
       console.error("error", error);
@@ -73,7 +73,7 @@ export const fetchEthereumBalanceInterval = createAsyncThunk<
   "wallet/fetchEthereumBalanceInterval",
   async (address: ethers.AddressLike, { rejectWithValue }) => {
     try {
-      const balance = await ethProvider.getBalance(address);
+      const balance = await ethService.getBalance(address);
       return ethers.formatEther(balance);
     } catch (error) {
       console.error("error", error);
@@ -86,7 +86,7 @@ export const fetchEthereumTransactions = createAsyncThunk(
   "wallet/fetchEthereumTransactions",
   async ({ address }: FetchTransactionsArg, { rejectWithValue }) => {
     try {
-      const transactions = await fetchTransactions(address);
+      const transactions = await ethService.fetchTransactions(address);
       return transactions;
     } catch (error) {
       console.error("error", error);
@@ -99,7 +99,7 @@ export const fetchEthereumTransactionsInterval = createAsyncThunk(
   "wallet/fetchEthereumTransactionsInterval",
   async ({ address }: FetchTransactionsArg, { rejectWithValue }) => {
     try {
-      const transactions = await fetchTransactions(address);
+      const transactions = await ethService.fetchTransactions(address);
       return transactions;
     } catch (error) {
       console.error("error", error);

@@ -176,7 +176,7 @@ export default function Index() {
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
-  }, [dispatch]);
+  }, [dispatch, solWalletAddress, ethWalletAddress]);
 
   const fetchTokenBalances = useCallback(async () => {
     if (ethWalletAddress) {
@@ -233,13 +233,17 @@ export default function Index() {
     const Icon = isSolana ? SolanaIcon : EthereumPlainIcon;
     const sign = item.direction === "received" ? "+" : "-";
     if (isSolana) {
+      const caption =
+        item.direction === "received"
+          ? `from ${truncateWalletAddress(item.from)}`
+          : `To ${truncateWalletAddress(item.to)}`;
       return (
         <CryptoInfoCard
           onPress={() =>
             _handlePressButtonAsync(urlBuilder(item.hash, item.asset))
           }
           title={capitalizeFirstLetter(item.direction)}
-          caption={`To ${truncateWalletAddress(item.to)}`}
+          caption={caption}
           details={`${sign} ${item.value} ${item.asset}`}
           icon={<Icon width={35} height={35} fill={theme.colors.white} />}
         />
@@ -247,13 +251,17 @@ export default function Index() {
     }
 
     if (isEthereum) {
+      const caption =
+        item.direction === "received"
+          ? `from ${truncateWalletAddress(item.from)}`
+          : `To ${truncateWalletAddress(item.to)}`;
       return (
         <CryptoInfoCard
           onPress={() =>
             _handlePressButtonAsync(urlBuilder(item.hash, item.asset))
           }
           title={capitalizeFirstLetter(item.direction)}
-          caption={`To ${truncateWalletAddress(item.to)}`}
+          caption={caption}
           details={`${sign} ${item.value} ${item.asset}`}
           icon={<Icon width={35} height={35} fill={theme.colors.white} />}
         />
@@ -327,7 +335,9 @@ export default function Index() {
           contentContainerStyle={{ gap: 10 }}
           data={isLoading ? placeholderArr(8) : transactions}
           renderItem={renderItem}
-          keyExtractor={(item) => item.uniqueId}
+          keyExtractor={(item) => {
+            return item.uniqueId;
+          }}
           initialNumToRender={10}
           maxToRenderPerBatch={10}
           windowSize={5}

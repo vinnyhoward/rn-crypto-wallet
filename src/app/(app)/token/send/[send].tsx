@@ -13,10 +13,7 @@ import SolanaIcon from "../../../../assets/svg/solana.svg";
 import EthereumIcon from "../../../../assets/svg/ethereum_plain.svg";
 import { capitalizeFirstLetter } from "../../../../utils/capitalizeFirstLetter";
 import { formatDollar } from "../../../../utils/formatDollars";
-import {
-  validateEthereumAddress,
-  calculateGasAndAmounts,
-} from "../../../../utils/etherHelpers";
+import ethService from "../../../../services/EthereumService";
 import {
   validateSolanaAddress,
   calculateSolanaTransactionFee,
@@ -242,7 +239,7 @@ export default function SendPage() {
 
   const validateAddress = async (address: string): Promise<boolean> => {
     return chainName === "ethereum"
-      ? validateEthereumAddress(address)
+      ? ethService.validateAddress(address)
       : await validateSolanaAddress(address);
   };
 
@@ -264,7 +261,7 @@ export default function SendPage() {
     errors: Record<string, string>
   ) => {
     if (chainName === "ethereum") {
-      const { totalCostMinusGas } = await calculateGasAndAmounts(
+      const { totalCostMinusGas } = await ethService.calculateGasAndAmounts(
         toAddress,
         amount.toString()
       );
@@ -296,7 +293,7 @@ export default function SendPage() {
 
     const isAddressValid =
       chainName === "ethereum"
-        ? validateEthereumAddress(toAddress)
+        ? ethService.validateAddress(toAddress)
         : await validateSolanaAddress(toAddress);
 
     if (!isAddressValid) {
@@ -309,7 +306,7 @@ export default function SendPage() {
 
     try {
       if (chainName === "ethereum") {
-        const { totalCostMinusGas } = await calculateGasAndAmounts(
+        const { totalCostMinusGas } = await ethService.calculateGasAndAmounts(
           address,
           tokenBalance
         );

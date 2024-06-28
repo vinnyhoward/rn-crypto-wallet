@@ -5,10 +5,7 @@ import { router } from "expo-router";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
-import {
-  importAllActiveEthAddresses,
-  findNextUnusedEthWalletIndex,
-} from "../../../utils/etherHelpers";
+import ethService from "../../../services/EthereumService";
 import {
   importAllActiveSolAddresses,
   findNextUnusedSolWalletIndex,
@@ -160,14 +157,14 @@ export default function Page() {
       // Logic is needed to find the crypto currency with the highest amount of accounts created
       // and using that index to create the same amount of addresses via hd wallets
       let highestIndex = 0;
-      const unusedEthIndex = await findNextUnusedEthWalletIndex(
+      const unusedEthIndex = await ethService.findNextUnusedWalletIndex(
         phraseTextValue
       );
       const unusedSolIndex = await findNextUnusedSolWalletIndex(
         phraseTextValue
       );
       highestIndex = Math.max(unusedEthIndex, unusedSolIndex);
-      const importedEthWallets = await importAllActiveEthAddresses(
+      const importedEthWallets = await ethService.importAllActiveAddresses(
         phraseTextValue
       );
 

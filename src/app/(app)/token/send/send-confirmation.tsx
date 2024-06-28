@@ -17,11 +17,7 @@ import { truncateWalletAddress } from "../../../../utils/truncateWalletAddress";
 import SendConfCard from "../../../../components/SendConfCard/SendConfCard";
 import { capitalizeFirstLetter } from "../../../../utils/capitalizeFirstLetter";
 import Button from "../../../../components/Button/Button";
-import {
-  calculateGasAndAmounts,
-  sendTransaction,
-  deriveEthPrivateKeysFromPhrase,
-} from "../../../../utils/etherHelpers";
+import ethService from "../../../../services/EthereumService";
 import {
   sendSolanaTransaction,
   calculateSolanaTransactionFee,
@@ -110,6 +106,9 @@ export default function SendConfirmationPage() {
   const walletAddress = useSelector(
     (state: RootState) => state.wallet[chainName].activeAddress.address
   );
+  const derivationPath = useSelector(
+    (state: RootState) => state.wallet[chainName].activeAddress.derivationPath
+  );
 
   const solPrice = prices.solana.usd;
   const ethPrice = prices.ethereum.usd;
@@ -126,11 +125,19 @@ export default function SendConfirmationPage() {
     const seedPhrase = await getPhrase();
 
     if (chainName === "ethereum") {
-      const ethPrivateKey = await deriveEthPrivateKeysFromPhrase(seedPhrase);
+      const ethPrivateKey = await ethService.derivePrivateKeysFromPhrase(
+        seedPhrase,
+        derivationPath
+      );
+
       try {
         setLoading(true);
         setBtnDisabled(true);
-        const response = await sendTransaction(address, ethPrivateKey, amount);
+        const response = await ethService.sendTransaction(
+          address,
+          ethPrivateKey,
+          amount
+        );
         if (response) {
           rootNavigation.dispatch(StackActions.popToTop());
           const dynamicUrl = `/token/${chainName}`;
@@ -175,7 +182,7 @@ export default function SendConfirmationPage() {
     try {
       if (chainName === "ethereum") {
         const { gasEstimate, totalCost, totalCostMinusGas } =
-          await calculateGasAndAmounts(address, amount);
+          await ethService.calculateGasAndAmounts(address, amount);
 
         const gasEstimateUsd = formatDollar(
           parseFloat(gasEstimate) * chainPrice

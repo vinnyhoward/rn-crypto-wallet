@@ -10,9 +10,11 @@ import {
   parseEther,
   HDNodeWallet,
   Mnemonic,
+  AddressLike,
 } from "ethers";
 import { validateMnemonic } from "bip39";
 import { Alchemy, Network } from "alchemy-sdk";
+import uuid from "react-native-uuid";
 import { truncateBalance } from "../utils/truncateBalance";
 
 interface ExtendedHDNodeWallet extends HDNodeWallet {
@@ -23,6 +25,7 @@ interface SendTransactionResponse {
   gasEstimate: string;
   totalCost: string;
   totalCostMinusGas: string;
+  gasFee: bigint;
 }
 
 interface AssetTransferParams {
@@ -59,7 +62,7 @@ class EthereumService {
 
   async createWallet(): Promise<HDNodeWallet> {
     try {
-      const wallet = Wallet.createRandom();
+      const wallet = HDNodeWallet.createRandom();
       return wallet;
     } catch (error) {
       throw new Error("Failed to create wallet: " + (error as Error).message);
@@ -76,11 +79,34 @@ class EthereumService {
     }
 
     try {
-      const ethWallet = Wallet.fromPhrase(mnemonicPhrase);
+      const ethWallet = HDNodeWallet.fromPhrase(mnemonicPhrase);
       return ethWallet;
     } catch (error) {
       throw new Error(
         "Failed to restore wallet from mnemonic: " + (error as Error).message
+      );
+    }
+  }
+
+  async derivePrivateKeysFromPhrase(
+    mnemonicPhrase: string,
+    derivationPath: string
+  ) {
+    if (!mnemonicPhrase) {
+      throw new Error("Empty mnemonic phrase ");
+    }
+
+    if (!validateMnemonic(mnemonicPhrase)) {
+      throw new Error("Invalid mnemonic phrase ");
+    }
+
+    const mnemonic = Mnemonic.fromPhrase(mnemonicPhrase);
+    try {
+      const ethWallet = HDNodeWallet.fromMnemonic(mnemonic, derivationPath);
+      return ethWallet.privateKey;
+    } catch (error) {
+      throw new Error(
+        "Failed to derive wallet from mnemonic: " + (error as Error).message
       );
     }
   }
@@ -115,7 +141,6 @@ class EthereumService {
       to: toAddress,
       value: parseEther(value),
     };
-
     try {
       const response = await signer.sendTransaction(transaction);
       return response;
@@ -148,6 +173,7 @@ class EthereumService {
         gasEstimate: formatEther(gasPrice),
         totalCost: formatEther(totalCost),
         totalCostMinusGas: formatEther(totalCostMinusGas),
+        gasFee,
       };
     } catch (error) {
       console.error("Failed to calculate gas:", error);
@@ -190,9 +216,10 @@ class EthereumService {
       receivedParams
     );
 
-    const transformTransfers = (txs, direction) =>
-      txs.map((tx) => ({
+    const transformTransfers = (txs: any, direction: any) =>
+      txs.map((tx: any) => ({
         ...tx,
+        uniqueId: uuid.v4(),
         value: parseFloat(truncateBalance(tx.value)),
         blockTime: new Date(tx.metadata.blockTimestamp).getTime() / 1000,
         direction,
@@ -211,6 +238,85 @@ class EthereumService {
 
   validateAddress(address: string): boolean {
     return isAddress(address);
+  }
+
+  async findNextUnusedWalletIndex(phrase: string, index: number = 0) {
+    if (!phrase) {
+      throw new Error("Empty mnemonic phrase ");
+    }
+
+    if (!validateMnemonic(phrase)) {
+      throw new Error("Invalid mnemonic phrase ");
+    }
+
+    let currentIndex = index;
+    const mnemonic = Mnemonic.fromPhrase(phrase);
+
+    while (true) {
+      const path = `m/44'/60'/0'/0/${currentIndex}`;
+      const wallet = HDNodeWallet.fromMnemonic(mnemonic, path);
+
+      const transactions = await this.fetchTransactions(wallet.address);
+      if (transactions.transferHistory.length === 0) {
+        break;
+      }
+      currentIndex += 1;
+    }
+
+    return currentIndex > 0 ? currentIndex + 1 : 0;
+  }
+
+  async importAllActiveAddresses(mnemonicPhrase: string, index?: number) {
+    if (index) {
+      const usedAddresses = await this.collectedUsedAddresses(
+        mnemonicPhrase,
+        index
+      );
+      return usedAddresses;
+    } else {
+      const unusedAddressIndex = await this.findNextUnusedWalletIndex(
+        mnemonicPhrase
+      );
+      const usedAddresses = await this.collectedUsedAddresses(
+        mnemonicPhrase,
+        unusedAddressIndex
+      );
+      return usedAddresses;
+    }
+  }
+
+  async collectedUsedAddresses(phrase: string, unusedIndex: number) {
+    const startingIndex = unusedIndex > 0 ? unusedIndex - 1 : unusedIndex;
+    const mnemonic = Mnemonic.fromPhrase(phrase);
+    const addressesUsed = [];
+
+    for (let i = 0; i <= startingIndex; i++) {
+      const path = `m/44'/60'/0'/0/${i}`;
+      const wallet = HDNodeWallet.fromMnemonic(mnemonic, path);
+      const walletWithDetails = {
+        ...wallet,
+        derivationPath: path,
+      };
+      addressesUsed.push(walletWithDetails);
+    }
+
+    return addressesUsed;
+  }
+
+  async getBalance(address: AddressLike): Promise<bigint> {
+    try {
+      return this.provider.getBalance(address);
+    } catch (err) {
+      console.error("Error fetching balance:", err);
+    }
+  }
+
+  getWebSocketProvider() {
+    return this.webSocketProvider;
+  }
+
+  getProvider() {
+    return this.provider;
   }
 }
 

@@ -26,9 +26,7 @@ const IconTouchContainer = styled.TouchableOpacity`
   padding: 10px;
 `;
 
-SplashScreen.preventAutoHideAsync()
-  .then((result) => console.log(`Prevent auto hide succeeded 2: ${result}`))
-  .catch(console.warn);
+SplashScreen.preventAutoHideAsync();
 
 export default function AppLayout() {
   const theme = useTheme();

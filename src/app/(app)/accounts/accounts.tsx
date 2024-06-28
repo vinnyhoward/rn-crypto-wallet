@@ -7,10 +7,7 @@ import * as ethers from "ethers";
 import { MotiView } from "moti";
 import { Skeleton } from "moti/skeleton";
 import { formatDollar } from "../../../utils/formatDollars";
-import {
-  ethProvider,
-  createEthWalletByIndex,
-} from "../../../utils/etherHelpers";
+import ethService from "../../../services/EthereumService";
 import {
   getSolanaBalance,
   createSolWalletByIndex,
@@ -147,7 +144,7 @@ async function compileAddressesConcurrently(
   solAcc: AddressState[]
 ) {
   const ethereumBalancePromise = ethAcc.map(async (account: AddressState) => {
-    const balance = await ethProvider.getBalance(account.address);
+    const balance = await ethService.getBalance(account.address);
     return {
       ...account,
       balance: parseFloat(ethers.formatEther(balance)),
@@ -228,7 +225,10 @@ const AccountsIndex = () => {
       const nextEthIndex = inactiveEthAccounts.length;
       const nextSolIndex = inactiveSolAccounts.length;
       const phrase = await getPhrase();
-      const newEthWallet = await createEthWalletByIndex(phrase, nextEthIndex);
+      const newEthWallet = await ethService.createWalletByIndex(
+        phrase,
+        nextEthIndex
+      );
       const newSolWallet = await createSolWalletByIndex(phrase, nextSolIndex);
       const transformedEthWallet: AddressState = {
         accountName: `Account ${nextEthIndex + 1}`,
