@@ -6,10 +6,7 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
 import ethService from "../../../services/EthereumService";
-import {
-  importAllActiveSolAddresses,
-  findNextUnusedSolWalletIndex,
-} from "../../../utils/solanaHelpers";
+import solanaService from "../../../services/SolanaService";
 import { ThemeType } from "../../../styles/theme";
 import {
   saveEthereumAccountDetails,
@@ -160,7 +157,7 @@ export default function Page() {
       const unusedEthIndex = await ethService.findNextUnusedWalletIndex(
         phraseTextValue
       );
-      const unusedSolIndex = await findNextUnusedSolWalletIndex(
+      const unusedSolIndex = await solanaService.findNextUnusedWalletIndex(
         phraseTextValue
       );
       highestIndex = Math.max(unusedEthIndex, unusedSolIndex);
@@ -168,7 +165,7 @@ export default function Page() {
         phraseTextValue
       );
 
-      const importedSolWallets = await importAllActiveSolAddresses(
+      const importedSolWallets = await solanaService.importAllActiveAddresses(
         phraseTextValue,
         highestIndex
       );

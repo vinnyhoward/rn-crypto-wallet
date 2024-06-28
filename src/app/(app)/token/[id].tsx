@@ -345,6 +345,7 @@ export default function Index() {
   };
 
   useEffect(() => {
+    fetchAndUpdatePrices();
     const intervalId = setInterval(
       fetchAndUpdatePricesInterval,
       FETCH_PRICES_INTERVAL

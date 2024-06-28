@@ -83,7 +83,7 @@ const SendConfCard: React.FC<SendConfCardProps> = ({
   return (
     <SendConfCardContainer>
       <TokenSectionViewTop>
-        <TokenNameLabel>Token Name</TokenNameLabel>
+        <TokenNameLabel>Address</TokenNameLabel>
         <TokenNameText>{toAddress}</TokenNameText>
       </TokenSectionViewTop>
       <TokenSectionViewMid>

@@ -18,11 +18,7 @@ import SendConfCard from "../../../../components/SendConfCard/SendConfCard";
 import { capitalizeFirstLetter } from "../../../../utils/capitalizeFirstLetter";
 import Button from "../../../../components/Button/Button";
 import ethService from "../../../../services/EthereumService";
-import {
-  sendSolanaTransaction,
-  calculateSolanaTransactionFee,
-  deriveSolPrivateKeysFromPhrase,
-} from "../../../../utils/solanaHelpers";
+import solanaService from "../../../../services/SolanaService";
 import { getPhrase } from "../../../../hooks/use-storage-state";
 import type { RootState } from "../../../../store";
 import { BalanceContainer } from "../../../../components/Styles/Layout.styles";
@@ -153,11 +149,15 @@ export default function SendConfirmationPage() {
     }
 
     if (chainName === "solana") {
-      const solPrivateKey = await deriveSolPrivateKeysFromPhrase(seedPhrase);
+      const solPrivateKey = await solanaService.derivePrivateKeysFromPhrase(
+        seedPhrase,
+        derivationPath
+      );
+
       try {
         setLoading(true);
         setBtnDisabled(true);
-        const response = await sendSolanaTransaction(
+        const response = await solanaService.sendTransaction(
           solPrivateKey,
           address,
           parseFloat(amount)
@@ -205,11 +205,12 @@ export default function SendConfirmationPage() {
       }
 
       if (chainName === "solana") {
-        const transactionFeeLamports = await calculateSolanaTransactionFee(
-          walletAddress,
-          address,
-          parseFloat(amount)
-        );
+        const transactionFeeLamports =
+          await solanaService.calculateTransactionFee(
+            walletAddress,
+            address,
+            parseFloat(amount)
+          );
 
         const tokenBalanceLamports = parseFloat(amount) * LAMPORTS_PER_SOL;
         const maxAmountLamports = tokenBalanceLamports - transactionFeeLamports;
@@ -288,6 +289,7 @@ export default function SendConfirmationPage() {
         <ButtonView>
           <ButtonContainer>
             <Button
+              linearGradient={theme.colors.primaryLinearGradient}
               loading={loading}
               disabled={isBtnDisabled}
               backgroundColor={theme.colors.primary}

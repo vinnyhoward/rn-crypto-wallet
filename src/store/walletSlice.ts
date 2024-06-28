@@ -5,10 +5,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import * as ethers from "ethers";
 import { RootState } from "./index";
 import ethService from "../services/EthereumService";
-import {
-  getTransactionsByWallet,
-  getSolanaBalance,
-} from "../utils/solanaHelpers";
+import solanaService from "../services/SolanaService";
 import { truncateBalance } from "../utils/truncateBalance";
 
 export interface AddressState {
@@ -165,7 +162,7 @@ export const fetchSolanaTransactions = createAsyncThunk(
   "wallet/fetchSolanaTransactions",
   async (address: string, { rejectWithValue }): Promise<any> => {
     try {
-      const transactions = await getTransactionsByWallet(address);
+      const transactions = await solanaService.getTransactionsByWallet(address);
       return transactions;
     } catch (error) {
       console.error("error", error);
@@ -178,7 +175,7 @@ export const fetchSolanaTransactionsInterval = createAsyncThunk(
   "wallet/fetchSolanaTransactionsInterval",
   async (address: string, { rejectWithValue }): Promise<any> => {
     try {
-      const transactions = await getTransactionsByWallet(address);
+      const transactions = await solanaService.getTransactionsByWallet(address);
       return transactions;
     } catch (error) {
       console.error("error", error);
@@ -191,7 +188,7 @@ export const fetchSolanaBalance = createAsyncThunk(
   "wallet/fetchSolanaBalance",
   async (tokenAddress: string, { rejectWithValue }): Promise<any> => {
     try {
-      const currentSolBalance = await getSolanaBalance(tokenAddress);
+      const currentSolBalance = await solanaService.getBalance(tokenAddress);
       return currentSolBalance;
     } catch (error) {
       console.error("error", error);
@@ -204,7 +201,7 @@ export const fetchSolanaBalanceInterval = createAsyncThunk(
   "wallet/fetchSolanaBalanceInterval",
   async (tokenAddress: string, { rejectWithValue }): Promise<any> => {
     try {
-      const currentSolBalance = await getSolanaBalance(tokenAddress);
+      const currentSolBalance = await solanaService.getBalance(tokenAddress);
       return currentSolBalance;
     } catch (error) {
       console.error("error", error);

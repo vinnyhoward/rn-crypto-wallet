@@ -14,10 +14,7 @@ import EthereumIcon from "../../../../assets/svg/ethereum_plain.svg";
 import { capitalizeFirstLetter } from "../../../../utils/capitalizeFirstLetter";
 import { formatDollar } from "../../../../utils/formatDollars";
 import ethService from "../../../../services/EthereumService";
-import {
-  validateSolanaAddress,
-  calculateSolanaTransactionFee,
-} from "../../../../utils/solanaHelpers";
+import solanaService from "../../../../services/SolanaService";
 import Button from "../../../../components/Button/Button";
 import { SafeAreaContainer } from "../../../../components/Styles/Layout.styles";
 
@@ -240,7 +237,7 @@ export default function SendPage() {
   const validateAddress = async (address: string): Promise<boolean> => {
     return chainName === "ethereum"
       ? ethService.validateAddress(address)
-      : await validateSolanaAddress(address);
+      : await solanaService.validateAddress(address);
   };
 
   const validateFunds = async (
@@ -269,11 +266,8 @@ export default function SendPage() {
         errors.amount = "Insufficient funds for amount plus gas costs";
       }
     } else if (chainName === "solana") {
-      const transactionFeeLamports = await calculateSolanaTransactionFee(
-        address,
-        toAddress,
-        amount
-      );
+      const transactionFeeLamports =
+        await solanaService.calculateTransactionFee(address, toAddress, amount);
 
       const tokenBalanceLamports = amount * LAMPORTS_PER_SOL;
       const maxAmountLamports = tokenBalanceLamports - transactionFeeLamports;
@@ -294,7 +288,7 @@ export default function SendPage() {
     const isAddressValid =
       chainName === "ethereum"
         ? ethService.validateAddress(toAddress)
-        : await validateSolanaAddress(toAddress);
+        : await solanaService.validateAddress(toAddress);
 
     if (!isAddressValid) {
       formRef.current?.setFieldError(
@@ -314,11 +308,12 @@ export default function SendPage() {
       } else if (chainName === "solana") {
         const totalBalanceLamports =
           parseFloat(tokenBalance) * LAMPORTS_PER_SOL;
-        const transactionFeeLamports = await calculateSolanaTransactionFee(
-          address,
-          toAddress,
-          totalBalanceLamports
-        );
+        const transactionFeeLamports =
+          await solanaService.calculateTransactionFee(
+            address,
+            toAddress,
+            totalBalanceLamports
+          );
         const maxAmountLamports = totalBalanceLamports - transactionFeeLamports;
         const maxAmount = maxAmountLamports / LAMPORTS_PER_SOL;
         if (maxAmountLamports > 0) {

@@ -8,10 +8,7 @@ import { MotiView } from "moti";
 import { Skeleton } from "moti/skeleton";
 import { formatDollar } from "../../../utils/formatDollars";
 import ethService from "../../../services/EthereumService";
-import {
-  getSolanaBalance,
-  createSolWalletByIndex,
-} from "../../../utils/solanaHelpers";
+import solanaService from "../../../services/SolanaService";
 import { getPhrase } from "../../../hooks/use-storage-state";
 import type { RootState } from "../../../store";
 import type { AddressState } from "../../../store/walletSlice";
@@ -152,7 +149,7 @@ async function compileAddressesConcurrently(
   });
 
   const solanaBalancePromise = solAcc.map(async (account: AddressState) => {
-    const balance = await getSolanaBalance(account.address);
+    const balance = await solanaService.getBalance(account.address);
     return {
       ...account,
       balance: balance,
@@ -229,7 +226,10 @@ const AccountsIndex = () => {
         phrase,
         nextEthIndex
       );
-      const newSolWallet = await createSolWalletByIndex(phrase, nextSolIndex);
+      const newSolWallet = await solanaService.createWalletByIndex(
+        phrase,
+        nextSolIndex
+      );
       const transformedEthWallet: AddressState = {
         accountName: `Account ${nextEthIndex + 1}`,
         derivationPath: newEthWallet.derivationPath,

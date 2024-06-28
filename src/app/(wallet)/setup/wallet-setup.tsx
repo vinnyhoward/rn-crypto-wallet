@@ -6,7 +6,7 @@ import { router } from "expo-router";
 import { View } from "moti";
 import styled, { useTheme } from "styled-components/native";
 import ethService from "../../../services/EthereumService";
-import { restoreSolWalletFromPhrase } from "../../../utils/solanaHelpers";
+import solanaService from "../../../services/SolanaService";
 import Button from "../../../components/Button/Button";
 import { ThemeType } from "../../../styles/theme";
 import {
@@ -93,7 +93,8 @@ export default function WalletSetup() {
       setLoading(true);
       const ethWallet = await ethService.createWallet();
       const masterMnemonicPhrase = ethWallet.mnemonic.phrase;
-      const solWallet = restoreSolWalletFromPhrase(masterMnemonicPhrase);
+      const solWallet =
+        solanaService.restoreWalletFromPhrase(masterMnemonicPhrase);
 
       const ethereumAccount: AddressState = {
         accountName: "Account 1",
