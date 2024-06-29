@@ -1,4 +1,5 @@
 import * as SplashScreen from "expo-splash-screen";
+import * as SystemUI from "expo-system-ui";
 import { useEffect, useState } from "react";
 import { Stack, router } from "expo-router";
 import { useSelector } from "react-redux";
@@ -47,7 +48,7 @@ export default function AppLayout() {
     const prepare = async () => {
       try {
         const phrase = await getPhrase();
-        if (!phrase || !walletsExist) {
+        if (!phrase && !walletsExist) {
           clearPersistedState();
           clearStorage();
         } else {
@@ -60,9 +61,10 @@ export default function AppLayout() {
         setAppReady(true);
       }
     };
-
+    SystemUI.setBackgroundColorAsync(theme.colors.primary);
     prepare();
   }, []);
+
   return (
     <SplashScreenOverlay
       userExists={userExists}

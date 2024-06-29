@@ -1,3 +1,11 @@
+// Inject node globals into React Native global scope.
+global.Buffer = require("buffer").Buffer;
+
+// @ts-ignore
+global.location = {
+  protocol: "file:",
+};
+
 import "react-native-reanimated";
 import "react-native-gesture-handler";
 
@@ -52,7 +60,10 @@ export default function RootLayout() {
             >
               <Stack.Screen
                 name={ROUTES.walletSetup}
-                options={{ headerShown: false }}
+                options={{
+                  animation: "none",
+                  headerShown: false,
+                }}
               />
               <Stack.Screen
                 name="(wallet)/seed/seed-phrase"
