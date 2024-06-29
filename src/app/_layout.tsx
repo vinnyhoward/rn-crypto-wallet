@@ -15,12 +15,15 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import styled, { ThemeProvider } from "styled-components/native";
+import * as SplashScreen from "expo-splash-screen";
 import { clearStorage } from "../hooks/use-storage-state";
 import Theme from "../styles/theme";
 import { store, persistor, clearPersistedState } from "../store";
 import { resetState } from "../store/walletSlice";
 import { ROUTES } from "../constants/routes";
 import LeftIcon from "../assets/svg/left-arrow.svg";
+
+SplashScreen.preventAutoHideAsync();
 
 const IconTouchContainer = styled.TouchableOpacity`
   padding: 10px;
@@ -61,7 +64,6 @@ export default function RootLayout() {
               <Stack.Screen
                 name={ROUTES.walletSetup}
                 options={{
-                  animation: "none",
                   headerShown: false,
                 }}
               />
