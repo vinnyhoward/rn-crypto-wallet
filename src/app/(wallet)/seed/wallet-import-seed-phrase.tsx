@@ -29,6 +29,11 @@ import {
   ErrorTextContainer,
 } from "../../../components/Styles/Errors.styles";
 
+interface SeedTextInputProps {
+  theme: ThemeType;
+  isInputFocused: boolean;
+}
+
 const isAndroid = Platform.OS === "android";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
@@ -58,10 +63,7 @@ const ButtonContainer = styled.View<{ theme: ThemeType }>`
   width: 100%;
 `;
 
-const SeedTextInput = styled.TextInput<{
-  theme: ThemeType;
-  isInputFocused: boolean;
-}>`
+const SeedTextInput = styled.TextInput<SeedTextInputProps>`
   justify-content: flex-start;
   padding: ${(props) => props.theme.spacing.large};
   margin: ${(props) => props.theme.spacing.large};
@@ -76,7 +78,7 @@ const SeedTextInput = styled.TextInput<{
       isInputFocused ? theme.colors.primary : theme.colors.grey};
 `;
 
-export const InfoContainer = styled.View<{ theme: ThemeType }>`
+const InfoContainer = styled.View<{ theme: ThemeType }>`
   justify-content: center;
   flex-direction: column;
   align-items: center;
@@ -87,14 +89,14 @@ export const InfoContainer = styled.View<{ theme: ThemeType }>`
   margin-bottom: ${(props) => props.theme.spacing.large};
 `;
 
-export const InfoTitle = styled.Text<{ theme: ThemeType }>`
+const InfoTitle = styled.Text<{ theme: ThemeType }>`
   font-family: ${(props) => props.theme.fonts.families.openBold};
   font-size: ${(props) => props.theme.fonts.sizes.large};
   color: ${(props) => props.theme.colors.white};
   margin-bottom: 5px;
 `;
 
-export const InfoText = styled.Text<{ theme: ThemeType }>`
+const InfoText = styled.Text<{ theme: ThemeType }>`
   font-family: ${(props) => props.theme.fonts.families.openRegular};
   font-size: ${(props) => props.theme.fonts.sizes.normal};
   color: ${(props) => props.theme.colors.white};
@@ -157,9 +159,11 @@ export default function Page() {
       const unusedEthIndex = await ethService.findNextUnusedWalletIndex(
         phraseTextValue
       );
+
       const unusedSolIndex = await solanaService.findNextUnusedWalletIndex(
         phraseTextValue
       );
+
       highestIndex = Math.max(unusedEthIndex, unusedSolIndex);
       const importedEthWallets = await ethService.importAllActiveAddresses(
         phraseTextValue

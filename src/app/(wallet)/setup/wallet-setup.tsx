@@ -89,12 +89,13 @@ export default function WalletSetup() {
   const [loading, setLoading] = useState(false);
 
   const walletSetup = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const ethWallet = await ethService.createWallet();
       const masterMnemonicPhrase = ethWallet.mnemonic.phrase;
-      const solWallet =
-        solanaService.restoreWalletFromPhrase(masterMnemonicPhrase);
+      const solWallet = await solanaService.restoreWalletFromPhrase(
+        masterMnemonicPhrase
+      );
 
       const ethereumAccount: AddressState = {
         accountName: "Account 1",
@@ -118,17 +119,16 @@ export default function WalletSetup() {
       dispatch(saveSolanaAccountDetails(solanaAccount));
       dispatch(saveAllSolanaAddresses([solanaAccount]));
 
-      setLoading(false);
       router.push({
         pathname: ROUTES.seedPhrase,
         params: { phrase: masterMnemonicPhrase },
       });
     } catch (err) {
-      setLoading(false);
       console.error("Failed to create wallet", err);
+    } finally {
+      setLoading(false);
     }
   };
-
   return (
     <LinearGradientBackground colors={theme.colors.primaryLinearGradient}>
       <SafeAreaContainer>

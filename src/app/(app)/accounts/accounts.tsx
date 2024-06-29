@@ -26,6 +26,18 @@ import { SafeAreaContainer } from "../../../components/Styles/Layout.styles";
 import Button from "../../../components/Button/Button";
 import { placeholderArr } from "../../../utils/placeholder";
 
+interface WalletContainerProps {
+  theme: ThemeType;
+  isLast: boolean;
+  isActiveAccount: boolean;
+}
+
+interface WalletSkeletonContainerProps {
+  theme: ThemeType;
+  isLast: boolean;
+  isActiveAccount: boolean;
+}
+
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
   justify-content: center;
@@ -33,11 +45,7 @@ const ContentContainer = styled.View<{ theme: ThemeType }>`
   margin-top: ${(props) => (Platform.OS === "android" ? "80px" : "0px")};
 `;
 
-const WalletContainer = styled.TouchableOpacity<{
-  theme: ThemeType;
-  isLast: boolean;
-  isActiveAccount: boolean;
-}>`
+const WalletContainer = styled.TouchableOpacity<WalletContainerProps>`
   flex-direction: row;
   justify-content: space-between;
   background-color: ${({ theme, isActiveAccount }) =>
@@ -52,11 +60,7 @@ const WalletContainer = styled.TouchableOpacity<{
       isActiveAccount ? "rgba(136, 120, 244, 0.6)" : theme.colors.dark};
 `;
 
-const WalletSkeletonContainer = styled(MotiView)<{
-  theme: ThemeType;
-  isLast: boolean;
-  isActiveAccount: boolean;
-}>`
+const WalletSkeletonContainer = styled(MotiView)<WalletSkeletonContainerProps>`
   flex-direction: row;
   justify-content: space-between;
   background-color: ${({ theme, isActiveAccount }) =>
@@ -408,6 +412,7 @@ const AccountsIndex = () => {
           }
         />
         <Button
+          linearGradient={theme.colors.primaryLinearGradient}
           loading={walletCreationLoading}
           onPress={createNewWalletPair}
           title="Create Wallet"

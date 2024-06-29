@@ -11,8 +11,6 @@ import uuid from "react-native-uuid";
 import { validateMnemonic, mnemonicToSeedSync } from "bip39";
 import { derivePath } from "ed25519-hd-key";
 import { TransactionObject } from "../types";
-import { uint8ArrayToBase64 } from "../utils/uint8ArrayToBase64";
-import { base64ToUint8Array } from "../utils/base64ToUint8Array";
 
 class SolanaService {
   private connection: Connection;
@@ -20,14 +18,20 @@ class SolanaService {
     this.connection = new Connection(rpcUrl, "confirmed");
   }
 
-  restoreWalletFromPhrase(mnemonicPhrase: string) {
-    const seed = mnemonicToSeedSync(mnemonicPhrase, "");
-    const path = `m/44'/501'/0'/0'`;
-    const keypair = Keypair.fromSeed(
-      derivePath(path, seed.toString("hex")).key
-    );
+  restoreWalletFromPhrase(mnemonicPhrase: string): Promise<Keypair> {
+    return new Promise((resolve, reject) => {
+      try {
+        const seed = mnemonicToSeedSync(mnemonicPhrase, "");
+        const path = `m/44'/501'/0'/0'`;
+        const keypair = Keypair.fromSeed(
+          derivePath(path, seed.toString("hex")).key
+        );
 
-    return keypair;
+        resolve(keypair);
+      } catch (error) {
+        reject(new Error("Failed to import solana wallet: " + error.message));
+      }
+    });
   }
 
   async createWalletByIndex(phrase: string, index: number = 0) {
@@ -264,7 +268,7 @@ class SolanaService {
     if (!validateMnemonic(mnemonicPhrase)) {
       throw new Error("Invalid mnemonic phrase ");
     }
-
+    console.log("connection:", this.connection);
     const seed = mnemonicToSeedSync(mnemonicPhrase, "");
     let currentIndex = indexOffset;
     while (true) {

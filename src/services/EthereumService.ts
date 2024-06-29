@@ -61,12 +61,14 @@ class EthereumService {
   }
 
   async createWallet(): Promise<HDNodeWallet> {
-    try {
-      const wallet = HDNodeWallet.createRandom();
-      return wallet;
-    } catch (error) {
-      throw new Error("Failed to create wallet: " + (error as Error).message);
-    }
+    return new Promise((resolve, reject) => {
+      try {
+        const wallet = HDNodeWallet.createRandom();
+        resolve(wallet);
+      } catch (error) {
+        reject(new Error("Failed to create wallet: " + error.message));
+      }
+    });
   }
 
   async restoreWalletFromPhrase(mnemonicPhrase: string): Promise<HDNodeWallet> {

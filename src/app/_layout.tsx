@@ -1,20 +1,12 @@
 import "react-native-reanimated";
 import "react-native-gesture-handler";
+
 import { StatusBar } from "expo-status-bar";
 import { Stack, router, useNavigation } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import styled, { ThemeProvider } from "styled-components/native";
-import {
-  useFonts,
-  OpenSans_400Regular,
-  OpenSans_700Bold,
-} from "@expo-google-fonts/open-sans";
-import {
-  Roboto_400Regular as RobotoReg,
-  Roboto_700Bold as RobotoBld,
-} from "@expo-google-fonts/roboto";
 import { clearStorage } from "../hooks/use-storage-state";
 import Theme from "../styles/theme";
 import { store, persistor, clearPersistedState } from "../store";
@@ -27,17 +19,7 @@ const IconTouchContainer = styled.TouchableOpacity`
 `;
 
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({
-    OpenSans_400Regular,
-    OpenSans_700Bold,
-    Roboto_400Regular: RobotoReg,
-    Roboto_700Bold: RobotoBld,
-  });
   const navigation = useNavigation();
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   const goBack = () => {
     if (navigation.canGoBack()) {

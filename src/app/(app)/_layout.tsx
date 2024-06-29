@@ -1,64 +1,73 @@
-// Inject node globals into React Native global scope.
-
-global.Buffer = require("buffer").Buffer;
-
-// @ts-ignore
-global.location = {
-  protocol: "file:",
-};
-
-import { useState, useEffect } from "react";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect, useState } from "react";
 import { Stack, router } from "expo-router";
 import { useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
-import * as SplashScreen from "expo-splash-screen";
 import Toast from "react-native-toast-message";
+import {
+  useFonts,
+  OpenSans_400Regular,
+  OpenSans_700Bold,
+} from "@expo-google-fonts/open-sans";
+import {
+  Roboto_400Regular as RobotoReg,
+  Roboto_700Bold as RobotoBld,
+} from "@expo-google-fonts/roboto";
 import type { RootState } from "../../store";
-import { ROUTES } from "../../constants/routes";
 import LeftIcon from "../../assets/svg/left-arrow.svg";
 import CloseIcon from "../../assets/svg/close.svg";
 import { getPhrase, clearStorage } from "../../hooks/use-storage-state";
 import { clearPersistedState } from "../../store";
 import { toastConfig } from "../../config/toast";
 import Header from "../../components/Header/Header";
+import SplashScreenOverlay from "../../components/AnimatedSplashScreen/AnimatedSplashScreen";
 
 const IconTouchContainer = styled.TouchableOpacity`
   padding: 10px;
 `;
 
-SplashScreen.preventAutoHideAsync();
-
 export default function AppLayout() {
+  const [fontsLoaded] = useFonts({
+    OpenSans_400Regular,
+    OpenSans_700Bold,
+    Roboto_400Regular: RobotoReg,
+    Roboto_700Bold: RobotoBld,
+  });
   const theme = useTheme();
   const ethWallet = useSelector((state: RootState) => state.wallet.ethereum);
   const solWallet = useSelector((state: RootState) => state.wallet.solana);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [appReady, setAppReady] = useState<boolean>(false);
+  const [userExists, setUserExists] = useState<boolean>(false);
 
   const walletsExist =
     ethWallet.activeAddress.address !== "" &&
     solWallet.activeAddress.address !== "";
 
   useEffect(() => {
-    const loadSeedPhraseConfirmation = async () => {
-      const phrase = await getPhrase();
-
-      if (!phrase || !walletsExist) {
-        clearPersistedState();
-        clearStorage();
-        router.replace(ROUTES.walletSetup);
+    const prepare = async () => {
+      try {
+        const phrase = await getPhrase();
+        if (!phrase || !walletsExist) {
+          clearPersistedState();
+          clearStorage();
+        } else {
+          setUserExists(true);
+        }
+      } catch (err) {
+        console.error("error fetching phrase:", err);
+      } finally {
+        SplashScreen.hideAsync();
+        setAppReady(true);
       }
     };
 
-    loadSeedPhraseConfirmation();
-    setLoading(false);
+    prepare();
   }, []);
-
-  if (!loading) {
-    SplashScreen.hideAsync();
-  }
-
   return (
-    <>
+    <SplashScreenOverlay
+      userExists={userExists}
+      appReady={appReady && fontsLoaded}
+    >
       <Stack
         screenOptions={{
           headerTransparent: true,
@@ -248,6 +257,6 @@ export default function AppLayout() {
         />
       </Stack>
       <Toast position="top" topOffset={75} config={toastConfig} />
-    </>
+    </SplashScreenOverlay>
   );
 }
