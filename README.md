@@ -1,5 +1,3 @@
-<a name="readme-top"></a>
-
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
 <br />
@@ -46,9 +44,9 @@ Ensure the `.env` variables are set to connect only to these testnet environment
 - [License](#license)
 - [Contact](#contact)
 
-## Tech Stack
+## Tech Stack[![](assets/pin.svg)](#tech-stack)
 
-Some description here
+This project leverages a modern tech stack for building and managing a cross-platform cryptocurrency wallet application:
 
 * [![typescript][typescript]][ts-url] - A strongly typed programming language that builds on JavaScript, giving you better tooling at any scale.
 
@@ -59,7 +57,6 @@ Some description here
 * [![redux][redux]][redux-url] - A predictable state container for JavaScript apps, used for managing state in the mobile app.
 
 * [![styled-components][styled-components]][sc-url] - A library that utilizes tagged template literals to style your components at a component level using CSS.
-* **Ethers.js** - A complete Ethereum wallet implementation and utilities in JavaScript (and TypeScript), used for blockchain interactions.
 
 * **Ethers.js** - A complete Ethereum wallet implementation and utilities in JavaScript (and TypeScript), used for blockchain interactions.
 
@@ -67,6 +64,45 @@ Some description here
 
 * **Alchemy SDK** - A powerful toolkit that simplifies the process of making requests to the Blockchain, enhancing the app’s capability to interact with Ethereum and Solana.
 
+<div align="right">[ <a href="#introduction">↑ Back to top ↑</a> ]</div>
+
+---
+
+
+## Features[![](assets/pin.svg)](#features)
+
+### Wallet Management
+- **Create Wallet**: Generate new wallets seamlessly.
+- **Import Wallets**: Import existing wallets using mnemonic phrases.
+- **Manage Multiple Wallets**: Create and manage multiple wallets using the same mnemonic phrase.
+- **Account Management**: Rename and manage different wallet accounts.
+- **Switch Wallets**: Easily switch between different wallet accounts.
+
+### Wallet Balance and Transactions
+- **Net Worth**: View the total net worth across all wallets.
+- **Balance Viewing**: Check the balance of Ethereum and Solana wallets.
+- **Transaction Management**:
+  - Send and receive Ethereum and Solana transactions.
+  - View a list of past transactions for both Ethereum and Solana.
+
+### Accessibility Features
+- **QR Code Functionality**: Easily share wallet addresses and send cryptocurrencies via QR codes.
+
+## Security
+
+This application prioritizes security while still under development:
+
+- **Secure Storage**: Sensitive data such as wallet phrases and keys are encrypted using advanced encryption methods before being securely stored locally on the device. This uses React Native's `SecureStore` module to ensure data protection.
+- **Data Encryption**: Utilizes `aesEncryptHelpers` for robust encryption and decryption of wallet phrases, enhancing data confidentiality.
+- **Secure Communication**: All network communications are secured and wallet interactions do not transmit private keys over the network.
+- **Local Storage Safety**: For platforms supporting web capabilities, local storage is used as a fallback, with appropriate error handling to manage data securely.
+- **Redundant Safety Checks**: The app includes multiple checks to clear sensitive data securely to prevent data leakage.
+- **Future Security Enhancements**: Plans include integrating biometric authentication to add an extra layer of security.
+
+
+<div align="right">[ <a href="#introduction">↑ Back to top ↑</a> ]</div>
+
+---
 
 
 ## Quick Start[![](assets/pin.svg)](#quick-start)
@@ -118,7 +154,7 @@ EXPO_PUBLIC_SALT=
 expo start
 ```
 
-## Environment Variables
+### Environment Variables
 
 `EXPO_PUBLIC_ALCHEMY_ETH_KEY`: Your Alchemy API key for accessing Ethereum blockchain data.
 
@@ -136,17 +172,33 @@ expo start
 
 `EXPO_PUBLIC_SALT`: Needed for encryption
 
+<div align="right">[ <a href="#introduction">↑ Back to top ↑</a> ]</div>
+
+---
+
+
 ## Roadmap
 
-- WIP
+- [ ] Adding Polygon Blockchain
+- [ ] Listing NFT transactions for all blockchains
+- [ ] Pagination
+- [ ] Implement biometric authentication to add an additional layer of security
+- [ ] Confirmation screen
+- [ ] Animations for confirmation screen, splash screen, create wallet screen
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<div align="right">[ <a href="#introduction">↑ Back to top ↑</a> ]</div>
+
+---
+
 
 ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<div align="right">[ <a href="#introduction">↑ Back to top ↑</a> ]</div>
+
+---
+
 
 ## Contact
 
@@ -154,7 +206,10 @@ Vincent Howard - [@NiftyDeveloper](https://twitter.com/NiftyDeveloper) - vinceng
 
 Project Link: [https://github.com/vinnyhoward/rn-crypto-wallet](https://github.com/vinnyhoward/rn-crypto-wallet)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<div align="right">[ <a href="#introduction">↑ Back to top ↑</a> ]</div>
+
+---
+
 
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/vinnyhoward/
