@@ -79,17 +79,17 @@ This project leverages a modern tech stack for building and managing a cross-pla
 - **Switch Wallets**: Easily switch between different wallet accounts.
 
 <div style="display: flex;">
-  <figure style="text-align: center;">
-    <img width="200" src="assets/wallet_create.gif" alt="Creating a new wallet">
+  <figure style="text-align: center; display: flex; flex-direction: column;">
+    <img style="margin-bottom: 10px" width="150" src="assets/wallet_create.gif" alt="Creating a new wallet">
     <figcaption style="font-size: 14px;">Creating a new wallet</figcaption>
   </figure>
 
-  <figure style="text-align: center;">
-    <img width="200" src="assets/wallet_import.gif" alt="Importing a wallet">
+  <figure style="text-align: center; display: flex; flex-direction: column;">
+    <img style="margin-bottom: 10px" width="150" src="assets/wallet_import.gif" alt="Importing a wallet">
     <figcaption style="font-size: 14px;">Importing a wallet</figcaption>
   </figure>
-    <figure style="text-align: center;">
-    <img width="200" src="assets/wallet_management.gif" alt="Importing a wallet">
+    <figure style="text-align: center; display: flex; flex-direction: column;">
+    <img style="margin-bottom: 10px" width="150" src="assets/wallet_management.gif" alt="Importing a wallet">
     <figcaption style="font-size: 14px;">Managing your wallet</figcaption>
   </figure>
 </div>
