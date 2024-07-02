@@ -8,14 +8,19 @@
     <img src="assets/readme_banner_main.png" alt="Logo" width="100%">
   </a>
 
-  <h3 align="center">React Native Crypto Wallet</h3>
+  <div style="margin-top:20px; margin-bottom:20px;">
+  <img width="100" height="100" src="assets/mascot_head.png">
+    <h1 align="center">BMO Wallet</h1>
+  </div>
 
   <p align="center">
-    A simple react native crypto wallet
+    A crypto wallet built with React Native
     <br />
     <a>Demo coming soon</a>
     ·
     <a href="https://github.com/vinnyhoward/rn-crypto-wallet/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/vinnyhoward/rn-crypto-wallet/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 

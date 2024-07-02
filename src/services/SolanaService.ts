@@ -268,7 +268,7 @@ class SolanaService {
     if (!validateMnemonic(mnemonicPhrase)) {
       throw new Error("Invalid mnemonic phrase ");
     }
-    console.log("connection:", this.connection);
+
     const seed = mnemonicToSeedSync(mnemonicPhrase, "");
     let currentIndex = indexOffset;
     while (true) {
