@@ -78,6 +78,22 @@ This project leverages a modern tech stack for building and managing a cross-pla
 - **Account Management**: Rename and manage different wallet accounts.
 - **Switch Wallets**: Easily switch between different wallet accounts.
 
+<div style="display: flex;">
+  <figure style="text-align: center;">
+    <img width="200" src="assets/wallet_create.gif" alt="Creating a new wallet">
+    <figcaption style="font-size: 14px;">Creating a new wallet</figcaption>
+  </figure>
+
+  <figure style="text-align: center;">
+    <img width="200" src="assets/wallet_import.gif" alt="Importing a wallet">
+    <figcaption style="font-size: 14px;">Importing a wallet</figcaption>
+  </figure>
+    <figure style="text-align: center;">
+    <img width="200" src="assets/wallet_management.gif" alt="Importing a wallet">
+    <figcaption style="font-size: 14px;">Managing your wallet</figcaption>
+  </figure>
+</div>
+
 ### Wallet Balance and Transactions
 - **Net Worth**: View the total net worth across all wallets.
 - **Balance Viewing**: Check the balance of Ethereum and Solana wallets.
@@ -88,7 +104,7 @@ This project leverages a modern tech stack for building and managing a cross-pla
 ### Accessibility Features
 - **QR Code Functionality**: Easily share wallet addresses and send cryptocurrencies via QR codes.
 
-## Security
+### Security
 
 This application prioritizes security while still under development:
 
@@ -177,7 +193,7 @@ expo start
 ---
 
 
-## Roadmap
+## Roadmap [![](assets/pin.svg)](#roadmap)
 
 - [ ] Adding Polygon Blockchain
 - [ ] Listing NFT transactions for all blockchains
@@ -191,7 +207,7 @@ expo start
 ---
 
 
-## License
+## License [![](assets/pin.svg)](#license)
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
@@ -200,7 +216,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 ---
 
 
-## Contact
+## Contact [![](assets/pin.svg)](#contact)
 
 Vincent Howard - [@NiftyDeveloper](https://twitter.com/NiftyDeveloper) - vincenguyenhoward@gmail.com
 
