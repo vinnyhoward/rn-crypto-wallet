@@ -24,30 +24,61 @@
   </p>
 </div>
 
+## Introduction[![](assets/pin.svg)](#introduction)
+
 This project is a React Native application for managing cryptocurrency transactions and balances. It utilizes the Expo framework, the Alchemy API for blockchain interaction, and is built with a focus on Ethereum and Solana cryptocurrencies.
 
-## Important Safety Information
+### Testnet-Only Application
+This application is designed solely for interaction with the Ethereum Sepolia testnet and the Solana Devnet. **Do not use real wallets or any wallets containing actual cryptocurrencies with this app.** Ensure you use wallet addresses generated within this app or other testnet-specific wallets that hold no real-world value.
 
-__Testnet-Only Application__: This application is specifically designed for interaction with the Sepolia testnet for Ethereum and the Solana Devnet. It is crucial that you do not use real wallets or wallets containing actual cryptocurrencies with this application. Use this app strictly with wallet addresses generated within this application or with other testnet wallets that do not hold any real value.
+#### Testnet Resources
+- **Ethereum (Sepolia Testnet)**: Obtain free Sepolia testnet ETH from the [Sepolia Faucet](https://www.infura.io/faucet/sepolia).
+- **Solana (Devnet)**: Acquire free SOL tokens from the [Solana Devnet Faucet](https://faucet.solana.com/).
 
-The testnet environments allow developers and users to experiment with blockchain features without any financial risk. Testnet tokens do not have real-world value but mimic the behavior of actual tokens to allow comprehensive testing and interaction:
+### Network Configuration Assurance
+Ensure the `.env` variables are set to connect only to these testnet environments to prevent any real cryptocurrency transactions. Always use testnet addresses when interacting with this application.
 
-- Ethereum (Sepolia Testnet): You can obtain Sepolia testnet ETH from the [Sepolia Faucet](https://www.infura.io/faucet/sepolia), which provides free testnet tokens.
+## Table of Contents[![](assets/pin.svg)](#table-of-contents)
+- [Tech Stack](#tech-stack)
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [Roadmap](#roadmap)
+- [License](#license)
+- [Contact](#contact)
 
-- Solana (Devnet): For testing on the Solana blockchain, use the [Solana Devnet Faucet](https://faucet.solana.com/) to receive free SOL tokens for the Devnet.
+## Tech Stack
 
-__Network Configuration Assurance__:It is crucial to understand that as long as the `.env` variables are correctly set to point to these testnet environments, the application cannot connect to the mainnet. Ensuring there is no risk of accidental transactions involving real cryptocurrencies. Please be diligent in using only testnet addresses while interacting with this application.
+Some description here
 
-__Note__: The security architecture for this project is currently in a developmental phase and has not yet been fully implemented. It is intended solely for development and testing purposes, with plans to enhance security features in future updates.
+* [![typescript][typescript]][ts-url] - A strongly typed programming language that builds on JavaScript, giving you better tooling at any scale.
 
-## Prerequisites
+* [![react-native][react-native]][rn-url] - A framework for building native apps using React, enabling native mobile development with JavaScript.
+
+* [![expo][expo]][expo-url] - An open-source platform for making universal native apps with React that run on Android, iOS, and the web.
+
+* [![redux][redux]][redux-url] - A predictable state container for JavaScript apps, used for managing state in the mobile app.
+
+* [![styled-components][styled-components]][sc-url] - A library that utilizes tagged template literals to style your components at a component level using CSS.
+* **Ethers.js** - A complete Ethereum wallet implementation and utilities in JavaScript (and TypeScript), used for blockchain interactions.
+
+* **Ethers.js** - A complete Ethereum wallet implementation and utilities in JavaScript (and TypeScript), used for blockchain interactions.
+
+* **@solana/web3.js** - Solana’s JavaScript API library, enabling interaction with the Solana Blockchain.
+
+* **Alchemy SDK** - A powerful toolkit that simplifies the process of making requests to the Blockchain, enhancing the app’s capability to interact with Ethereum and Solana.
+
+
+
+## Quick Start[![](assets/pin.svg)](#quick-start)
+
+### Prerequisites
 
 Before you begin, ensure you have the following installed:
 - Node.js (v14.x or later)
 - Yarn (v1.22.x or later)
 - Expo CLI (`npm install -g expo-cli`)
 
-## Quick Start
+### Getting Started
 
 To get the project up and running on your local machine, follow these steps:
 
@@ -91,13 +122,54 @@ expo start
 
 `EXPO_PUBLIC_ALCHEMY_ETH_KEY`: Your Alchemy API key for accessing Ethereum blockchain data.
 
-`EXPO_PUBLIC_ALCHEMY_ETH_URL`: The base URL for Alchemy API requests.
+`EXPO_PUBLIC_ALCHEMY_ETH_URL`: The base URL for Ethereum Alchemy API requests.
 
 `EXPO_PUBLIC_ALCHEMY_SOCKET_URL`: The WebSocket URL for real-time updates from Alchemy.
 
+`EXPO_PUBLIC_ALCHEMY_SOL_URL`: The base URL for Solana Alchemy API requests.
+
+`EXPO_PUBLIC_ALCHEMY_SOL_API_KEY`: Your Alchemy API key for accessing Solana blockchain data.
+
 `EXPO_PUBLIC_ENVIRONMENT`: Environment setting, e.g., development or production.
 
+`EXPO_PUBLIC_PASSWORD`: Needed for encryption
+
+`EXPO_PUBLIC_SALT`: Needed for encryption
+
+## Roadmap
+
+- WIP
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## License
+
+Distributed under the MIT License. See `LICENSE.txt` for more information.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Contact
+
+Vincent Howard - [@NiftyDeveloper](https://twitter.com/NiftyDeveloper) - vincenguyenhoward@gmail.com
+
+Project Link: [https://github.com/vinnyhoward/rn-crypto-wallet](https://github.com/vinnyhoward/rn-crypto-wallet)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/vinnyhoward/
 
+[typescript]: https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white
+[ts-url]: https://www.typescriptlang.org/
+
+[react-native]: https://img.shields.io/badge/react_native-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB
+[rn-url]: https://reactnative.dev/
+
+[expo]: https://img.shields.io/badge/expo-1C1E24?style=for-the-badge&logo=expo&logoColor=#D04A37
+[expo-url]: https://docs.expo.dev/
+
+[styled-components]: https://img.shields.io/badge/styled--components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white
+[sc-url]: https://styled-components.com/
+
+[redux]: https://img.shields.io/badge/redux-%23593d88.svg?style=for-the-badge&logo=redux&logoColor=white
+[redux-url]: https://styled-components.com/
