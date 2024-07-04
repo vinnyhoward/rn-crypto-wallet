@@ -169,14 +169,9 @@ export default function SendPage() {
 
   const state = useSelector((state: RootState) => state.wallet[chainName]);
 
-  console.log("state:", state);
-  console.log("chain name:", chainName);
-
   const tokenBalance = useSelector(
     (state: RootState) => state.wallet[chainName].activeAddress.balance
   );
-  console.log("state:", state);
-  console.log("chain name:", chainName);
 
   const address = useSelector(
     (state: RootState) => state.wallet[chainName].activeAddress.address

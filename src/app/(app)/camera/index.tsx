@@ -9,6 +9,7 @@ import {
   BarcodeScanningResult,
 } from "expo-camera";
 import Button from "../../../components/Button/Button";
+import { identifyAddress } from "../../../utils/identifyAddress";
 import { ThemeType } from "../../../styles/theme";
 import QRCodeCamera from "../../../assets/svg/qr-code-camera.svg";
 import CloseIcon from "../../../assets/svg/close.svg";
@@ -110,10 +111,10 @@ export default function Camera() {
     if (!data) {
       return;
     }
-
     if (data.data !== "") {
+      const routeName = !chainName ? identifyAddress(data.data) : chainName;
       return router.push({
-        pathname: `token/send/${chainName}`,
+        pathname: `token/send/${routeName}`,
         params: {
           toAddress: data.data,
         },
