@@ -15,7 +15,7 @@ import {
   saveAllEthereumAddresses,
   saveAllSolanaAddresses,
 } from "../../../store/walletSlice";
-import type { AddressState } from "../../../store/walletSlice";
+import type { AddressState } from "../../../store/types";
 import { ROUTES } from "../../../constants/routes";
 import WalletIcon from "../../../assets/svg/wallet.svg";
 import { LinearGradientBackground } from "../../../components/Styles/Gradient";

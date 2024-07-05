@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchCryptoPrices } from "../utils/fetchCryptoPrices";
 import { FETCH_PRICES_INTERVAL } from "../constants/price";
+import { GeneralStatus } from "./types";
 
 export const fetchPrices = createAsyncThunk(
   "price/fetchPrices",
@@ -32,7 +33,7 @@ export interface CryptoPrices {
 export interface PriceState {
   data: CryptoPrices;
   lastUpdated: number;
-  status: "idle" | "loading" | "rejected";
+  status: GeneralStatus;
 }
 
 const initialState = {
@@ -45,7 +46,7 @@ const initialState = {
     },
   },
   lastUpdated: 0,
-  status: "idle",
+  status: GeneralStatus.Idle,
 };
 
 const priceSlice = createSlice({
@@ -57,13 +58,13 @@ const priceSlice = createSlice({
       .addCase(fetchPrices.fulfilled, (state, action) => {
         state.data = action.payload;
         state.lastUpdated = new Date().getTime();
-        state.status = "fulfilled";
+        state.status = GeneralStatus.Success;
       })
       .addCase(fetchPrices.pending, (state) => {
-        state.status = "loading";
+        state.status = GeneralStatus.Loading;
       })
       .addCase(fetchPrices.rejected, (state) => {
-        state.status = "rejected";
+        state.status = GeneralStatus.Failed;
       });
   },
 });

@@ -134,7 +134,7 @@ class EthereumService {
   }
 
   async sendTransaction(
-    toAddress: string,
+    toAddress: AddressLike,
     privateKey: string,
     value: string
   ): Promise<any> {

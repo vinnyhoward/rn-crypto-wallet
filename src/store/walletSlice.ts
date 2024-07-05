@@ -7,27 +7,12 @@ import { RootState } from "./index";
 import ethService from "../services/EthereumService";
 import solanaService from "../services/SolanaService";
 import { truncateBalance } from "../utils/truncateBalance";
-
-export interface AddressState {
-  accountName: string;
-  derivationPath: string;
-  address: string;
-  publicKey: string;
-  balance: number;
-  transactionMetadata?: transactionMetadata;
-}
-
-export interface transactionMetadata {
-  paginationKey: undefined | string | string[];
-  transactions: Transaction[];
-}
-
-export interface AccountState {
-  activeAddress: AddressState;
-  inactiveAddresses: AddressState[];
-  failedNetworkRequest: boolean;
-  status: "idle" | "loading" | "failed" | "success";
-}
+import {
+  GeneralStatus,
+  AccountState,
+  AddressState,
+  Transaction,
+} from "./types";
 
 export interface WalletState {
   activeAccountName: string;
@@ -38,17 +23,6 @@ export interface WalletState {
 export interface ActiveAccountDetails {
   ethereum: AddressState;
   solana: AddressState;
-}
-
-export interface Transaction {
-  uniqueId: string;
-  from: string;
-  to: string;
-  hash: string;
-  value: number;
-  blockTime: number;
-  asset: string;
-  direction: string;
 }
 
 const initialState: WalletState = {
@@ -67,7 +41,8 @@ const initialState: WalletState = {
     },
     inactiveAddresses: [],
     failedNetworkRequest: false,
-    status: "idle",
+    transactionStatus: GeneralStatus.Idle,
+    status: GeneralStatus.Idle,
   },
   solana: {
     activeAddress: {
@@ -83,7 +58,8 @@ const initialState: WalletState = {
     },
     inactiveAddresses: [],
     failedNetworkRequest: false,
-    status: "idle",
+    transactionStatus: GeneralStatus.Idle,
+    status: GeneralStatus.Idle,
   },
 };
 
@@ -205,6 +181,56 @@ export const fetchSolanaBalanceInterval = createAsyncThunk(
       return currentSolBalance;
     } catch (error) {
       console.error("error", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+interface EthTransactionArgs {
+  address: ethers.AddressLike;
+  privateKey: string;
+  amount: string;
+}
+
+export const sendEthereumTransaction = createAsyncThunk(
+  "ethereum/sendTransaction",
+  async (
+    { address, privateKey, amount }: EthTransactionArgs,
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await ethService.sendTransaction(
+        address,
+        privateKey,
+        amount
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+interface SolTransactionArgs {
+  privateKey: Uint8Array;
+  address: string;
+  amount: string;
+}
+
+export const sendSolanaTransaction = createAsyncThunk(
+  "solana/sendTransaction",
+  async (
+    { privateKey, address, amount }: SolTransactionArgs,
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await solanaService.sendTransaction(
+        privateKey,
+        address,
+        parseFloat(amount)
+      );
+      return response;
+    } catch (error) {
       return rejectWithValue(error.message);
     }
   }
@@ -349,30 +375,30 @@ export const walletSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchEthereumBalance.pending, (state) => {
-        state.ethereum.status = "loading";
+        state.ethereum.status = GeneralStatus.Loading;
       })
       .addCase(fetchEthereumBalance.fulfilled, (state, action) => {
         state.ethereum.activeAddress.balance = parseFloat(
           truncateBalance(action.payload)
         );
-        state.ethereum.status = "idle";
+        state.ethereum.status = GeneralStatus.Idle;
       })
       .addCase(fetchEthereumBalance.rejected, (state, action) => {
-        state.ethereum.status = "failed";
+        state.ethereum.status = GeneralStatus.Failed;
         console.error("Failed to fetch balance:", action.payload);
       })
       .addCase(fetchEthereumBalanceInterval.fulfilled, (state, action) => {
         state.ethereum.activeAddress.balance = parseFloat(
           truncateBalance(action.payload)
         );
-        state.ethereum.status = "idle";
+        state.ethereum.status = GeneralStatus.Idle;
       })
       .addCase(fetchEthereumBalanceInterval.rejected, (state, action) => {
-        state.ethereum.status = "failed";
+        state.ethereum.status = GeneralStatus.Failed;
         console.error("Failed to fetch balance:", action.payload);
       })
       .addCase(fetchEthereumTransactions.pending, (state) => {
-        state.ethereum.status = "loading";
+        state.ethereum.status = GeneralStatus.Loading;
       })
       .addCase(fetchEthereumTransactions.fulfilled, (state, action) => {
         if (action.payload) {
@@ -384,10 +410,10 @@ export const walletSlice = createSlice({
         } else {
           state.ethereum.failedNetworkRequest = true;
         }
-        state.ethereum.status = "idle";
+        state.ethereum.status = GeneralStatus.Idle;
       })
       .addCase(fetchEthereumTransactions.rejected, (state, action) => {
-        state.ethereum.status = "failed";
+        state.ethereum.status = GeneralStatus.Failed;
         console.error("Failed to fetch transactions:", action.payload);
       })
       .addCase(fetchEthereumTransactionsInterval.fulfilled, (state, action) => {
@@ -400,37 +426,37 @@ export const walletSlice = createSlice({
         } else {
           state.ethereum.failedNetworkRequest = true;
         }
-        state.ethereum.status = "idle";
+        state.ethereum.status = GeneralStatus.Idle;
       })
       .addCase(fetchEthereumTransactionsInterval.rejected, (state, action) => {
-        state.ethereum.status = "failed";
+        state.ethereum.status = GeneralStatus.Failed;
         console.error("Failed to fetch transactions:", action.payload);
       })
       .addCase(fetchSolanaBalance.pending, (state) => {
-        state.solana.status = "loading";
+        state.solana.status = GeneralStatus.Loading;
       })
       .addCase(fetchSolanaBalance.fulfilled, (state, action) => {
         state.solana.activeAddress.balance = parseFloat(
           truncateBalance(action.payload)
         );
-        state.solana.status = "idle";
+        state.solana.status = GeneralStatus.Idle;
       })
       .addCase(fetchSolanaBalance.rejected, (state, action) => {
-        state.solana.status = "failed";
+        state.solana.status = GeneralStatus.Failed;
         console.error("Failed to fetch balance:", action.payload);
       })
       .addCase(fetchSolanaBalanceInterval.fulfilled, (state, action) => {
         state.solana.activeAddress.balance = parseFloat(
           truncateBalance(action.payload)
         );
-        state.solana.status = "idle";
+        state.solana.status = GeneralStatus.Idle;
       })
       .addCase(fetchSolanaBalanceInterval.rejected, (state, action) => {
-        state.solana.status = "failed";
+        state.solana.status = GeneralStatus.Failed;
         console.error("Failed to fetch balance:", action.payload);
       })
       .addCase(fetchSolanaTransactions.pending, (state) => {
-        state.solana.status = "loading";
+        state.solana.status = GeneralStatus.Loading;
       })
       .addCase(fetchSolanaTransactions.fulfilled, (state, action) => {
         if (action.payload) {
@@ -440,10 +466,10 @@ export const walletSlice = createSlice({
         } else {
           state.solana.failedNetworkRequest = true;
         }
-        state.solana.status = "idle";
+        state.solana.status = GeneralStatus.Idle;
       })
       .addCase(fetchSolanaTransactions.rejected, (state, action) => {
-        state.solana.status = "failed";
+        state.solana.status = GeneralStatus.Failed;
         console.error("Failed to fetch transactions:", action.payload);
       })
       .addCase(fetchSolanaTransactionsInterval.fulfilled, (state, action) => {
@@ -454,10 +480,10 @@ export const walletSlice = createSlice({
         } else {
           state.solana.failedNetworkRequest = true;
         }
-        state.solana.status = "idle";
+        state.solana.status = GeneralStatus.Idle;
       })
       .addCase(fetchSolanaTransactionsInterval.rejected, (state, action) => {
-        state.solana.status = "failed";
+        state.solana.status = GeneralStatus.Failed;
         console.error("Failed to fetch transactions:", action.payload);
       });
   },

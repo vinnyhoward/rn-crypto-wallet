@@ -7,7 +7,7 @@ import Toast from "react-native-toast-message";
 import { ROUTES } from "../../../constants/routes";
 import type { ThemeType } from "../../../styles/theme";
 import type { RootState } from "../../../store";
-import type { AddressState } from "../../../store/walletSlice";
+import type { AddressState } from "../../../store/types";
 import EditIcon from "../../../assets/svg/edit.svg";
 import SolanaIcon from "../../../assets/svg/solana.svg";
 import EthereumPlainIcon from "../../../assets/svg/ethereum_plain.svg";

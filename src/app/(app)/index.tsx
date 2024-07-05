@@ -20,6 +20,7 @@ import {
   fetchSolanaBalanceInterval,
 } from "../../store/walletSlice";
 import { useLoadingState } from "../../hooks/redux";
+import { GeneralStatus } from "../../store/types";
 import { capitalizeFirstLetter } from "../../utils/capitalizeFirstLetter";
 import { truncateWalletAddress } from "../../utils/truncateWalletAddress";
 import { formatDollar, formatDollarRaw } from "../../utils/formatDollars";
@@ -150,10 +151,10 @@ export default function Index() {
       state.wallet.ethereum.activeAddress.transactionMetadata.transactions
   );
   const failedEthStatus = useSelector(
-    (state: RootState) => state.wallet.ethereum.status === "failed"
+    (state: RootState) => state.wallet.ethereum.status === GeneralStatus.Failed
   );
   const failedSolStatus = useSelector(
-    (state: RootState) => state.wallet.solana.status === "failed"
+    (state: RootState) => state.wallet.solana.status === GeneralStatus.Failed
   );
 
   const snapPoints = useMemo(() => ["10%", "33%", "69%", "88%"], []);

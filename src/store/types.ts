@@ -1,8 +1,16 @@
+export enum GeneralStatus {
+  Idle = "idle",
+  Loading = "loading",
+  Failed = "failed",
+  Success = "success",
+}
+
 export interface AccountState {
   activeAddress: AddressState;
   inactiveAddresses: AddressState[];
   failedNetworkRequest: boolean;
-  status: "idle" | "loading" | "failed" | "success";
+  status: GeneralStatus;
+  transactionStatus: GeneralStatus;
 }
 
 export interface AddressState {
@@ -28,13 +36,6 @@ export interface Transaction {
   blockTime: number;
   asset: string;
   direction: string;
-}
-
-export enum StatusTypes {
-  IDLE = "idle",
-  LOADING = "loading",
-  FAILED = "failed",
-  SUCCESS = "success",
 }
 
 export interface FetchTransactionsArg {

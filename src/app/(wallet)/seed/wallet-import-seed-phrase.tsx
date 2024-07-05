@@ -18,7 +18,7 @@ import {
   fetchSolanaTransactions,
   fetchEthereumTransactions,
 } from "../../../store/walletSlice";
-import type { AddressState } from "../../../store/walletSlice";
+import type { AddressState } from "../../../store/types";
 import type { AppDispatch } from "../../../store";
 import Button from "../../../components/Button/Button";
 import { ROUTES } from "../../../constants/routes";

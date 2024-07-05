@@ -13,6 +13,7 @@ import type {
   AccountState,
   FetchTransactionsArg,
 } from "./types";
+import { GeneralStatus } from "./types";
 
 export interface EthereumWalletState {
   activeAccountName: string;
@@ -39,7 +40,8 @@ const initialState: EthereumWalletState = {
     },
     inactiveAddresses: [],
     failedNetworkRequest: false,
-    status: "idle",
+    status: GeneralStatus.Idle,
+    transactionStatus: GeneralStatus.Idle,
   },
 };
 
@@ -200,30 +202,30 @@ export const walletSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchEthereumBalance.pending, (state) => {
-        state.ethereum.status = "loading";
+        state.ethereum.status = GeneralStatus.Loading;
       })
       .addCase(fetchEthereumBalance.fulfilled, (state, action) => {
         state.ethereum.activeAddress.balance = parseFloat(
           truncateBalance(action.payload)
         );
-        state.ethereum.status = "idle";
+        state.ethereum.status = GeneralStatus.Idle;
       })
       .addCase(fetchEthereumBalance.rejected, (state, action) => {
-        state.ethereum.status = "failed";
+        state.ethereum.status = GeneralStatus.Failed;
         console.error("Failed to fetch balance:", action.payload);
       })
       .addCase(fetchEthereumBalanceInterval.fulfilled, (state, action) => {
         state.ethereum.activeAddress.balance = parseFloat(
           truncateBalance(action.payload)
         );
-        state.ethereum.status = "idle";
+        state.ethereum.status = GeneralStatus.Idle;
       })
       .addCase(fetchEthereumBalanceInterval.rejected, (state, action) => {
-        state.ethereum.status = "failed";
+        state.ethereum.status = GeneralStatus.Failed;
         console.error("Failed to fetch balance:", action.payload);
       })
       .addCase(fetchEthereumTransactions.pending, (state) => {
-        state.ethereum.status = "loading";
+        state.ethereum.status = GeneralStatus.Loading;
       })
       .addCase(fetchEthereumTransactions.fulfilled, (state, action) => {
         if (action.payload) {
@@ -235,10 +237,10 @@ export const walletSlice = createSlice({
         } else {
           state.ethereum.failedNetworkRequest = true;
         }
-        state.ethereum.status = "idle";
+        state.ethereum.status = GeneralStatus.Idle;
       })
       .addCase(fetchEthereumTransactions.rejected, (state, action) => {
-        state.ethereum.status = "failed";
+        state.ethereum.status = GeneralStatus.Failed;
         console.error("Failed to fetch transactions:", action.payload);
       })
       .addCase(fetchEthereumTransactionsInterval.fulfilled, (state, action) => {
@@ -251,10 +253,10 @@ export const walletSlice = createSlice({
         } else {
           state.ethereum.failedNetworkRequest = true;
         }
-        state.ethereum.status = "idle";
+        state.ethereum.status = GeneralStatus.Idle;
       })
       .addCase(fetchEthereumTransactionsInterval.rejected, (state, action) => {
-        state.ethereum.status = "failed";
+        state.ethereum.status = GeneralStatus.Failed;
         console.error("Failed to fetch transactions:", action.payload);
       });
   },

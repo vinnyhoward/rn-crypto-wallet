@@ -22,6 +22,7 @@ import { capitalizeFirstLetter } from "../../../utils/capitalizeFirstLetter";
 import { formatDollar } from "../../../utils/formatDollars";
 import { placeholderArr } from "../../../utils/placeholder";
 import { Chains, GenericTransaction } from "../../../types";
+import { GeneralStatus } from "../../../store/types";
 import { truncateWalletAddress } from "../../../utils/truncateWalletAddress";
 // import { isCloseToBottom } from "../../../utils/isCloseToBottom";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
@@ -176,11 +177,12 @@ export default function Index() {
   );
 
   const failedStatus = useSelector(
-    (state: RootState) => state.wallet[chainName].status === "failed"
+    (state: RootState) =>
+      state.wallet[chainName].status === GeneralStatus.Failed
   );
 
   // const loadingStatus = useSelector(
-  //   (state: RootState) => state.wallet[chainName].status === "loading"
+  //   (state: RootState) => state.wallet[chainName].status === GeneralStatus.Loading
   // );
 
   // const paginationKey: string[] | string = useSelector(

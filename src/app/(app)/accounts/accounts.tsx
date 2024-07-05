@@ -11,7 +11,7 @@ import ethService from "../../../services/EthereumService";
 import solanaService from "../../../services/SolanaService";
 import { getPhrase } from "../../../hooks/use-storage-state";
 import type { RootState } from "../../../store";
-import type { AddressState } from "../../../store/walletSlice";
+import type { AddressState } from "../../../store/types";
 import type { ThemeType } from "../../../styles/theme";
 import {
   setActiveAccount,

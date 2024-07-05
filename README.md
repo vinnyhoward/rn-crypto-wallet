@@ -227,12 +227,14 @@ expo start
 
 ## Roadmap [![](assets/pin.svg)](#roadmap)
 
-- [ ] Adding Polygon Blockchain
-- [ ] Listing NFT transactions for all blockchains
-- [ ] Pagination
-- [ ] Implement biometric authentication to add an additional layer of security
 - [ ] Confirmation screen
 - [ ] Animations for confirmation screen, splash screen, create wallet screen
+- [ ] Improve redux structure (in progress)
+- [ ] Pagination
+- [ ] Add profit/loss UI for assets purchased
+- [ ] Adding Polygon Blockchain
+- [ ] Listing NFT transactions for all blockchains
+- [ ] Implement biometric authentication to add an additional layer of security
 
 <div align="right">[ <a href="#introduction">↑ Back to top ↑</a> ]</div>
 
