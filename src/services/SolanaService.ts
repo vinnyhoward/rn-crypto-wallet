@@ -6,6 +6,7 @@ import {
   LAMPORTS_PER_SOL,
   sendAndConfirmTransaction,
   Keypair,
+  TransactionConfirmationStrategy,
 } from "@solana/web3.js";
 import uuid from "react-native-uuid";
 import { validateMnemonic, mnemonicToSeedSync } from "bip39";
@@ -332,6 +333,24 @@ class SolanaService {
         unusedAddressIndex
       );
       return usedAddresses;
+    }
+  }
+
+  async confirmTransaction(signature: string): Promise<boolean> {
+    try {
+      const latestBlockhash = await this.connection.getLatestBlockhash();
+
+      const strategy: TransactionConfirmationStrategy = {
+        signature: signature,
+        blockhash: latestBlockhash.blockhash,
+        lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
+      };
+
+      const result = await this.connection.confirmTransaction(strategy);
+      return result.value.err === null;
+    } catch (error) {
+      console.error("Error confirming Solana transaction:", error);
+      return false;
     }
   }
 }

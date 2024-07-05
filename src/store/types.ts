@@ -1,3 +1,5 @@
+import { Chains } from "../types";
+
 export enum GeneralStatus {
   Idle = "idle",
   Loading = "loading",
@@ -5,12 +7,18 @@ export enum GeneralStatus {
   Success = "success",
 }
 
+export enum ConfirmationState {
+  Pending = "pending",
+  Confirmed = "confirmed",
+  Failed = "failed",
+}
+
 export interface AccountState {
   activeAddress: AddressState;
   inactiveAddresses: AddressState[];
   failedNetworkRequest: boolean;
   status: GeneralStatus;
-  transactionStatus: GeneralStatus;
+  transactionConfirmations: TransactionConfirmation[];
 }
 
 export interface AddressState {
@@ -41,4 +49,10 @@ export interface Transaction {
 export interface FetchTransactionsArg {
   address: string;
   paginationKey?: string[] | string;
+}
+
+export interface TransactionConfirmation {
+  txHash: string;
+  status: ConfirmationState;
+  error?: string;
 }

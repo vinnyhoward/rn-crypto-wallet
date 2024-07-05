@@ -41,7 +41,6 @@ const initialState: EthereumWalletState = {
     inactiveAddresses: [],
     failedNetworkRequest: false,
     status: GeneralStatus.Idle,
-    transactionStatus: GeneralStatus.Idle,
   },
 };
 

@@ -9,6 +9,7 @@ import {
 } from "expo-router";
 import { useSelector } from "react-redux";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { Chains } from "../../../../types";
 import type { ThemeType } from "../../../../styles/theme";
 import ConfirmSend from "../../../../assets/svg/confirm-send.svg";
 import { formatDollar } from "../../../../utils/formatDollars";
@@ -120,7 +121,7 @@ export default function SendConfirmationPage() {
   const handleSubmit = async () => {
     const seedPhrase = await getPhrase();
 
-    if (chainName === "ethereum") {
+    if (chainName === Chains.Ethereum) {
       const ethPrivateKey = await ethService.derivePrivateKeysFromPhrase(
         seedPhrase,
         derivationPath
@@ -148,7 +149,7 @@ export default function SendConfirmationPage() {
       }
     }
 
-    if (chainName === "solana") {
+    if (chainName === Chains.Solana) {
       const solPrivateKey = await solanaService.derivePrivateKeysFromPhrase(
         seedPhrase,
         derivationPath
@@ -178,9 +179,9 @@ export default function SendConfirmationPage() {
   };
 
   const calculateTransactionCosts = async () => {
-    const chainPrice = chainName === "ethereum" ? ethPrice : solPrice;
+    const chainPrice = chainName === Chains.Ethereum ? ethPrice : solPrice;
     try {
-      if (chainName === "ethereum") {
+      if (chainName === Chains.Ethereum) {
         const { gasEstimate, totalCost, totalCostMinusGas } =
           await ethService.calculateGasAndAmounts(address, amount);
 
@@ -204,7 +205,7 @@ export default function SendConfirmationPage() {
         }
       }
 
-      if (chainName === "solana") {
+      if (chainName === Chains.Solana) {
         const transactionFeeLamports =
           await solanaService.calculateTransactionFee(
             walletAddress,
@@ -254,7 +255,7 @@ export default function SendConfirmationPage() {
 
   const renderNetworkName = () => {
     const isDev = process.env.EXPO_PUBLIC_ENVIRONMENT === "development";
-    if (chainName === "ethereum") {
+    if (chainName === Chains.Ethereum) {
       return isDev ? "Sepolia" : "Mainnet";
     }
     return isDev ? "Devnet" : "Mainnet";

@@ -12,7 +12,12 @@ import {
   AccountState,
   AddressState,
   Transaction,
+  TransactionConfirmation,
+  ConfirmationState,
 } from "./types";
+import { Chains } from "../types";
+
+const CONFIRMATION_TIMEOUT = 60000;
 
 export interface WalletState {
   activeAccountName: string;
@@ -41,8 +46,8 @@ const initialState: WalletState = {
     },
     inactiveAddresses: [],
     failedNetworkRequest: false,
-    transactionStatus: GeneralStatus.Idle,
     status: GeneralStatus.Idle,
+    transactionConfirmations: [],
   },
   solana: {
     activeAddress: {
@@ -58,8 +63,8 @@ const initialState: WalletState = {
     },
     inactiveAddresses: [],
     failedNetworkRequest: false,
-    transactionStatus: GeneralStatus.Idle,
     status: GeneralStatus.Idle,
+    transactionConfirmations: [],
   },
 };
 
@@ -232,6 +237,33 @@ export const sendSolanaTransaction = createAsyncThunk(
       return response;
     } catch (error) {
       return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const confirmTransaction = createAsyncThunk(
+  "wallet/confirmTransaction",
+  async (
+    { txHash, blockchain }: { txHash: string; blockchain: Chains },
+    { rejectWithValue }
+  ) => {
+    const service = blockchain === Chains.Ethereum ? ethService : solanaService;
+    try {
+      const confirmationPromise = service.confirmTransaction(txHash);
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error("Transaction confirmation timed out")),
+          CONFIRMATION_TIMEOUT
+        )
+      );
+
+      const confirmation = await Promise.race([
+        confirmationPromise,
+        timeoutPromise,
+      ]);
+      return { txHash, blockchain, confirmation };
+    } catch (error) {
+      return rejectWithValue({ txHash, blockchain, error: error.message });
     }
   }
 );
@@ -485,6 +517,37 @@ export const walletSlice = createSlice({
       .addCase(fetchSolanaTransactionsInterval.rejected, (state, action) => {
         state.solana.status = GeneralStatus.Failed;
         console.error("Failed to fetch transactions:", action.payload);
+      })
+      .addCase(confirmTransaction.pending, (state, action) => {
+        const { txHash, blockchain } = action.meta.arg;
+        const newConfirmation: TransactionConfirmation = {
+          txHash,
+          status: ConfirmationState.Pending,
+        };
+        state[blockchain].transactionConfirmations.push(newConfirmation);
+      })
+      .addCase(confirmTransaction.fulfilled, (state, action) => {
+        const { txHash, blockchain, confirmation } = action.payload;
+        const index = state[blockchain].transactionConfirmations.findIndex(
+          (tx) => tx.txHash === txHash
+        );
+        if (index !== -1) {
+          state[blockchain].transactionConfirmations[index].status =
+            confirmation
+              ? ConfirmationState.Confirmed
+              : ConfirmationState.Failed;
+        }
+      })
+      .addCase(confirmTransaction.rejected, (state, action) => {
+        const { txHash, blockchain, error } = action.payload as any;
+        const index = state[blockchain].transactionConfirmations.findIndex(
+          (tx: any) => tx.txHash === txHash
+        );
+        if (index !== -1) {
+          state[blockchain].transactionConfirmations[index].status =
+            ConfirmationState.Failed;
+          state[blockchain].transactionConfirmations[index].error = error;
+        }
       });
   },
 });

@@ -313,6 +313,16 @@ class EthereumService {
     }
   }
 
+  async confirmTransaction(txHash: string): Promise<boolean> {
+    try {
+      const receipt = await this.provider.waitForTransaction(txHash);
+      return receipt.status === 1;
+    } catch (error) {
+      console.error("Error confirming Ethereum transaction:", error);
+      return false;
+    }
+  }
+
   getWebSocketProvider() {
     return this.webSocketProvider;
   }
