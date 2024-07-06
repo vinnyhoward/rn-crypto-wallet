@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Platform } from "react-native";
-import { StackActions } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
-import {
-  useLocalSearchParams,
-  useNavigationContainerRef,
-  router,
-} from "expo-router";
-import { useSelector } from "react-redux";
+import { useLocalSearchParams, router } from "expo-router";
+import { useDispatch, useSelector } from "react-redux";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { Chains } from "../../../../types";
 import type { ThemeType } from "../../../../styles/theme";
@@ -21,9 +16,14 @@ import Button from "../../../../components/Button/Button";
 import ethService from "../../../../services/EthereumService";
 import solanaService from "../../../../services/SolanaService";
 import { getPhrase } from "../../../../hooks/use-storage-state";
-import type { RootState } from "../../../../store";
+import type { RootState, AppDispatch } from "../../../../store";
+import {
+  sendEthereumTransaction,
+  sendSolanaTransaction,
+} from "../../../../store/walletSlice";
 import { BalanceContainer } from "../../../../components/Styles/Layout.styles";
 import { SafeAreaContainer } from "../../../../components/Styles/Layout.styles";
+import { ROUTES } from "../../../../constants/routes";
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
@@ -86,7 +86,7 @@ const ErrorText = styled.Text<{ theme: ThemeType }>`
 const ButtonView = styled.View<{ theme: ThemeType }>``;
 
 export default function SendConfirmationPage() {
-  const rootNavigation = useNavigationContainerRef();
+  const dispatch = useDispatch<AppDispatch>();
   const theme = useTheme();
   const {
     address: toAddress,
@@ -121,60 +121,55 @@ export default function SendConfirmationPage() {
   const handleSubmit = async () => {
     const seedPhrase = await getPhrase();
 
-    if (chainName === Chains.Ethereum) {
-      const ethPrivateKey = await ethService.derivePrivateKeysFromPhrase(
-        seedPhrase,
-        derivationPath
-      );
+    setLoading(true);
+    setBtnDisabled(true);
 
-      try {
-        setLoading(true);
-        setBtnDisabled(true);
-        const response = await ethService.sendTransaction(
-          address,
-          ethPrivateKey,
-          amount
+    try {
+      if (chainName === Chains.Ethereum) {
+        const ethPrivateKey = await ethService.derivePrivateKeysFromPhrase(
+          seedPhrase,
+          derivationPath
         );
-        if (response) {
-          rootNavigation.dispatch(StackActions.popToTop());
-          const dynamicUrl = `/token/${chainName}`;
-          router.navigate(dynamicUrl);
+        const result = await dispatch(
+          sendEthereumTransaction({
+            address,
+            privateKey: ethPrivateKey,
+            amount,
+          })
+        ).unwrap();
+
+        if (result) {
+          router.push({
+            pathname: ROUTES.confirmation,
+            params: { txHash: result.hash, blockchain: Chains.Ethereum },
+          });
         }
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to send transaction:", error);
-        setError("Failed to send transaction. Please try again later.");
-        setLoading(false);
-        setBtnDisabled(false);
-      }
-    }
-
-    if (chainName === Chains.Solana) {
-      const solPrivateKey = await solanaService.derivePrivateKeysFromPhrase(
-        seedPhrase,
-        derivationPath
-      );
-
-      try {
-        setLoading(true);
-        setBtnDisabled(true);
-        const response = await solanaService.sendTransaction(
-          solPrivateKey,
-          address,
-          parseFloat(amount)
+      } else if (chainName === Chains.Solana) {
+        const solPrivateKey = await solanaService.derivePrivateKeysFromPhrase(
+          seedPhrase,
+          derivationPath
         );
-        if (response) {
-          rootNavigation.dispatch(StackActions.popToTop());
-          const dynamicUrl = `/token/${chainName}`;
-          router.navigate(dynamicUrl);
+        const result = await dispatch(
+          sendSolanaTransaction({
+            privateKey: solPrivateKey,
+            address,
+            amount,
+          })
+        ).unwrap();
+
+        if (result) {
+          router.push({
+            pathname: ROUTES.confirmation,
+            params: { txHash: result, blockchain: Chains.Solana },
+          });
         }
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to send transaction:", error);
-        setError("Failed to send transaction. Please try again later.");
-        setLoading(false);
-        setBtnDisabled(false);
       }
+    } catch (error) {
+      console.error("Failed to send transaction:", error);
+      setError("Failed to send transaction. Please try again later.");
+    } finally {
+      setLoading(false);
+      setBtnDisabled(false);
     }
   };
 

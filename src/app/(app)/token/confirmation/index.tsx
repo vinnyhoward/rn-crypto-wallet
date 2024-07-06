@@ -1,9 +1,15 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native";
 import { Image } from "expo-image";
 import styled from "styled-components/native";
 import { View } from "moti";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useDispatch, useSelector } from "react-redux";
 import { ThemeType } from "../../../../styles/theme";
+import { confirmTransaction } from "../../../../store/walletSlice";
+import { RootState } from "../../../../store";
+import { ConfirmationState } from "../../../../store/types";
+import type { Chains } from "../../../../types";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -69,7 +75,54 @@ const SecondaryButtonText = styled.Text<{ theme: ThemeType }>`
 `;
 
 export default function Confirmation() {
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const { txHash, blockchain } = useLocalSearchParams();
+
+  const transactionConfirmation = {
+    status: ConfirmationState.Pending,
+    error: "Poop",
+  };
+
+  const test = useSelector(
+    (state: RootState) =>
+      state.wallet[blockchain as Chains].transactionConfirmations
+  );
+  console.log("confirmation screen state", blockchain);
+  useEffect(() => {
+    if (txHash && blockchain) {
+      dispatch(
+        confirmTransaction({
+          txHash: txHash as string,
+          blockchain: blockchain as Chains,
+        })
+      );
+    }
+  }, [txHash, blockchain, dispatch]);
+
+  useEffect(() => {
+    if (
+      transactionConfirmation?.status === ConfirmationState.Confirmed ||
+      transactionConfirmation?.status === ConfirmationState.Failed
+    ) {
+      setTimeout(() => router.replace("/"), 3000);
+    }
+  }, [transactionConfirmation, router]);
+
+  const getStatusMessage = () => {
+    switch (transactionConfirmation?.status) {
+      case ConfirmationState.Pending:
+        return "Transaction is being confirmed...";
+      case ConfirmationState.Confirmed:
+        return "Transaction confirmed successfully!";
+      case ConfirmationState.Failed:
+        return `Transaction failed: ${
+          transactionConfirmation.error || "Unknown error"
+        }`;
+      default:
+        return "Waiting for transaction...";
+    }
+  };
 
   return (
     <SafeAreaContainer>
@@ -81,11 +134,15 @@ export default function Confirmation() {
           />
         </ImageContainer>
         <TextContainer>
-          <Title></Title>
-          <Subtitle></Subtitle>
+          <Title>Transaction Status</Title>
+          <Subtitle>{getStatusMessage()}</Subtitle>
         </TextContainer>
       </ContentContainer>
-      <ButtonContainer></ButtonContainer>
+      <ButtonContainer>
+        <SecondaryButtonContainer onPress={() => router.replace("/")}>
+          <SecondaryButtonText>Back to Wallet</SecondaryButtonText>
+        </SecondaryButtonContainer>
+      </ButtonContainer>
     </SafeAreaContainer>
   );
 }
