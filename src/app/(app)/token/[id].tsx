@@ -9,14 +9,16 @@ import type { ThemeType } from "../../../styles/theme";
 import type { RootState, AppDispatch } from "../../../store";
 import {
   fetchEthereumBalance,
-  fetchSolanaBalance,
   fetchEthereumTransactions,
-  fetchSolanaTransactions,
   fetchEthereumTransactionsInterval,
-  fetchSolanaTransactionsInterval,
   fetchEthereumBalanceInterval,
+} from "../../../store/ethereumSlice";
+import {
+  fetchSolanaBalance,
+  fetchSolanaTransactions,
+  fetchSolanaTransactionsInterval,
   fetchSolanaBalanceInterval,
-} from "../../../store/walletSlice";
+} from "../../../store/solanaSlice";
 import { useLoadingState } from "../../../hooks/redux";
 import { capitalizeFirstLetter } from "../../../utils/capitalizeFirstLetter";
 import { formatDollar } from "../../../utils/formatDollars";
@@ -161,24 +163,29 @@ export default function Index() {
   const theme = useTheme();
   const isStateLoading = useLoadingState();
   const chainName = id as string;
+
+  const activeIndex = useSelector(
+    (state: RootState) => state.ethereum.activeIndex
+  );
   const tokenAddress = useSelector(
-    (state: RootState) => state.wallet[chainName].activeAddress.address
+    (state: RootState) => state[chainName].addresses[activeIndex].address
   );
   const tokenBalance = useSelector(
-    (state: RootState) => state.wallet[chainName].activeAddress.balance
+    (state: RootState) => state[chainName].addresses[activeIndex].balance
   );
   const transactionHistory = useSelector(
     (state: RootState) =>
-      state.wallet[chainName].activeAddress.transactionMetadata.transactions
+      state[chainName].addresses[activeIndex].transactionMetadata.transactions
   );
 
   const failedNetworkRequest = useSelector(
-    (state: RootState) => state.wallet[chainName].failedNetworkRequest
+    (state: RootState) =>
+      state[chainName].addresses[activeIndex].failedNetworkRequest
   );
 
   const failedStatus = useSelector(
     (state: RootState) =>
-      state.wallet[chainName].status === GeneralStatus.Failed
+      state[chainName].addresses[activeIndex].status === GeneralStatus.Failed
   );
 
   // const loadingStatus = useSelector(

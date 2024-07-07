@@ -11,14 +11,16 @@ import type { RootState, AppDispatch } from "../../store";
 import { fetchPrices } from "../../store/priceSlice";
 import {
   fetchEthereumBalance,
-  fetchSolanaBalance,
   fetchEthereumTransactions,
-  fetchSolanaTransactions,
   fetchEthereumTransactionsInterval,
-  fetchSolanaTransactionsInterval,
   fetchEthereumBalanceInterval,
+} from "../../store/ethereumSlice";
+import {
+  fetchSolanaBalance,
+  fetchSolanaTransactions,
+  fetchSolanaTransactionsInterval,
   fetchSolanaBalanceInterval,
-} from "../../store/walletSlice";
+} from "../../store/solanaSlice";
 import { useLoadingState } from "../../hooks/redux";
 import { GeneralStatus } from "../../store/types";
 import { capitalizeFirstLetter } from "../../utils/capitalizeFirstLetter";
@@ -130,31 +132,40 @@ export default function Index() {
   const theme = useTheme();
   const isLoading = useLoadingState();
 
+  const activeEthIndex = useSelector(
+    (state: RootState) => state.ethereum.activeIndex
+  );
   const ethWalletAddress = useSelector(
-    (state: RootState) => state.wallet.ethereum.activeAddress.address
+    (state: RootState) => state.ethereum.addresses[activeEthIndex].address
   );
   const ethBalance = useSelector(
-    (state: RootState) => state.wallet.ethereum.activeAddress.balance
-  );
-  const solWalletAddress = useSelector(
-    (state: RootState) => state.wallet.solana.activeAddress.address
-  );
-  const solBalance = useSelector(
-    (state: RootState) => state.wallet.solana.activeAddress.balance
-  );
-  const solTransactions = useSelector(
-    (state: RootState) =>
-      state.wallet.solana.activeAddress.transactionMetadata.transactions
+    (state: RootState) => state.ethereum.addresses[activeEthIndex].balance
   );
   const ethTransactions = useSelector(
     (state: RootState) =>
-      state.wallet.ethereum.activeAddress.transactionMetadata.transactions
+      state.ethereum.addresses[activeEthIndex].transactionMetadata.transactions
   );
   const failedEthStatus = useSelector(
-    (state: RootState) => state.wallet.ethereum.status === GeneralStatus.Failed
+    (state: RootState) =>
+      state.ethereum.addresses[activeEthIndex].status === GeneralStatus.Failed
+  );
+  const activeSolIndex = useSelector(
+    (state: RootState) => state.solana.activeIndex
+  );
+  const solWalletAddress = useSelector(
+    (state: RootState) => state.solana.addresses[activeSolIndex].address
+  );
+  const solBalance = useSelector(
+    (state: RootState) => state.solana.addresses[activeSolIndex].balance
+  );
+
+  const solTransactions = useSelector(
+    (state: RootState) =>
+      state.solana.addresses[activeSolIndex].transactionMetadata.transactions
   );
   const failedSolStatus = useSelector(
-    (state: RootState) => state.wallet.solana.status === GeneralStatus.Failed
+    (state: RootState) =>
+      state.solana.addresses[activeSolIndex].status === GeneralStatus.Failed
   );
 
   const snapPoints = useMemo(() => ["10%", "33%", "69%", "88%"], []);

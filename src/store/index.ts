@@ -12,9 +12,8 @@ import {
 } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import walletReducer from "./walletSlice";
-// import ethereumReducer from "./ethereumSlice";
-// import solanaReducer from "./solanaSlice";
+import ethereumReducer from "./ethereumSlice";
+import solanaReducer from "./solanaSlice";
 import priceReduce from "./priceSlice";
 import biometricsReducer from "./biometricsSlice";
 import { formatEther } from "ethers";
@@ -26,9 +25,8 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
-  wallet: walletReducer,
-  // ethereum: ethereumReducer,
-  // solana: solanaReducer,
+  ethereum: ethereumReducer,
+  solana: solanaReducer,
   price: priceReduce,
   biometrics: biometricsReducer,
 });
@@ -42,11 +40,11 @@ export const webSocketMiddleware: Middleware =
     next(action);
     if (action.type === "wallet/saveEthereumAddress") {
       const state = store.getState();
-      const { ethereum } = state.wallet;
+      const { ethereum, activeIndex } = state.ethereum;
       ethService.getWebSocketProvider().on("block", async () => {
         const balance = await ethService
           .getWebSocketProvider()
-          .getBalance(ethereum.address);
+          .getBalance(ethereum.addresses[activeIndex]);
         store.dispatch({
           type: "wallet/updateEthereumBalance",
           payload: formatEther(balance),

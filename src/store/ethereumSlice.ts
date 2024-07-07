@@ -1,47 +1,40 @@
 import "react-native-get-random-values";
 import "@ethersproject/shims";
 
-// TODO: File is current a WIP - Splitting walletSlice into two
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import * as ethers from "ethers";
 import { RootState } from "./index";
 import ethService from "../services/EthereumService";
+
 import { truncateBalance } from "../utils/truncateBalance";
-import type {
+import {
+  GeneralStatus,
   AddressState,
   Transaction,
-  AccountState,
-  FetchTransactionsArg,
+  TransactionConfirmation,
+  ConfirmationState,
+  WalletState,
 } from "./types";
-import { GeneralStatus } from "./types";
 
-export interface EthereumWalletState {
-  activeAccountName: string;
-  ethereum: AccountState;
-}
-
-export interface EthereumActiveAccountDetails {
-  ethereum: AddressState;
-}
-
-const initialState: EthereumWalletState = {
-  activeAccountName: "",
-  ethereum: {
-    activeAddress: {
+const CONFIRMATION_TIMEOUT = 60000;
+const initialState: WalletState = {
+  activeIndex: 0,
+  addresses: [
+    {
       accountName: "",
       derivationPath: "",
       address: "",
       publicKey: "",
       balance: 0,
+      failedNetworkRequest: false,
+      status: GeneralStatus.Idle,
+      transactionConfirmations: [],
       transactionMetadata: {
         paginationKey: undefined,
         transactions: [],
       },
     },
-    inactiveAddresses: [],
-    failedNetworkRequest: false,
-    status: GeneralStatus.Idle,
-  },
+  ],
 };
 
 export const fetchEthereumBalance = createAsyncThunk<
@@ -84,6 +77,11 @@ export const fetchEthereumBalanceInterval = createAsyncThunk<
   }
 );
 
+export interface FetchTransactionsArg {
+  address: string;
+  paginationKey?: string[] | string;
+}
+
 export const fetchEthereumTransactions = createAsyncThunk(
   "wallet/fetchEthereumTransactions",
   async ({ address }: FetchTransactionsArg, { rejectWithValue }) => {
@@ -109,154 +107,201 @@ export const fetchEthereumTransactionsInterval = createAsyncThunk(
     }
   }
 );
+interface EthTransactionArgs {
+  address: ethers.AddressLike;
+  privateKey: string;
+  amount: string;
+}
 
-export const walletSlice = createSlice({
-  name: "wallet",
+export const sendEthereumTransaction = createAsyncThunk(
+  "ethereum/sendEthereumTransaction",
+  async (
+    { address, privateKey, amount }: EthTransactionArgs,
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await ethService.sendTransaction(
+        address,
+        privateKey,
+        amount
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const confirmEthereumTransaction = createAsyncThunk(
+  "wallet/confirmEthereumTransaction",
+  async ({ txHash }: { txHash: string }, { rejectWithValue }) => {
+    try {
+      const confirmationPromise = ethService.confirmTransaction(txHash);
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error("Transaction confirmation timed out")),
+          CONFIRMATION_TIMEOUT
+        )
+      );
+
+      const confirmation = await Promise.race([
+        confirmationPromise,
+        timeoutPromise,
+      ]);
+      return { txHash, confirmation };
+    } catch (error) {
+      return rejectWithValue({ txHash, error: error.message });
+    }
+  }
+);
+
+export const ethereumSlice = createSlice({
+  name: "ethereum",
   initialState,
   reducers: {
-    saveEthereumAccountDetails: (
-      state,
-      action: PayloadAction<AddressState>
-    ) => {
-      state.ethereum.activeAddress = {
-        ...action.payload,
-        transactionMetadata: {
-          paginationKey: undefined,
-          transactions: [],
-        },
-      };
-      state.activeAccountName = "Account 1";
-    },
-    saveAllEthereumAddresses: (
-      state,
-      action: PayloadAction<AddressState[]>
-    ) => {
-      state.ethereum.inactiveAddresses = action.payload;
+    saveEthereumAddresses: (state, action: PayloadAction<AddressState[]>) => {
+      state.addresses = [...action.payload];
     },
     depositEthereum: (state, action: PayloadAction<number>) => {
-      state.ethereum.activeAddress.balance += action.payload;
+      state[state.activeIndex].balance += action.payload;
     },
     withdrawEthereum: (state, action: PayloadAction<number>) => {
-      if (state.ethereum.activeAddress.balance >= action.payload) {
-        state.ethereum.activeAddress.balance -= action.payload;
+      if (state[state.activeIndex].balance >= action.payload) {
+        state[state.activeIndex].balance -= action.payload;
       } else {
         console.warn("Not enough Ethereum balance");
       }
     },
     addEthereumTransaction: (state, action: PayloadAction<Transaction>) => {
-      state.ethereum.activeAddress.transactionMetadata.transactions.push(
+      state[state.activeIndex].transactionMetadata.transactions.push(
         action.payload
       );
     },
     updateEthereumBalance: (state, action: PayloadAction<string>) => {
-      state.ethereum.activeAddress.balance = parseFloat(action.payload);
+      state[state.activeIndex].balance = parseFloat(action.payload);
     },
-    updateEthereumInactiveAddresses: (
-      state,
-      action: PayloadAction<AddressState>
-    ) => {
-      state.ethereum.inactiveAddresses.push(action.payload);
+    updateEthereumAddresses: (state, action: PayloadAction<AddressState>) => {
+      state[state.activeIndex].address.push(action.payload);
     },
     updateAccountName: (
       state,
       action: PayloadAction<{
         accountName: string;
         ethAddress: string;
-        solAddress: string;
       }>
     ) => {
-      const ethAddressIndex = state.ethereum.inactiveAddresses.findIndex(
+      const ethAddressIndex = state.addresses.findIndex(
         (item) => item.address === action.payload.ethAddress
       );
       if (ethAddressIndex !== -1) {
-        state.ethereum.inactiveAddresses[ethAddressIndex].accountName =
-          action.payload.accountName;
-      }
-
-      const isCurrentActiveAccountName =
-        state.ethereum.activeAddress.address === action.payload.ethAddress;
-
-      if (isCurrentActiveAccountName) {
-        state.activeAccountName = state.activeAccountName =
+        state.addresses[ethAddressIndex].accountName =
           action.payload.accountName;
       }
     },
-    setActiveAccount: (
-      state,
-      action: PayloadAction<EthereumActiveAccountDetails>
-    ) => {
-      state.activeAccountName = action.payload.ethereum.accountName;
-      state.ethereum.activeAddress = {
-        ...action.payload.ethereum,
-        transactionMetadata: {
-          paginationKey: undefined,
-          transactions: [],
-        },
-      };
+    // TODO: Refactor. This is an tech debt from redux refactor
+    setActiveEthereumAccount: (state, action: PayloadAction<number>) => {
+      state.activeIndex = action.payload;
     },
-    resetState: (state) => {
+    resetEthereumState: (state) => {
       state = initialState;
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchEthereumBalance.pending, (state) => {
-        state.ethereum.status = GeneralStatus.Loading;
+        state.addresses[state.activeIndex].status = GeneralStatus.Loading;
       })
       .addCase(fetchEthereumBalance.fulfilled, (state, action) => {
-        state.ethereum.activeAddress.balance = parseFloat(
+        state.addresses[state.activeIndex].balance = parseFloat(
           truncateBalance(action.payload)
         );
-        state.ethereum.status = GeneralStatus.Idle;
+        state.addresses[state.activeIndex].status = GeneralStatus.Idle;
       })
       .addCase(fetchEthereumBalance.rejected, (state, action) => {
-        state.ethereum.status = GeneralStatus.Failed;
+        state.addresses[state.activeIndex].status = GeneralStatus.Failed;
         console.error("Failed to fetch balance:", action.payload);
       })
       .addCase(fetchEthereumBalanceInterval.fulfilled, (state, action) => {
-        state.ethereum.activeAddress.balance = parseFloat(
+        state.addresses[state.activeIndex].balance = parseFloat(
           truncateBalance(action.payload)
         );
-        state.ethereum.status = GeneralStatus.Idle;
+        state.addresses[state.activeIndex].status = GeneralStatus.Idle;
       })
       .addCase(fetchEthereumBalanceInterval.rejected, (state, action) => {
-        state.ethereum.status = GeneralStatus.Failed;
+        state.addresses[state.activeIndex].status = GeneralStatus.Failed;
         console.error("Failed to fetch balance:", action.payload);
       })
       .addCase(fetchEthereumTransactions.pending, (state) => {
-        state.ethereum.status = GeneralStatus.Loading;
+        state.addresses[state.activeIndex].status = GeneralStatus.Loading;
       })
       .addCase(fetchEthereumTransactions.fulfilled, (state, action) => {
         if (action.payload) {
-          state.ethereum.failedNetworkRequest = false;
-          state.ethereum.activeAddress.transactionMetadata.transactions =
+          state.addresses[state.activeIndex].failedNetworkRequest = false;
+          state.addresses[state.activeIndex].transactionMetadata.transactions =
             action.payload.transferHistory;
-          state.ethereum.activeAddress.transactionMetadata.paginationKey =
+          state.addresses[state.activeIndex].transactionMetadata.paginationKey =
             action.payload.paginationKey;
         } else {
-          state.ethereum.failedNetworkRequest = true;
+          state.addresses[state.activeIndex].failedNetworkRequest = true;
         }
-        state.ethereum.status = GeneralStatus.Idle;
+        state.addresses[state.activeIndex].status = GeneralStatus.Idle;
       })
       .addCase(fetchEthereumTransactions.rejected, (state, action) => {
-        state.ethereum.status = GeneralStatus.Failed;
+        state.addresses[state.activeIndex].status = GeneralStatus.Failed;
         console.error("Failed to fetch transactions:", action.payload);
       })
       .addCase(fetchEthereumTransactionsInterval.fulfilled, (state, action) => {
         if (action.payload) {
-          state.ethereum.failedNetworkRequest = false;
-          state.ethereum.activeAddress.transactionMetadata.transactions =
+          state.addresses[state.activeIndex].failedNetworkRequest = false;
+          state.addresses[state.activeIndex].transactionMetadata.transactions =
             action.payload.transferHistory;
-          state.ethereum.activeAddress.transactionMetadata.paginationKey =
+          state.addresses[state.activeIndex].transactionMetadata.paginationKey =
             action.payload.paginationKey;
         } else {
-          state.ethereum.failedNetworkRequest = true;
+          state.addresses[state.activeIndex].failedNetworkRequest = true;
         }
-        state.ethereum.status = GeneralStatus.Idle;
+        state.addresses[state.activeIndex].status = GeneralStatus.Idle;
       })
       .addCase(fetchEthereumTransactionsInterval.rejected, (state, action) => {
-        state.ethereum.status = GeneralStatus.Failed;
+        state.addresses[state.activeIndex].status = GeneralStatus.Failed;
         console.error("Failed to fetch transactions:", action.payload);
+      })
+      .addCase(confirmEthereumTransaction.pending, (state, action) => {
+        const { txHash } = action.meta.arg;
+        const newConfirmation: TransactionConfirmation = {
+          txHash,
+          status: ConfirmationState.Pending,
+        };
+        state.addresses[state.activeIndex].transactionConfirmations.push(
+          newConfirmation
+        );
+      })
+      .addCase(confirmEthereumTransaction.fulfilled, (state, action) => {
+        const { txHash, confirmation } = action.payload;
+        const index = state.addresses[
+          state.activeIndex
+        ].transactionConfirmations.findIndex((tx) => tx.txHash === txHash);
+        if (index !== -1) {
+          state.addresses[state.activeIndex].transactionConfirmations[
+            index
+          ].status = confirmation
+            ? ConfirmationState.Confirmed
+            : ConfirmationState.Failed;
+        }
+      })
+      .addCase(confirmEthereumTransaction.rejected, (state, action) => {
+        const { txHash, error } = action.payload as any;
+        const index = state.addresses[
+          state.activeIndex
+        ].transactionConfirmations.findIndex((tx: any) => tx.txHash === txHash);
+        if (index !== -1) {
+          state.addresses[state.activeIndex].transactionConfirmations[
+            index
+          ].status = ConfirmationState.Failed;
+          state.addresses[state.activeIndex].transactionConfirmations[
+            index
+          ].error = error;
+        }
       });
   },
 });
@@ -265,13 +310,12 @@ export const {
   depositEthereum,
   withdrawEthereum,
   addEthereumTransaction,
-  saveAllEthereumAddresses,
   updateEthereumBalance,
-  saveEthereumAccountDetails,
-  resetState,
-  setActiveAccount,
-  updateEthereumInactiveAddresses,
+  saveEthereumAddresses,
+  resetEthereumState,
+  setActiveEthereumAccount,
+  updateEthereumAddresses,
   updateAccountName,
-} = walletSlice.actions;
+} = ethereumSlice.actions;
 
-export default walletSlice.reducer;
+export default ethereumSlice.reducer;

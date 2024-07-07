@@ -168,12 +168,17 @@ export default function SendPage() {
   const toWalletAddress = toAddress as string;
   const ticker = TICKERS[chainName];
 
-  const tokenBalance = useSelector(
-    (state: RootState) => state.wallet[chainName].activeAddress.balance
+  const activeEthIndex = useSelector(
+    (state: RootState) => state.ethereum.activeIndex
   );
-
+  const activeSolIndex = useSelector(
+    (state: RootState) => state.solana.activeIndex
+  );
+  const tokenBalance = useSelector(
+    (state: RootState) => state[chainName].addresses[activeEthIndex].balance
+  );
   const address = useSelector(
-    (state: RootState) => state.wallet[chainName].activeAddress.address
+    (state: RootState) => state[chainName].addresses[activeSolIndex].address
   );
   const prices = useSelector((state: RootState) => state.price.data);
   const solPrice = prices.solana.usd;

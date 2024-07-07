@@ -13,13 +13,13 @@ export enum ConfirmationState {
   Failed = "failed",
 }
 
-export interface AccountState {
-  activeAddress: AddressState;
-  inactiveAddresses: AddressState[];
-  failedNetworkRequest: boolean;
-  status: GeneralStatus;
-  transactionConfirmations: TransactionConfirmation[];
-}
+// export interface AccountState {
+//   activeAddress: AddressState;
+//   inactiveAddresses: AddressState[];
+//   failedNetworkRequest: boolean;
+//   status: GeneralStatus;
+//   transactionConfirmations: TransactionConfirmation[];
+// }
 
 export interface AddressState {
   accountName: string;
@@ -28,6 +28,9 @@ export interface AddressState {
   publicKey: string;
   balance: number;
   transactionMetadata?: TransactionMetadata;
+  failedNetworkRequest: boolean;
+  status: GeneralStatus;
+  transactionConfirmations: TransactionConfirmation[];
 }
 
 export interface TransactionMetadata {
@@ -55,4 +58,9 @@ export interface TransactionConfirmation {
   txHash: string;
   status: ConfirmationState;
   error?: string;
+}
+
+export interface WalletState {
+  activeIndex: number | null;
+  addresses: AddressState[];
 }

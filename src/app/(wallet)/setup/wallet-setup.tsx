@@ -9,13 +9,10 @@ import ethService from "../../../services/EthereumService";
 import solanaService from "../../../services/SolanaService";
 import Button from "../../../components/Button/Button";
 import { ThemeType } from "../../../styles/theme";
-import {
-  saveEthereumAccountDetails,
-  saveSolanaAccountDetails,
-  saveAllEthereumAddresses,
-  saveAllSolanaAddresses,
-} from "../../../store/walletSlice";
+import { saveEthereumAddresses } from "../../../store/ethereumSlice";
+import { saveSolanaAddresses } from "../../../store/solanaSlice";
 import type { AddressState } from "../../../store/types";
+import { GeneralStatus } from "../../../store/types";
 import { ROUTES } from "../../../constants/routes";
 import WalletIcon from "../../../assets/svg/wallet.svg";
 import { LinearGradientBackground } from "../../../components/Styles/Gradient";
@@ -103,6 +100,13 @@ export default function WalletSetup() {
         address: ethWallet.address,
         publicKey: ethWallet.publicKey,
         balance: 0,
+        transactionMetadata: {
+          paginationKey: undefined,
+          transactions: [],
+        },
+        failedNetworkRequest: false,
+        status: GeneralStatus.Idle,
+        transactionConfirmations: [],
       };
 
       const solanaAccount: AddressState = {
@@ -111,13 +115,17 @@ export default function WalletSetup() {
         address: solWallet.publicKey.toBase58(),
         publicKey: solWallet.publicKey.toBase58(),
         balance: 0,
+        transactionMetadata: {
+          paginationKey: undefined,
+          transactions: [],
+        },
+        failedNetworkRequest: false,
+        status: GeneralStatus.Idle,
+        transactionConfirmations: [],
       };
 
-      dispatch(saveEthereumAccountDetails(ethereumAccount));
-      dispatch(saveAllEthereumAddresses([ethereumAccount]));
-
-      dispatch(saveSolanaAccountDetails(solanaAccount));
-      dispatch(saveAllSolanaAddresses([solanaAccount]));
+      dispatch(saveEthereumAddresses([ethereumAccount]));
+      dispatch(saveSolanaAddresses([solanaAccount]));
 
       router.push({
         pathname: ROUTES.seedPhrase,

@@ -9,15 +9,16 @@ import ethService from "../../../services/EthereumService";
 import solanaService from "../../../services/SolanaService";
 import { ThemeType } from "../../../styles/theme";
 import {
-  saveEthereumAccountDetails,
-  saveSolanaAccountDetails,
-  saveAllEthereumAddresses,
-  saveAllSolanaAddresses,
-  fetchEthereumBalance,
+  saveSolanaAddresses,
   fetchSolanaBalance,
   fetchSolanaTransactions,
+} from "../../../store/solanaSlice";
+import {
+  saveEthereumAddresses,
+  fetchEthereumBalance,
   fetchEthereumTransactions,
-} from "../../../store/walletSlice";
+} from "../../../store/ethereumSlice";
+import { GeneralStatus } from "../../../store/types";
 import type { AddressState } from "../../../store/types";
 import type { AppDispatch } from "../../../store";
 import Button from "../../../components/Button/Button";
@@ -182,6 +183,13 @@ export default function Page() {
             address: info.address,
             publicKey: info.publicKey,
             balance: 0,
+            transactionMetadata: {
+              paginationKey: undefined,
+              transactions: [],
+            },
+            failedNetworkRequest: false,
+            status: GeneralStatus.Idle,
+            transactionConfirmations: [],
           };
         });
 
@@ -193,23 +201,31 @@ export default function Page() {
             address: info.publicKey,
             publicKey: info.publicKey,
             balance: 0,
+            transactionMetadata: {
+              paginationKey: undefined,
+              transactions: [],
+            },
+            failedNetworkRequest: false,
+            status: GeneralStatus.Idle,
+            transactionConfirmations: [],
           };
         });
 
-      const firstEthWallet: AddressState = transformedActiveEthAddresses[0];
-      const firstSolWallet: AddressState = transformedActiveSolAddresses[0];
-
       await savePhrase(JSON.stringify(phraseTextValue));
 
-      dispatch(saveEthereumAccountDetails(firstEthWallet));
-      dispatch(fetchEthereumBalance(firstEthWallet.address));
-      dispatch(fetchEthereumTransactions({ address: firstEthWallet.address }));
-      dispatch(saveAllEthereumAddresses(transformedActiveEthAddresses));
+      dispatch(saveEthereumAddresses(transformedActiveEthAddresses));
+      dispatch(fetchEthereumBalance(transformedActiveEthAddresses[0].address));
+      dispatch(
+        fetchEthereumTransactions({
+          address: transformedActiveEthAddresses[0].address,
+        })
+      );
 
-      dispatch(saveSolanaAccountDetails(firstSolWallet));
-      dispatch(fetchSolanaBalance(firstSolWallet.address));
-      dispatch(fetchSolanaTransactions(firstSolWallet.address));
-      dispatch(saveAllSolanaAddresses(transformedActiveSolAddresses));
+      dispatch(saveSolanaAddresses(transformedActiveSolAddresses));
+      dispatch(fetchSolanaBalance(transformedActiveSolAddresses[0].address));
+      dispatch(
+        fetchSolanaTransactions(transformedActiveSolAddresses[0].address)
+      );
 
       router.push({
         pathname: ROUTES.walletCreatedSuccessfully,

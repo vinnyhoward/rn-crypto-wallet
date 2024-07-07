@@ -13,11 +13,15 @@ import { getPhrase } from "../../../hooks/use-storage-state";
 import type { RootState } from "../../../store";
 import type { AddressState } from "../../../store/types";
 import type { ThemeType } from "../../../styles/theme";
+import { GeneralStatus } from "../../../store/types";
 import {
-  setActiveAccount,
-  updateSolanaInactiveAddresses,
-  updateEthereumInactiveAddresses,
-} from "../../../store/walletSlice";
+  setActiveEthereumAccount,
+  updateEthereumAddresses,
+} from "../../../store/ethereumSlice";
+import {
+  setActiveSolanaAccount,
+  updateSolanaAddresses,
+} from "../../../store/solanaSlice";
 import { ROUTES } from "../../../constants/routes";
 import RightArrowIcon from "../../../assets/svg/right-arrow.svg";
 import PhraseIcon from "../../../assets/svg/phrase.svg";
@@ -197,18 +201,23 @@ function compileInactiveAddresses(
 }
 
 const AccountsIndex = () => {
+  const activeEthIndex = useSelector(
+    (state: RootState) => state.ethereum.activeIndex
+  );
+  const activeSolIndex = useSelector(
+    (state: RootState) => state.solana.activeIndex
+  );
   const activeEthAddress = useSelector(
-    (state: RootState) => state.wallet.ethereum.activeAddress.address
+    (state: RootState) => state.ethereum.addresses[activeEthIndex]
   );
   const activeSolAddress = useSelector(
-    (state: RootState) => state.wallet.solana.activeAddress.address
+    (state: RootState) => state.solana.addresses[activeSolIndex]
   );
-  const inactiveEthAccounts = useSelector(
-    (state: RootState) => state.wallet.ethereum.inactiveAddresses
+
+  const ethAccounts = useSelector(
+    (state: RootState) => state.ethereum.addresses
   );
-  const inactiveSolAccounts = useSelector(
-    (state: RootState) => state.wallet.solana.inactiveAddresses
-  );
+  const solAccounts = useSelector((state: RootState) => state.solana.addresses);
 
   const prices = useSelector((state: RootState) => state.price.data);
   const solPrice = prices?.solana?.usd;
@@ -223,8 +232,8 @@ const AccountsIndex = () => {
   const createNewWalletPair = async () => {
     setWalletCreationLoading(true);
     try {
-      const nextEthIndex = inactiveEthAccounts.length;
-      const nextSolIndex = inactiveSolAccounts.length;
+      const nextEthIndex = ethAccounts.length;
+      const nextSolIndex = solAccounts.length;
       const phrase = await getPhrase();
       const newEthWallet = await ethService.createWalletByIndex(
         phrase,
@@ -234,12 +243,20 @@ const AccountsIndex = () => {
         phrase,
         nextSolIndex
       );
+
       const transformedEthWallet: AddressState = {
         accountName: `Account ${nextEthIndex + 1}`,
         derivationPath: newEthWallet.derivationPath,
         address: newEthWallet.address,
         publicKey: newEthWallet.publicKey,
         balance: 0,
+        transactionMetadata: {
+          paginationKey: undefined,
+          transactions: [],
+        },
+        failedNetworkRequest: false,
+        status: GeneralStatus.Idle,
+        transactionConfirmations: [],
       };
       const transformedSolWallet: AddressState = {
         accountName: `Account ${nextSolIndex + 1}`,
@@ -247,9 +264,17 @@ const AccountsIndex = () => {
         address: newSolWallet.address,
         publicKey: newSolWallet.publicKey,
         balance: 0,
+        transactionMetadata: {
+          paginationKey: undefined,
+          transactions: [],
+        },
+        failedNetworkRequest: false,
+        status: GeneralStatus.Idle,
+        transactionConfirmations: [],
       };
-      dispatch(updateEthereumInactiveAddresses(transformedEthWallet));
-      dispatch(updateSolanaInactiveAddresses(transformedSolWallet));
+
+      dispatch(updateEthereumAddresses(transformedEthWallet));
+      dispatch(updateSolanaAddresses(transformedSolWallet));
     } catch (err) {
       console.error("Failed to create new wallet pair:", err);
     } finally {
@@ -257,16 +282,9 @@ const AccountsIndex = () => {
     }
   };
 
-  const setNextActiveAccounts = (
-    ethereum: AddressState,
-    solana: AddressState
-  ) => {
-    const nextActiveAddress = {
-      solana,
-      ethereum,
-    };
-
-    dispatch(setActiveAccount(nextActiveAddress));
+  const setNextActiveAccounts = (index: number) => {
+    dispatch(setActiveEthereumAccount(index));
+    dispatch(setActiveSolanaAccount(index));
   };
 
   const calculateTotalPrice = (ethBalance: number, solBalance: number) => {
@@ -314,10 +332,8 @@ const AccountsIndex = () => {
     return (
       <WalletContainer
         onPress={() =>
-          setNextActiveAccounts(
-            item.walletDetails.ethereum,
-            item.walletDetails.solana
-          )
+          // TODO: Refactor. This is an tech debt from redux refactor
+          setNextActiveAccounts(index)
         }
         isActiveAccount={item.isActiveAccount}
         isLast={index === accounts.length - 1}
@@ -349,16 +365,16 @@ const AccountsIndex = () => {
       setPriceAndBalanceLoading(true);
       try {
         const { ethereum, solana } = await compileAddressesConcurrently(
-          inactiveEthAccounts,
-          inactiveSolAccounts
+          ethAccounts,
+          solAccounts
         );
         if (ethereum && solana) {
           setAccounts(
             compileInactiveAddresses(
               ethereum,
               solana,
-              activeEthAddress,
-              activeSolAddress
+              activeEthAddress.address,
+              activeSolAddress.address
             )
           );
         }
@@ -369,14 +385,9 @@ const AccountsIndex = () => {
       }
     };
     fetchBalances();
-  }, [
-    activeEthAddress,
-    activeSolAddress,
-    inactiveEthAccounts,
-    inactiveSolAccounts,
-  ]);
+  }, [activeEthAddress, activeSolAddress, ethAccounts, solAccounts]);
 
-  const placeholderAmount = inactiveEthAccounts.length;
+  const placeholderAmount = ethAccounts.length;
   return (
     <SafeAreaContainer>
       <ContentContainer>

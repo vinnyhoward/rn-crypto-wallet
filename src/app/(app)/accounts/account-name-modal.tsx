@@ -5,7 +5,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { useLocalSearchParams } from "expo-router";
 import type { ThemeType } from "../../../styles/theme";
 import type { RootState } from "../../../store";
-import { updateAccountName } from "../../../store/walletSlice";
+import type { AddressState } from "../../../store/types";
+import { updateAccountName } from "../../../store/ethereumSlice";
+import { updateSolanaAccountName } from "../../../store/solanaSlice";
 import { SafeAreaContainer } from "../../../components/Styles/Layout.styles";
 import {
   ErrorText,
@@ -38,14 +40,15 @@ const AccountsNameModal = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const { ethAddress, solAddress } = useLocalSearchParams();
+
   const ethereumAccount = useSelector((state: RootState) =>
-    state.wallet.ethereum.inactiveAddresses.find(
-      (item) => item.address === ethAddress
+    state.ethereum.addresses.find(
+      (item: AddressState) => item.address === ethAddress
     )
   );
   const solanaAccount = useSelector((state: RootState) =>
-    state.wallet.solana.inactiveAddresses.find(
-      (item) => item.address === solAddress
+    state.solana.addresses.find(
+      (item: AddressState) => item.address === solAddress
     )
   );
   const name = ethereumAccount.accountName ?? solanaAccount.accountName;
@@ -60,10 +63,15 @@ const AccountsNameModal = () => {
       return setErrorText("Wallet name is too long");
     }
     dispatch(
+      updateSolanaAccountName({
+        accountName: accountNameValue,
+        solAddress: solanaAccount.address,
+      })
+    );
+    dispatch(
       updateAccountName({
         accountName: accountNameValue,
         ethAddress: ethereumAccount.address,
-        solAddress: solanaAccount.address,
       })
     );
   };

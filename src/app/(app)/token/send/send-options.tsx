@@ -26,11 +26,17 @@ const CardView = styled.View<{ theme: ThemeType }>`
 export default function SendOptions() {
   const theme = useTheme();
   const router = useRouter();
+  const activeEthIndex = useSelector(
+    (state: RootState) => state.ethereum.activeIndex
+  );
+  const activeSolIndex = useSelector(
+    (state: RootState) => state.solana.activeIndex
+  );
   const ethBalance = useSelector(
-    (state: RootState) => state.wallet.ethereum.activeAddress.balance
+    (state: RootState) => state.ethereum.addresses[activeEthIndex].balance
   );
   const solBalance = useSelector(
-    (state: RootState) => state.wallet.solana.activeAddress.balance
+    (state: RootState) => state.solana.addresses[activeSolIndex].balance
   );
   const prices = useSelector((state: RootState) => state.price.data);
   const solPrice = prices.solana.usd;

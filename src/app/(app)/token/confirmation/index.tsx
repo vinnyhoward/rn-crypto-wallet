@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native";
 import { Image } from "expo-image";
 import styled from "styled-components/native";
 import { View } from "moti";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { ThemeType } from "../../../../styles/theme";
-import { confirmTransaction } from "../../../../store/walletSlice";
-import { RootState } from "../../../../store";
+import { confirmEthereumTransaction } from "../../../../store/ethereumSlice";
+import { confirmSolanaTransaction } from "../../../../store/solanaSlice";
 import { ConfirmationState } from "../../../../store/types";
-import type { Chains } from "../../../../types";
+import { Chains } from "../../../../types";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -84,19 +84,23 @@ export default function Confirmation() {
     error: "Poop",
   };
 
-  const test = useSelector(
-    (state: RootState) =>
-      state.wallet[blockchain as Chains].transactionConfirmations
-  );
-  console.log("confirmation screen state", blockchain);
   useEffect(() => {
     if (txHash && blockchain) {
-      dispatch(
-        confirmTransaction({
-          txHash: txHash as string,
-          blockchain: blockchain as Chains,
-        })
-      );
+      if (blockchain === Chains.Ethereum) {
+        dispatch(
+          confirmEthereumTransaction({
+            txHash: txHash as string,
+          })
+        );
+      }
+
+      if (blockchain === Chains.Solana) {
+        dispatch(
+          confirmSolanaTransaction({
+            txHash: txHash as string,
+          })
+        );
+      }
     }
   }, [txHash, blockchain, dispatch]);
 

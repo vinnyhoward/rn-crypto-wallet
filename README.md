@@ -229,7 +229,7 @@ expo start
 
 - [ ] Confirmation screen
 - [ ] Animations for confirmation screen, splash screen, create wallet screen
-- [ ] Improve redux structure (in progress)
+- [x] Improve redux structure 
 - [ ] Pagination
 - [ ] Add profit/loss UI for assets purchased
 - [ ] Adding Polygon Blockchain

@@ -6,11 +6,23 @@ export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
 export const useAppSelector = useSelector.withTypes<RootState>();
 
 export const useLoadingState = () => {
-  const ethLoading = useSelector(
-    (state: RootState) => state.wallet.ethereum.status === GeneralStatus.Loading
+  const activeEthIndex = useSelector(
+    (state: RootState) => state.ethereum.activeIndex
   );
-  const solLoading = useSelector(
-    (state: RootState) => state.wallet.solana.status === GeneralStatus.Loading
+  const activeSolIndex = useSelector(
+    (state: RootState) => state.solana.activeIndex
+  );
+
+  const ethLoading = useSelector((state: RootState) =>
+    state.ethereum.addresses.length !== 0
+      ? state.ethereum.addresses[activeEthIndex].status ===
+        GeneralStatus.Loading
+      : false
+  );
+  const solLoading = useSelector((state: RootState) =>
+    state.solana.addresses.length !== 0
+      ? state.solana.addresses[activeSolIndex].status === GeneralStatus.Loading
+      : false
   );
 
   return ethLoading || solLoading;

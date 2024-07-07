@@ -19,7 +19,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { clearStorage } from "../hooks/use-storage-state";
 import Theme from "../styles/theme";
 import { store, persistor, clearPersistedState } from "../store";
-import { resetState } from "../store/walletSlice";
+import { resetSolanaState } from "../store/solanaSlice";
+import { resetEthereumState } from "../store/ethereumSlice";
 import { ROUTES } from "../constants/routes";
 import LeftIcon from "../assets/svg/left-arrow.svg";
 
@@ -36,7 +37,8 @@ export default function RootLayout() {
     if (navigation.canGoBack()) {
       navigation.goBack();
     } else {
-      resetState();
+      resetSolanaState();
+      resetEthereumState();
       clearStorage();
       clearPersistedState();
       router.replace(ROUTES.walletSetup);

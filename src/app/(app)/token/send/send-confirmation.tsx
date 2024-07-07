@@ -17,10 +17,8 @@ import ethService from "../../../../services/EthereumService";
 import solanaService from "../../../../services/SolanaService";
 import { getPhrase } from "../../../../hooks/use-storage-state";
 import type { RootState, AppDispatch } from "../../../../store";
-import {
-  sendEthereumTransaction,
-  sendSolanaTransaction,
-} from "../../../../store/walletSlice";
+import { sendEthereumTransaction } from "../../../../store/ethereumSlice";
+import { sendSolanaTransaction } from "../../../../store/solanaSlice";
 import { BalanceContainer } from "../../../../components/Styles/Layout.styles";
 import { SafeAreaContainer } from "../../../../components/Styles/Layout.styles";
 import { ROUTES } from "../../../../constants/routes";
@@ -100,11 +98,18 @@ export default function SendConfirmationPage() {
   const address = toAddress as string;
 
   const prices = useSelector((state: RootState) => state.price.data);
+  const activeEthIndex = useSelector(
+    (state: RootState) => state.ethereum.activeIndex
+  );
+  const activeSolIndex = useSelector(
+    (state: RootState) => state.solana.activeIndex
+  );
   const walletAddress = useSelector(
-    (state: RootState) => state.wallet[chainName].activeAddress.address
+    (state: RootState) => state[chainName].addresses[activeEthIndex].address
   );
   const derivationPath = useSelector(
-    (state: RootState) => state.wallet[chainName].activeAddress.derivationPath
+    (state: RootState) =>
+      state[chainName].addresses[activeSolIndex].derivationPath
   );
 
   const solPrice = prices.solana.usd;

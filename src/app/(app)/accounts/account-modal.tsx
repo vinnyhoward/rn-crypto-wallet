@@ -124,12 +124,12 @@ const AccountsModalIndex = () => {
   const theme = useTheme();
   const { ethAddress, solAddress, balance } = useLocalSearchParams();
   const ethereumAccount = useSelector((state: RootState) =>
-    state.wallet.ethereum.inactiveAddresses.find(
+    state.ethereum.addresses.find(
       (item: AddressState) => item.address === ethAddress
     )
   );
   const solanaAccount = useSelector((state: RootState) =>
-    state.wallet.solana.inactiveAddresses.find(
+    state.solana.addresses.find(
       (item: AddressState) => item.address === solAddress
     )
   );

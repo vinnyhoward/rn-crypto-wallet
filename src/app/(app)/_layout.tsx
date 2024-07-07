@@ -43,14 +43,24 @@ export default function AppLayout() {
     Roboto_700Bold: RobotoBld,
   });
   const theme = useTheme();
-  const ethWallet = useSelector((state: RootState) => state.wallet.ethereum);
-  const solWallet = useSelector((state: RootState) => state.wallet.solana);
+  const ethActiveIndex = useSelector(
+    (state: RootState) => state.ethereum.activeIndex ?? 0
+  );
+
+  const solActiveIndex = useSelector(
+    (state: RootState) => state.solana.activeIndex ?? 0
+  );
+  const ethWallet = useSelector(
+    (state: RootState) =>
+      state.ethereum.addresses[ethActiveIndex]?.address ?? ""
+  );
+
+  const solWallet = useSelector(
+    (state: RootState) => state.solana.addresses[solActiveIndex]?.address ?? ""
+  );
   const [appReady, setAppReady] = useState<boolean>(false);
   const [userExists, setUserExists] = useState<boolean>(false);
-
-  const walletsExist =
-    ethWallet.activeAddress.address !== "" &&
-    solWallet.activeAddress.address !== "";
+  const walletsExist = ethWallet !== "" && solWallet !== "";
 
   useEffect(() => {
     const prepare = async () => {
