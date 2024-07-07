@@ -8,7 +8,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useDispatch } from "react-redux";
 import { ThemeType } from "../../../../styles/theme";
 import { LinearGradientBackground } from "../../../../components/Styles/Gradient";
-import Loader from "../../../../components/Loader/RotatingCuteLoader";
+import Loader from "../../../../components/Loader/CleanArcSpinner";
 import { confirmEthereumTransaction } from "../../../../store/ethereumSlice";
 import { confirmSolanaTransaction } from "../../../../store/solanaSlice";
 import { ConfirmationState } from "../../../../store/types";
