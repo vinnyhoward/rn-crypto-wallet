@@ -227,8 +227,11 @@ expo start
 
 ## Roadmap [![](assets/pin.svg)](#roadmap)
 
-- [ ] Confirmation screen
-- [ ] Animations for confirmation screen, splash screen, create wallet screen
+- [x] Confirmation screen
+- [ ] Animations: 
+  - [x] Confirmation screen
+  - [ ] Splash screen
+  - [x] Create wallet screen
 - [x] Improve redux structure 
 - [ ] Pagination
 - [ ] Add profit/loss UI for assets purchased

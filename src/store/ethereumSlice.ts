@@ -302,6 +302,21 @@ export const ethereumSlice = createSlice({
             index
           ].error = error;
         }
+      })
+      .addCase(sendEthereumTransaction.pending, (state) => {
+        state.addresses[state.activeIndex].status = GeneralStatus.Loading;
+      })
+      .addCase(sendEthereumTransaction.fulfilled, (state, action) => {
+        state.addresses[state.activeIndex].status = GeneralStatus.Idle;
+
+        state.addresses[state.activeIndex].transactionConfirmations.push({
+          txHash: action.payload.hash,
+          status: ConfirmationState.Pending,
+        });
+      })
+      .addCase(sendEthereumTransaction.rejected, (state, action) => {
+        state.addresses[state.activeIndex].status = GeneralStatus.Failed;
+        console.error("Failed to send transaction:", action.payload);
       });
   },
 });

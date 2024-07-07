@@ -69,17 +69,7 @@ export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [
-          "persist/PERSIST",
-          "persist/REHYDRATE",
-          "persist/PURGE",
-          "persist/FLUSH",
-          "persist/PAUSE",
-          "persist/REGISTER",
-          "persist/DEFAULT_VERSION",
-        ],
-      },
+      serializableCheck: false,
     })
       .prepend(listenerMiddleware.middleware)
       .concat(webSocketMiddleware),

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Platform } from "react-native";
 import styled, { useTheme } from "styled-components/native";
-import { useLocalSearchParams, router } from "expo-router";
+import { useLocalSearchParams, router, useNavigation } from "expo-router";
+import { StackActions } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { Chains } from "../../../../types";
@@ -91,6 +92,7 @@ export default function SendConfirmationPage() {
     amount: tokenAmount,
     chainName: chain,
   } = useLocalSearchParams();
+  const navigation = useNavigation();
 
   const chainName = chain as string;
   const ticker = TICKERS[chainName];
@@ -142,8 +144,8 @@ export default function SendConfirmationPage() {
             amount,
           })
         ).unwrap();
-
         if (result) {
+          navigation.dispatch(StackActions.popToTop());
           router.push({
             pathname: ROUTES.confirmation,
             params: { txHash: result.hash, blockchain: Chains.Ethereum },
@@ -163,6 +165,7 @@ export default function SendConfirmationPage() {
         ).unwrap();
 
         if (result) {
+          navigation.dispatch(StackActions.popToTop());
           router.push({
             pathname: ROUTES.confirmation,
             params: { txHash: result, blockchain: Chains.Solana },

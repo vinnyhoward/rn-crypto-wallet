@@ -283,6 +283,21 @@ export const solanaSlice = createSlice({
             index
           ].error = error;
         }
+      })
+      .addCase(sendSolanaTransaction.pending, (state) => {
+        state.addresses[state.activeIndex].status = GeneralStatus.Loading;
+      })
+      .addCase(sendSolanaTransaction.fulfilled, (state, action) => {
+        state.addresses[state.activeIndex].status = GeneralStatus.Idle;
+
+        state.addresses[state.activeIndex].transactionConfirmations.push({
+          txHash: action.payload,
+          status: ConfirmationState.Pending,
+        });
+      })
+      .addCase(sendSolanaTransaction.rejected, (state, action) => {
+        state.addresses[state.activeIndex].status = GeneralStatus.Failed;
+        console.error("Failed to send Solana transaction:", action.payload);
       });
   },
 });
