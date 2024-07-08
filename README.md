@@ -81,7 +81,6 @@ This project leverages a modern tech stack for building and managing a cross-pla
 | Creating a new wallet | Importing a wallet | Managing your wallet |
 |:---:|:---:|:---:|
 | <img width="200" src="assets/wallet_create.gif" alt="Creating a new wallet"> | <img width="200" src="assets/wallet_import.gif" alt="Importing a wallet"> | <img width="200" src="assets/wallet_management.gif" alt="Managing your wallet"> |
-| | | |
 
 
 ### Wallet Balance and Transactions
@@ -93,8 +92,7 @@ This project leverages a modern tech stack for building and managing a cross-pla
 
 | Viewing wallet transactions  | Viewing Ethereum balance  | Sending Ethereum |
 |:---:|:---:|:---:|
-| <img width="200" src="assets/networth.gif" alt="Creating a new wallet"> | <img width="200" src="assets/balance.gif" alt="Importing a wallet"> | <img width="200" src="assets/send.gif" alt="Managing your wallet"> |
-| | | |
+| <img width="200" src="assets/networth.gif" alt="Creating a new wallet"> | <img width="200" src="assets/balance.gif" alt="Importing a wallet"> | <img width="200" src="assets/send-alt.gif" alt="Managing your wallet"> |
 
 ### Accessibility Features
 - **QR Code Functionality**: Easily share wallet addresses and send cryptocurrencies via QR codes.
@@ -102,7 +100,6 @@ This project leverages a modern tech stack for building and managing a cross-pla
 | Sharing Address  | Scanning QR code | 
 |:---:|:---:|
 | <img width="200" src="assets/sharing_qr.gif" alt="Creating a new wallet"> | <img width="200" src="assets/qr-send.gif" alt="Importing a wallet"> 
-| | 
 
 ### Security
 
