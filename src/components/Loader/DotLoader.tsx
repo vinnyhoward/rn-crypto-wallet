@@ -27,7 +27,7 @@ const PulseDotLoader: React.FC<LoaderProps> = ({
   size = 50,
   color = "#007AFF",
   dotCount = 3,
-  duration = 1000,
+  duration = 500,
   ...props
 }) => {
   const animations = useRef(

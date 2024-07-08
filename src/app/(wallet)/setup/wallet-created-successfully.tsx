@@ -8,6 +8,7 @@ import Button from "../../../components/Button/Button";
 import { LinearGradientBackground } from "../../../components/Styles/Gradient";
 import { ThemeType } from "../../../styles/theme";
 import { ROUTES } from "../../../constants/routes";
+import CheckMark from "../../../assets/svg/check-mark.svg";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -107,6 +108,9 @@ export default function WalletCreationSuccessPage() {
             linearGradient={theme.colors.secondaryLinearGradient}
             onPress={() => router.replace(ROUTES.home)}
             title="Continue to wallet"
+            icon={
+              <CheckMark width={25} height={25} fill={theme.colors.white} />
+            }
           />
         </ButtonContainer>
       </SafeAreaContainer>

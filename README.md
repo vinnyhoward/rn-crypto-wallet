@@ -78,21 +78,11 @@ This project leverages a modern tech stack for building and managing a cross-pla
 - **Account Management**: Rename and manage different wallet accounts.
 - **Switch Wallets**: Easily switch between different wallet accounts.
 
-<div style="display: flex;">
-  <figure style="text-align: center; display: flex; flex-direction: column;">
-    <img style="margin-bottom: 10px" width="200" src="assets/wallet_create.gif" alt="Creating a new wallet">
-    <!-- <figcaption style="font-size: 14px;">Creating a new wallet</figcaption> -->
-  </figure>
+| Creating a new wallet | Importing a wallet | Managing your wallet |
+|:---:|:---:|:---:|
+| <img width="200" src="assets/wallet_create.gif" alt="Creating a new wallet"> | <img width="200" src="assets/wallet_import.gif" alt="Importing a wallet"> | <img width="200" src="assets/wallet_management.gif" alt="Managing your wallet"> |
+| | | |
 
-  <figure style="text-align: center; display: flex; flex-direction: column;">
-    <img style="margin-bottom: 10px" width="200" src="assets/wallet_import.gif" alt="Importing a wallet">
-    <!-- <figcaption style="font-size: 14px;">Importing a wallet</figcaption> -->
-  </figure>
-    <figure style="text-align: center; display: flex; flex-direction: column;">
-    <img style="margin-bottom: 10px" width="200" src="assets/wallet_management.gif" alt="Importing a wallet">
-    <!-- <figcaption style="font-size: 14px;">Managing your wallet</figcaption> -->
-  </figure>
-</div>
 
 ### Wallet Balance and Transactions
 - **Net Worth**: View the total net worth across all wallets.
@@ -101,40 +91,18 @@ This project leverages a modern tech stack for building and managing a cross-pla
   - Send and receive Ethereum and Solana transactions.
   - View a list of past transactions for both Ethereum and Solana.
 
-<div style="display: flex;">
-  <figure style="text-align: center; display: flex; flex-direction: column;">
-    <img style="margin-bottom: 10px" width="200" src="assets/networth.gif" alt="Viewing wallet networth">
-    <!-- <figcaption style="font-size: 14px;">Viewing wallet networth and transactions</figcaption> -->
-  </figure>
-
-  <figure style="text-align: center; display: flex; flex-direction: column;">
-    <img style="margin-bottom: 10px" width="200" src="assets/balance.gif" alt="Viewing Balance">
-    <!-- <figcaption style="font-size: 14px;">Viewing balance of Ethereum</figcaption> -->
-  </figure>
-    <figure style="text-align: center; display: flex; flex-direction: column;">
-    <img style="margin-bottom: 10px" width="200" src="assets/send.gif" alt="Sending Ethereum to another wallet">
-    <!-- <figcaption style="font-size: 14px;">Sending Ethereum</figcaption> -->
-  </figure>
-</div>
+| Viewing wallet transactions  | Viewing Ethereum balance  | Sending Ethereum |
+|:---:|:---:|:---:|
+| <img width="200" src="assets/networth.gif" alt="Creating a new wallet"> | <img width="200" src="assets/balance.gif" alt="Importing a wallet"> | <img width="200" src="assets/send.gif" alt="Managing your wallet"> |
+| | | |
 
 ### Accessibility Features
 - **QR Code Functionality**: Easily share wallet addresses and send cryptocurrencies via QR codes.
 
-<div style="display: flex;">
-  <figure style="text-align: center; display: flex; flex-direction: column;">
-    <img style="margin-bottom: 10px" width="200" src="assets/sharing_qr.gif" alt="Sharing address via QR code">
-    <!-- <figcaption style="font-size: 14px;">Viewing wallet networth and transactions</figcaption> -->
-  </figure>
-
-  <!-- <figure style="text-align: center; display: flex; flex-direction: column;">
-    <img style="margin-bottom: 10px" width="200" src="assets/balance.gif" alt="Viewing Balance">
-    <figcaption style="font-size: 14px;">Viewing balance of Ethereum</figcaption>
-  </figure>
-    <figure style="text-align: center; display: flex; flex-direction: column;">
-    <img style="margin-bottom: 10px" width="200" src="assets/send.gif" alt="Sending Ethereum to another wallet">
-    <figcaption style="font-size: 14px;">Sending Ethereum</figcaption>
-  </figure> -->
-</div>
+| Sharing Address  | Scanning QR code | 
+|:---:|:---:|
+| <img width="200" src="assets/sharing_qr.gif" alt="Creating a new wallet"> | <img width="200" src="assets/qr-send.gif" alt="Importing a wallet"> 
+| | 
 
 ### Security
 
