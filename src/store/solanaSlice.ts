@@ -147,25 +147,25 @@ export const solanaSlice = createSlice({
       state.addresses = [...action.payload];
     },
     depositSolana: (state, action: PayloadAction<number>) => {
-      state[state.activeIndex].balance += action.payload;
+      state.addresses[state.activeIndex].balance += action.payload;
     },
     withdrawSolana: (state, action: PayloadAction<number>) => {
-      if (state[state.activeIndex].balance >= action.payload) {
-        state[state.activeIndex].balance -= action.payload;
+      if (state.addresses[state.activeIndex].balance >= action.payload) {
+        state.addresses[state.activeIndex].balance -= action.payload;
       } else {
         console.warn("Not enough Solana balance");
       }
     },
     addSolanaTransaction: (state, action: PayloadAction<Transaction>) => {
-      state[state.activeIndex].transactionMetadata.transactions.push(
+      state.addresses[state.activeIndex].transactionMetadata.transactions.push(
         action.payload
       );
     },
     updateSolanaBalance: (state, action: PayloadAction<number>) => {
-      state[state.activeIndex].balance = action.payload;
+      state.addresses[state.activeIndex].balance = action.payload;
     },
     updateSolanaAddresses: (state, action: PayloadAction<AddressState>) => {
-      state[state.activeIndex].addresses.push(action.payload);
+      state.addresses.push(action.payload);
     },
     // TODO: Refactor. This is an tech debt from redux refactor
     updateSolanaAccountName: (

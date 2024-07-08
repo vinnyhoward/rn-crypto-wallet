@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo, memo } from "react";
 import { FlatList, Dimensions, Platform } from "react-native";
 import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import * as ethers from "ethers";
 import { MotiView } from "moti";
 import { Skeleton } from "moti/skeleton";
+import { debounce } from "lodash";
 import { formatDollar } from "../../../utils/formatDollars";
 import ethService from "../../../services/EthereumService";
 import solanaService from "../../../services/SolanaService";
@@ -213,15 +214,11 @@ const AccountsIndex = () => {
   const activeSolAddress = useSelector(
     (state: RootState) => state.solana.addresses[activeSolIndex]
   );
-
   const ethAccounts = useSelector(
     (state: RootState) => state.ethereum.addresses
   );
   const solAccounts = useSelector((state: RootState) => state.solana.addresses);
-
   const prices = useSelector((state: RootState) => state.price.data);
-  const solPrice = prices?.solana?.usd;
-  const ethPrice = prices?.ethereum?.usd;
 
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -229,7 +226,7 @@ const AccountsIndex = () => {
   const [priceAndBalanceLoading, setPriceAndBalanceLoading] = useState(false);
   const [accounts, setAccounts] = useState([]);
 
-  const createNewWalletPair = async () => {
+  const createNewWalletPair = useCallback(async () => {
     setWalletCreationLoading(true);
     try {
       const nextEthIndex = ethAccounts.length;
@@ -280,114 +277,147 @@ const AccountsIndex = () => {
     } finally {
       setWalletCreationLoading(false);
     }
-  };
+  }, [dispatch]);
 
-  const setNextActiveAccounts = (index: number) => {
-    dispatch(setActiveEthereumAccount(index));
-    dispatch(setActiveSolanaAccount(index));
-  };
+  const setNextActiveAccounts = useCallback(
+    (index: number) => {
+      dispatch(setActiveEthereumAccount(index));
+      dispatch(setActiveSolanaAccount(index));
+    },
+    [dispatch]
+  );
 
-  const calculateTotalPrice = (ethBalance: number, solBalance: number) => {
-    const ethUsd = ethPrice * ethBalance;
-    const solUsd = solPrice * solBalance;
-    return formatDollar(ethUsd + solUsd);
-  };
+  const calculateTotalPrice = useCallback(
+    (ethBalance: number, solBalance: number) => {
+      const ethUsd = prices.ethereum.usd * ethBalance;
+      const solUsd = prices.solana.usd * solBalance;
+      return formatDollar(ethUsd + solUsd);
+    },
+    [prices]
+  );
 
   const width = Dimensions.get("window").width * 0.6;
-  const renderItem = ({ item, index }) => {
-    if (priceAndBalanceLoading) {
+  const renderItem = useCallback(
+    ({ item, index }) => {
+      if (priceAndBalanceLoading) {
+        return (
+          <WalletSkeletonContainer
+            isActiveAccount={false}
+            isLast={index === accounts.length - 1}
+          >
+            <Skeleton
+              height={35}
+              colors={[
+                theme.colors.grey,
+                theme.colors.dark,
+                theme.colors.dark,
+                theme.colors.grey,
+              ]}
+              width={width}
+            />
+            <Skeleton
+              height={35}
+              colors={[
+                theme.colors.grey,
+                theme.colors.dark,
+                theme.colors.dark,
+                theme.colors.grey,
+              ]}
+              width={50}
+            />
+          </WalletSkeletonContainer>
+        );
+      }
+
+      const balance = calculateTotalPrice(
+        item.walletDetails.ethereum.balance,
+        item.walletDetails.solana.balance
+      );
       return (
-        <WalletSkeletonContainer
-          isActiveAccount={false}
+        <WalletContainer
+          onPress={() =>
+            // TODO: Refactor. This is an tech debt from redux refactor
+            setNextActiveAccounts(index)
+          }
+          isActiveAccount={item.isActiveAccount}
           isLast={index === accounts.length - 1}
         >
-          <Skeleton
-            height={35}
-            colors={[
-              theme.colors.grey,
-              theme.colors.dark,
-              theme.colors.dark,
-              theme.colors.grey,
-            ]}
-            width={width}
-          />
-          <Skeleton
-            height={35}
-            colors={[
-              theme.colors.grey,
-              theme.colors.dark,
-              theme.colors.dark,
-              theme.colors.grey,
-            ]}
-            width={50}
-          />
-        </WalletSkeletonContainer>
+          <AccountDetails>
+            <AccountTitle>{item.accountName}</AccountTitle>
+            <PriceText>{balance}</PriceText>
+          </AccountDetails>
+          <EditIconContainer
+            onPress={() => {
+              router.push({
+                pathname: ROUTES.accountModal,
+                params: {
+                  ethAddress: item.walletDetails.ethereum.address,
+                  solAddress: item.walletDetails.solana.address,
+                  balance,
+                },
+              });
+            }}
+          >
+            <EditIcon width={20} height={20} fill={theme.colors.white} />
+          </EditIconContainer>
+        </WalletContainer>
       );
-    }
+    },
+    [
+      calculateTotalPrice,
+      setNextActiveAccounts,
+      priceAndBalanceLoading,
+      accounts.length,
+      theme,
+    ]
+  );
 
-    const balance = calculateTotalPrice(
-      item.walletDetails.ethereum.balance,
-      item.walletDetails.solana.balance
-    );
-    return (
-      <WalletContainer
-        onPress={() =>
-          // TODO: Refactor. This is an tech debt from redux refactor
-          setNextActiveAccounts(index)
-        }
-        isActiveAccount={item.isActiveAccount}
-        isLast={index === accounts.length - 1}
-      >
-        <AccountDetails>
-          <AccountTitle>{item.accountName}</AccountTitle>
-          <PriceText>{balance}</PriceText>
-        </AccountDetails>
-        <EditIconContainer
-          onPress={() => {
-            router.push({
-              pathname: ROUTES.accountModal,
-              params: {
-                ethAddress: item.walletDetails.ethereum.address,
-                solAddress: item.walletDetails.solana.address,
-                balance,
-              },
-            });
-          }}
-        >
-          <EditIcon width={20} height={20} fill={theme.colors.white} />
-        </EditIconContainer>
-      </WalletContainer>
-    );
-  };
+  const fetchBalances = useCallback(async () => {
+    setPriceAndBalanceLoading(true);
+    try {
+      const { ethereum, solana } = await compileAddressesConcurrently(
+        ethAccounts,
+        solAccounts
+      );
+      if (ethereum && solana) {
+        setAccounts(
+          compileInactiveAddresses(
+            ethereum,
+            solana,
+            activeEthAddress.address,
+            activeSolAddress.address
+          )
+        );
+      }
+    } catch (err) {
+      console.error("Failed fetching balance:", err);
+    } finally {
+      setPriceAndBalanceLoading(false);
+    }
+  }, [
+    ethAccounts,
+    solAccounts,
+    activeEthAddress,
+    activeSolAddress,
+    activeEthIndex,
+    activeSolIndex,
+  ]);
+
+  const debouncedFetchBalances = useMemo(
+    () => debounce(fetchBalances, 300),
+    [fetchBalances]
+  );
 
   useEffect(() => {
-    const fetchBalances = async () => {
-      setPriceAndBalanceLoading(true);
-      try {
-        const { ethereum, solana } = await compileAddressesConcurrently(
-          ethAccounts,
-          solAccounts
-        );
-        if (ethereum && solana) {
-          setAccounts(
-            compileInactiveAddresses(
-              ethereum,
-              solana,
-              activeEthAddress.address,
-              activeSolAddress.address
-            )
-          );
-        }
-      } catch (err) {
-        console.error("Failed fetching balance:", err);
-      } finally {
-        setPriceAndBalanceLoading(false);
-      }
-    };
-    fetchBalances();
-  }, [activeEthAddress, activeSolAddress, ethAccounts, solAccounts]);
+    debouncedFetchBalances();
+    return () => debouncedFetchBalances.cancel();
+  }, [debouncedFetchBalances]);
 
-  const placeholderAmount = ethAccounts.length;
+  const memoizedAccounts = useMemo(
+    () =>
+      priceAndBalanceLoading ? placeholderArr(ethAccounts.length) : accounts,
+    [priceAndBalanceLoading, ethAccounts.length, accounts]
+  );
   return (
     <SafeAreaContainer>
       <ContentContainer>
@@ -412,11 +442,7 @@ const AccountsIndex = () => {
               />
             </WalletPhraseContainer>
           }
-          data={
-            priceAndBalanceLoading
-              ? placeholderArr(placeholderAmount)
-              : accounts
-          }
+          data={memoizedAccounts}
           renderItem={renderItem}
           keyExtractor={(item) =>
             priceAndBalanceLoading ? item.uniqueId : item.id
@@ -434,4 +460,4 @@ const AccountsIndex = () => {
   );
 };
 
-export default AccountsIndex;
+export default memo(AccountsIndex);

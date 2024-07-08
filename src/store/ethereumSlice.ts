@@ -163,25 +163,25 @@ export const ethereumSlice = createSlice({
       state.addresses = [...action.payload];
     },
     depositEthereum: (state, action: PayloadAction<number>) => {
-      state[state.activeIndex].balance += action.payload;
+      state.addresses[state.activeIndex].balance += action.payload;
     },
     withdrawEthereum: (state, action: PayloadAction<number>) => {
-      if (state[state.activeIndex].balance >= action.payload) {
-        state[state.activeIndex].balance -= action.payload;
+      if (state.addresses[state.activeIndex].balance >= action.payload) {
+        state.addresses[state.activeIndex].balance -= action.payload;
       } else {
         console.warn("Not enough Ethereum balance");
       }
     },
     addEthereumTransaction: (state, action: PayloadAction<Transaction>) => {
-      state[state.activeIndex].transactionMetadata.transactions.push(
+      state.addresses[state.activeIndex].transactionMetadata.transactions.push(
         action.payload
       );
     },
     updateEthereumBalance: (state, action: PayloadAction<string>) => {
-      state[state.activeIndex].balance = parseFloat(action.payload);
+      state.addresses[state.activeIndex].balance = parseFloat(action.payload);
     },
     updateEthereumAddresses: (state, action: PayloadAction<AddressState>) => {
-      state[state.activeIndex].address.push(action.payload);
+      state.addresses.push(action.payload);
     },
     updateAccountName: (
       state,
