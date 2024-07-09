@@ -10,7 +10,7 @@ import { debounce } from "lodash";
 import { formatDollar } from "../../../utils/formatDollars";
 import ethService from "../../../services/EthereumService";
 import solanaService from "../../../services/SolanaService";
-import { getPhrase } from "../../../hooks/use-storage-state";
+import { getPhrase } from "../../../hooks/useStorageState";
 import type { RootState } from "../../../store";
 import type { AddressState } from "../../../store/types";
 import type { ThemeType } from "../../../styles/theme";
@@ -373,6 +373,9 @@ const AccountsIndex = () => {
   );
 
   const fetchBalances = useCallback(async () => {
+    // TODO: Need to rethink how to calculate this. Possibly
+    // Have a price and wallet section in redux. Currently
+    // this causes too many re-renders
     setPriceAndBalanceLoading(true);
     try {
       const { ethereum, solana } = await compileAddressesConcurrently(

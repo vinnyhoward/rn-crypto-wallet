@@ -5,7 +5,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
 import * as Clipboard from "expo-clipboard";
-import { savePhrase } from "../../../hooks/use-storage-state";
+import { savePhrase } from "../../../hooks/useStorageState";
 import { ThemeType } from "../../../styles/theme";
 import Button from "../../../components/Button/Button";
 import Bubble from "../../../components/Bubble/Bubble";

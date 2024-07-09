@@ -13,16 +13,13 @@ export const useLoadingState = () => {
     (state: RootState) => state.solana.activeIndex
   );
 
-  const ethLoading = useSelector((state: RootState) =>
-    state.ethereum.addresses.length !== 0
-      ? state.ethereum.addresses[activeEthIndex].status ===
-        GeneralStatus.Loading
-      : false
+  const ethLoading = useSelector(
+    (state: RootState) =>
+      state.ethereum.addresses[activeEthIndex].status === GeneralStatus.Loading
   );
-  const solLoading = useSelector((state: RootState) =>
-    state.solana.addresses.length !== 0
-      ? state.solana.addresses[activeSolIndex].status === GeneralStatus.Loading
-      : false
+  const solLoading = useSelector(
+    (state: RootState) =>
+      state.solana.addresses[activeSolIndex].status === GeneralStatus.Loading
   );
 
   return ethLoading || solLoading;

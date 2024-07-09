@@ -145,6 +145,7 @@ export const solanaSlice = createSlice({
   reducers: {
     saveSolanaAddresses: (state, action: PayloadAction<AddressState[]>) => {
       state.addresses = [...action.payload];
+      state.activeIndex = 0;
     },
     depositSolana: (state, action: PayloadAction<number>) => {
       state.addresses[state.activeIndex].balance += action.payload;

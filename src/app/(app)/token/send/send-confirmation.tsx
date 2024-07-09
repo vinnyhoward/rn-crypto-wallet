@@ -16,7 +16,7 @@ import { capitalizeFirstLetter } from "../../../../utils/capitalizeFirstLetter";
 import Button from "../../../../components/Button/Button";
 import ethService from "../../../../services/EthereumService";
 import solanaService from "../../../../services/SolanaService";
-import { getPhrase } from "../../../../hooks/use-storage-state";
+import { getPhrase } from "../../../../hooks/useStorageState";
 import type { RootState, AppDispatch } from "../../../../store";
 import { sendEthereumTransaction } from "../../../../store/ethereumSlice";
 import { sendSolanaTransaction } from "../../../../store/solanaSlice";
@@ -137,6 +137,7 @@ export default function SendConfirmationPage() {
           seedPhrase,
           derivationPath
         );
+
         const result = await dispatch(
           sendEthereumTransaction({
             address,

@@ -161,6 +161,7 @@ export const ethereumSlice = createSlice({
   reducers: {
     saveEthereumAddresses: (state, action: PayloadAction<AddressState[]>) => {
       state.addresses = [...action.payload];
+      state.activeIndex = 0;
     },
     depositEthereum: (state, action: PayloadAction<number>) => {
       state.addresses[state.activeIndex].balance += action.payload;

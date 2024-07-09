@@ -18,7 +18,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import type { RootState } from "../../store";
 import LeftIcon from "../../assets/svg/left-arrow.svg";
 import CloseIcon from "../../assets/svg/close.svg";
-import { getPhrase, clearStorage } from "../../hooks/use-storage-state";
+import { getPhrase, clearStorage } from "../../hooks/useStorageState";
 import { clearPersistedState } from "../../store";
 import { toastConfig } from "../../config/toast";
 import Header from "../../components/Header/Header";

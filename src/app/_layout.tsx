@@ -16,7 +16,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import styled, { ThemeProvider } from "styled-components/native";
 import * as SplashScreen from "expo-splash-screen";
-import { clearStorage } from "../hooks/use-storage-state";
+import { clearStorage } from "../hooks/useStorageState";
 import Theme from "../styles/theme";
 import { store, persistor, clearPersistedState } from "../store";
 import { resetSolanaState } from "../store/solanaSlice";

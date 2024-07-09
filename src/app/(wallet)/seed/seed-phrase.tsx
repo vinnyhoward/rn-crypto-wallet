@@ -11,7 +11,7 @@ import Button from "../../../components/Button/Button";
 import Bubble from "../../../components/Bubble/Bubble";
 import { ROUTES } from "../../../constants/routes";
 import { Title, Subtitle } from "../../../components/Styles/Text.styles";
-import { getPhrase } from "../../../hooks/use-storage-state";
+import { getPhrase } from "../../../hooks/useStorageState";
 
 const SafeAreaContainer = styled(SafeAreaView)<{ theme: ThemeType }>`
   flex: 1;
@@ -128,7 +128,7 @@ export default function Page() {
         <ButtonContainer>
           <Button
             color={theme.colors.white}
-            backgroundColor={theme.colors.primary}
+            linearGradient={theme.colors.primaryLinearGradient}
             onPress={() =>
               router.push({
                 pathname: ROUTES.confirmSeedPhrase,

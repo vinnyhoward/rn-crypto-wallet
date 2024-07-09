@@ -68,7 +68,6 @@ This project leverages a modern tech stack for building and managing a cross-pla
 
 ---
 
-
 ## Features[![](assets/pin.svg)](#features)
 
 ### Wallet Management
@@ -103,20 +102,44 @@ This project leverages a modern tech stack for building and managing a cross-pla
 
 ### Security
 
-This application prioritizes security while still under development:
+#### Encryption and Secure Storage
+- **Advanced Encryption Standard (AES)**: Utilizes AES encryption, the gold standard in symmetric cryptography, to secure sensitive data.
+- **Secure Local Storage**: Leverages React Native's `SecureStore` module, which uses Keychain Services on iOS and KeyStore on Android, providing OS-level security for stored data.
 
-- **Secure Storage**: Sensitive data such as wallet phrases and keys are encrypted using advanced encryption methods before being securely stored locally on the device. This uses React Native's `SecureStore` module to ensure data protection.
-- **Data Encryption**: Utilizes `aesEncryptHelpers` for robust encryption and decryption of wallet phrases, enhancing data confidentiality.
-- **Secure Communication**: All network communications are secured and wallet interactions do not transmit private keys over the network.
-- **Local Storage Safety**: For platforms supporting web capabilities, local storage is used as a fallback, with appropriate error handling to manage data securely.
-- **Redundant Safety Checks**: The app includes multiple checks to clear sensitive data securely to prevent data leakage.
-- **Future Security Enhancements**: Plans include integrating biometric authentication to add an extra layer of security.
+#### Cryptographic Best Practices
+- **Password-Based Key Derivation Function 2 (PBKDF2)**:
+  - Implements PBKDF2 for key derivation, significantly increasing resistance to brute-force attacks.
+  - Utilizes a high iteration count (configurable up to 100,000) to enhance security, balanced with performance considerations.
+- **Salted Hashes**: Employs unique salts for each encryption operation, preventing rainbow table attacks and enhancing overall security.
+
+#### Key Security
+- **Unique Key Generation**: Implements a secure system for generating and storing unique encryption keys for each user, significantly enhancing the protection of sensitive data.
+- **Advanced Key Derivation**: Utilizes key derivation functions to ensure that each user's encryption key is both strong and unique.
+
+#### Wallet Security
+- **Non-Custodial Design**: Users maintain full control of their private keys, which are never transmitted or stored unencrypted.
+- **Mnemonic Phrase Protection**: Recovery phrases are encrypted before storage, ensuring they remain secure even if the device is compromised.
+
+#### Code-Level Security Measures
+- **Type Safety**: Utilizes TypeScript to prevent common programming errors and enhance code reliability.
+- **Separation of Concerns**: Cryptographic operations are isolated in dedicated modules, facilitating code audits and reducing the risk of security vulnerabilities.
+- **Error Handling**: Implements comprehensive error handling to prevent information leakage through error messages.
+
+#### Future Security Enhancements (In Development)
+- **Biometric Authentication**: Plans to integrate fingerprint and face recognition for an additional layer of security.
+- **Secure Enclave Integration**: Future updates aim to leverage hardware-based key storage on supported devices for enhanced private key protection.
+- **Transaction Signing**: Upcoming feature to allow offline transaction signing, further securing the transaction process.
+
+#### Security Considerations for Users
+- **Testnet Focus**: Currently designed for testnet use only. Users are advised against using real cryptocurrency with this wallet until a full security audit is completed.
+- **Regular Updates**: The development team is committed to regular security updates and patch releases to address any discovered vulnerabilities promptly.
+
+BMO Wallet's security architecture is designed to meet and exceed industry standards, providing a robust foundation for managing digital assets securely. While we strive for the highest security standards, users should always follow best practices in cryptocurrency management, including safeguarding recovery phrases and regularly updating the application.
 
 
 <div align="right">[ <a href="#introduction">↑ Back to top ↑</a> ]</div>
 
 ---
-
 
 ## Quick Start[![](assets/pin.svg)](#quick-start)
 
@@ -156,8 +179,6 @@ EXPO_PUBLIC_ALCHEMY_SOL_URL=https://solana-devnet.g.alchemy.com/v2/
 EXPO_PUBLIC_ALCHEMY_SOL_API_KEY=YOUR_ALCHEMY_KEY
 
 EXPO_PUBLIC_ENVIRONMENT=development
-EXPO_PUBLIC_PASSWORD=
-EXPO_PUBLIC_SALT=
 
 ```
 
@@ -189,25 +210,57 @@ expo start
 
 ---
 
-
 ## Roadmap [![](assets/pin.svg)](#roadmap)
 
-- [x] Confirmation screen
-- [ ] Animations: 
-  - [x] Confirmation screen
-  - [ ] Splash screen
-  - [x] Create wallet screen
-- [x] Improve redux structure 
-- [ ] Pagination
-- [ ] Add profit/loss UI for assets purchased
-- [ ] Adding Polygon Blockchain
-- [ ] Listing NFT transactions for all blockchains
-- [ ] Implement biometric authentication to add an additional layer of security
+BMO Wallet is continuously evolving. Here's our exciting roadmap for future developments:
+
+### Near Term Goals
+
+#### Bug Fixes
+- [ ] Account list causes too many re-renders
+
+#### Enhanced Security
+- [x] Implement confirmation screen for transactions
+- [ ] Integrate biometric authentication (fingerprint and face recognition)
+- [x] Remove hardcoded environment variables `EXPO_PUBLIC_PASSWORD` and `EXPO_PUBLIC_SALT`
+- [x] Implement secure key generation and storage unique to each user
+  - Utilizes advanced encryption methods for key derivation
+  - Ensures each user has a unique, securely stored encryption key
+- [ ] Add option for 2-factor authentication (2FA)
+
+#### User Experience Improvements
+- [ ] Animations and Transitions: 
+  - [x] Enhance confirmation screen
+  - [ ] Create engaging splash screen
+  - [x] Improve create wallet screen animations
+  - [ ] Add subtle animations for balance updates and transactions
+- [x] Refactor and optimize Redux structure for better performance
+- [ ] Implement light mode and customizable themes
+
+#### Feature Enhancements
+- [ ] Multi-chain pagination support for transaction history
+- [ ] Add profit/loss tracking UI for purchased assets
+- [ ] Implement real-time price alerts and notifications
+
+### Long Term Goals
+
+#### Blockchain Expansion
+- [ ] Integrate Polygon blockchain support
+- [ ] Add support for Bitcoin (BTC) transactions
+- [ ] Explore integration with layer-2 solutions (e.g., Optimism, Arbitrum)
+
+#### Advanced Features
+- [ ] Implement NFT support:
+  - [ ] List NFT transactions across all supported blockchains
+  - [ ] Add NFT gallery view and management features
+
+This roadmap is a living document and will evolve based on technological advancements, user feedback, and market trends.
+
+Your feedback and suggestions are always welcome as I continue to improve and expand BMO Wallet!
 
 <div align="right">[ <a href="#introduction">↑ Back to top ↑</a> ]</div>
 
 ---
-
 
 ## License [![](assets/pin.svg)](#license)
 
@@ -216,7 +269,6 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <div align="right">[ <a href="#introduction">↑ Back to top ↑</a> ]</div>
 
 ---
-
 
 ## Contact [![](assets/pin.svg)](#contact)
 
@@ -227,7 +279,6 @@ Project Link: [https://github.com/vinnyhoward/rn-crypto-wallet](https://github.c
 <div align="right">[ <a href="#introduction">↑ Back to top ↑</a> ]</div>
 
 ---
-
 
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/vinnyhoward/

@@ -23,7 +23,7 @@ import type { AddressState } from "../../../store/types";
 import type { AppDispatch } from "../../../store";
 import Button from "../../../components/Button/Button";
 import { ROUTES } from "../../../constants/routes";
-import { savePhrase } from "../../../hooks/use-storage-state";
+import { savePhrase } from "../../../hooks/useStorageState";
 import { Title, Subtitle } from "../../../components/Styles/Text.styles";
 import {
   ErrorTextCenter,

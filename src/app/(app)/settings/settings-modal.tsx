@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import styled, { useTheme } from "styled-components/native";
 import { clearPersistedState } from "../../../store";
-import { clearStorage } from "../../../hooks/use-storage-state";
+import { clearStorage } from "../../../hooks/useStorageState";
 import { ROUTES } from "../../../constants/routes";
 import { ThemeType } from "../../../styles/theme";
 import ClearIcon from "../../../assets/svg/clear.svg";
