@@ -24,17 +24,29 @@
 
 ## Introduction[![](assets/pin.svg)](#introduction)
 
-This project is a React Native application for managing cryptocurrency transactions and balances. It utilizes the Expo framework, the Alchemy API for blockchain interaction, and is built with a focus on Ethereum and Solana cryptocurrencies.
+BMO Wallet is a cutting-edge, multi-chain cryptocurrency wallet built with React Native. This robust mobile application offers a comprehensive suite of features for managing digital assets across multiple blockchains, with a current focus on Ethereum and Solana networks.
+
+### Key Features:
+- **Multi-Chain Support**: Seamlessly manage Ethereum and Solana assets within a single, user-friendly interface.
+- **Wallet Management**: Create new wallets, import existing ones, and manage multiple accounts with ease.
+- **Transaction Handling**: Send, receive, and track transactions across supported blockchains.
+- **Balance and Portfolio Tracking**: View real-time balances and monitor your overall crypto portfolio.
+- **Security**: Implements encryption and secure storage techniques to protect your digital assets.
+- **QR Code Integration**: Simplify address sharing and transaction processes with built-in QR code functionality.
+
+Leveraging the power of Expo framework and Alchemy API, BMO Wallet provides a smooth, responsive user experience while ensuring reliable blockchain interactions. Whether you're a crypto enthusiast or a developer looking to explore mobile wallet implementation, BMO Wallet offers a feature-rich platform for managing digital currencies.
 
 ### Testnet-Only Application
-This application is designed solely for interaction with the Ethereum Sepolia testnet and the Solana Devnet. **Do not use real wallets or any wallets containing actual cryptocurrencies with this app.** Ensure you use wallet addresses generated within this app or other testnet-specific wallets that hold no real-world value.
+**Important**: BMO Wallet is currently designed for use with the Ethereum Sepolia testnet and Solana Devnet only. It is not intended for use with real cryptocurrencies or on mainnet networks. This testnet focus allows for safe experimentation and development without risking actual digital assets.
 
-#### Testnet Resources
-- **Ethereum (Sepolia Testnet)**: Obtain free Sepolia testnet ETH from the [Sepolia Faucet](https://www.infura.io/faucet/sepolia).
-- **Solana (Devnet)**: Acquire free SOL tokens from the [Solana Devnet Faucet](https://faucet.solana.com/).
+#### Testnet Resources:
+- **Ethereum (Sepolia Testnet)**: Obtain free test ETH from the [Sepolia Faucet](https://www.infura.io/faucet/sepolia).
+- **Solana (Devnet)**: Acquire free test SOL from the [Solana Devnet Faucet](https://faucet.solana.com/).
 
-### Network Configuration Assurance
-Ensure the `.env` variables are set to connect only to these testnet environments to prevent any real cryptocurrency transactions. Always use testnet addresses when interacting with this application.
+### Development Focus
+BMO Wallet serves as both a functional crypto wallet and a showcase of modern mobile development practices. It demonstrates the integration of blockchain technologies with React Native, emphasizing clean code architecture, robust state management with Redux, and a strong focus on security.
+
+As we continue to evolve BMO Wallet, we're committed to expanding its capabilities, enhancing security features, and potentially supporting additional blockchain networks in the future.
 
 ## Table of Contents[![](assets/pin.svg)](#table-of-contents)
 - [Tech Stack](#tech-stack)
@@ -134,9 +146,6 @@ This project leverages a modern tech stack for building and managing a cross-pla
 - **Testnet Focus**: Currently designed for testnet use only. Users are advised against using real cryptocurrency with this wallet until a full security audit is completed.
 - **Regular Updates**: The development team is committed to regular security updates and patch releases to address any discovered vulnerabilities promptly.
 
-BMO Wallet's security architecture is designed to meet and exceed industry standards, providing a robust foundation for managing digital assets securely. While we strive for the highest security standards, users should always follow best practices in cryptocurrency management, including safeguarding recovery phrases and regularly updating the application.
-
-
 <div align="right">[ <a href="#introduction">↑ Back to top ↑</a> ]</div>
 
 ---
@@ -172,13 +181,11 @@ yarn install
 ```bash
 EXPO_PUBLIC_ALCHEMY_ETH_KEY=YOUR_ALCHEMY_KEY
 EXPO_PUBLIC_ALCHEMY_ETH_URL=https://eth-sepolia.g.alchemy.com/v2/
-
 EXPO_PUBLIC_ALCHEMY_SOCKET_URL=wss://eth-sepolia.g.alchemy.com/v2/
-
 EXPO_PUBLIC_ALCHEMY_SOL_URL=https://solana-devnet.g.alchemy.com/v2/
 EXPO_PUBLIC_ALCHEMY_SOL_API_KEY=YOUR_ALCHEMY_KEY
-
 EXPO_PUBLIC_ENVIRONMENT=development
+
 
 ```
 
