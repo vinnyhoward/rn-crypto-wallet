@@ -3,7 +3,7 @@
 <br />
 <div align="center">
   <a>
-    <img src="assets/readme_banner_main.png" alt="Logo" width="100%">
+    <img src="assets/readme_banner.png" alt="Logo" width="100%">
   </a>
 
   <div style="margin-top:20px; margin-bottom:20px;">
