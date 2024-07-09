@@ -24,7 +24,7 @@
 
 ## Introduction[![](assets/pin.svg)](#introduction)
 
-BMO Wallet is a cutting-edge, multi-chain cryptocurrency wallet built with React Native. This robust mobile application offers a comprehensive suite of features for managing digital assets across multiple blockchains, with a current focus on Ethereum and Solana networks.
+BMO Wallet is a multi-chain cryptocurrency wallet built with React Native. This robust mobile application offers a comprehensive suite of features for managing digital assets across multiple blockchains, with a current focus on Ethereum and Solana networks.
 
 ### Key Features:
 - **Multi-Chain Support**: Seamlessly manage Ethereum and Solana assets within a single, user-friendly interface.
