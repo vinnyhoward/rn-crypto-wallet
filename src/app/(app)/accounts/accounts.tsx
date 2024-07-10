@@ -223,7 +223,7 @@ const AccountsIndex = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const [walletCreationLoading, setWalletCreationLoading] = useState(false);
-  const [priceAndBalanceLoading, setPriceAndBalanceLoading] = useState(false);
+  const [priceAndBalanceLoading, setPriceAndBalanceLoading] = useState(true);
   const [accounts, setAccounts] = useState([]);
 
   const createNewWalletPair = useCallback(async () => {
@@ -376,7 +376,6 @@ const AccountsIndex = () => {
     // TODO: Need to rethink how to calculate this. Possibly
     // Have a price and wallet section in redux. Currently
     // this causes too many re-renders
-    setPriceAndBalanceLoading(true);
     try {
       const { ethereum, solana } = await compileAddressesConcurrently(
         ethAccounts,
@@ -406,10 +405,9 @@ const AccountsIndex = () => {
     activeSolIndex,
   ]);
 
-  const debouncedFetchBalances = useMemo(
-    () => debounce(fetchBalances, 300),
-    [fetchBalances]
-  );
+  const debouncedFetchBalances = useMemo(() => {
+    return debounce(fetchBalances, 300);
+  }, [fetchBalances]);
 
   useEffect(() => {
     debouncedFetchBalances();

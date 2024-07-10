@@ -333,6 +333,7 @@ export default function Index() {
   }, [ethBalance, solBalance, ethWalletAddress, solWalletAddress]);
 
   useEffect(() => {
+    // TODO: Sort these somewhere else
     const mergedAndSortedTransactions = [
       ...solTransactions,
       ...ethTransactions,

@@ -91,7 +91,7 @@ This project leverages a modern tech stack for building and managing a cross-pla
 
 | Creating a new wallet | Importing a wallet | Managing your wallet |
 |:---:|:---:|:---:|
-| <img width="200" src="assets/wallet_create.gif" alt="Creating a new wallet"> | <img width="200" src="assets/wallet_import.gif" alt="Importing a wallet"> | <img width="200" src="assets/wallet_management.gif" alt="Managing your wallet"> |
+| <img width="200" src="assets/wallet_create.gif" alt="Creating a new wallet"> | <img width="200" src="assets/wallet_import.gif" alt="Importing a wallet"> | <img width="200" src="assets/wallet_management_alt.gif" alt="Managing your wallet"> |
 
 
 ### Wallet Balance and Transactions
@@ -103,7 +103,7 @@ This project leverages a modern tech stack for building and managing a cross-pla
 
 | Viewing wallet transactions  | Viewing Ethereum balance  | Sending Ethereum |
 |:---:|:---:|:---:|
-| <img width="200" src="assets/networth.gif" alt="Creating a new wallet"> | <img width="200" src="assets/balance.gif" alt="Importing a wallet"> | <img width="200" src="assets/send-alt.gif" alt="Managing your wallet"> |
+| <img width="200" src="assets/networth.gif" alt="Creating a new wallet"> | <img width="200" src="assets/balance.gif" alt="Importing a wallet"> | <img width="200" src="assets/send-alt.gif" alt="Sending Crypto"> |
 
 ### Accessibility Features
 - **QR Code Functionality**: Easily share wallet addresses and send cryptocurrencies via QR codes.
@@ -121,7 +121,6 @@ This project leverages a modern tech stack for building and managing a cross-pla
 #### Cryptographic Best Practices
 - **Password-Based Key Derivation Function 2 (PBKDF2)**:
   - Implements PBKDF2 for key derivation, significantly increasing resistance to brute-force attacks.
-  - Utilizes a high iteration count (configurable up to 100,000) to enhance security, balanced with performance considerations.
 - **Salted Hashes**: Employs unique salts for each encryption operation, preventing rainbow table attacks and enhancing overall security.
 
 #### Key Security
@@ -209,9 +208,6 @@ expo start
 
 `EXPO_PUBLIC_ENVIRONMENT`: Environment setting, e.g., development or production.
 
-`EXPO_PUBLIC_PASSWORD`: Needed for encryption
-
-`EXPO_PUBLIC_SALT`: Needed for encryption
 
 <div align="right">[ <a href="#introduction">↑ Back to top ↑</a> ]</div>
 
@@ -224,7 +220,7 @@ BMO Wallet is continuously evolving. Here's our exciting roadmap for future deve
 ### Near Term Goals
 
 #### Bug Fixes
-- [ ] Account list causes too many re-renders
+- [x] Account list causes too many re-renders
 
 #### Enhanced Security
 - [x] Implement confirmation screen for transactions
