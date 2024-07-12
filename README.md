@@ -46,7 +46,7 @@ Leveraging the power of Expo framework and Alchemy API, BMO Wallet provides a sm
 ### Development Focus
 BMO Wallet serves as both a functional crypto wallet and a showcase of modern mobile development practices. It demonstrates the integration of blockchain technologies with React Native, emphasizing clean code architecture, robust state management with Redux, and a strong focus on security.
 
-As we continue to evolve BMO Wallet, we're committed to expanding its capabilities, enhancing security features, and potentially supporting additional blockchain networks in the future.
+As I continue to evolve BMO Wallet, I'm committed to expanding its capabilities, enhancing security features, and potentially supporting additional blockchain networks in the future. This project represents my ongoing effort to create a robust, user-friendly cryptocurrency wallet that adapts to the ever-changing landscape of blockchain technology.
 
 ## Table of Contents[![](assets/pin.svg)](#table-of-contents)
 - [Tech Stack](#tech-stack)
@@ -225,7 +225,7 @@ BMO Wallet is continuously evolving. Here's our exciting roadmap for future deve
 #### Enhanced Security
 - [x] Implement confirmation screen for transactions
 - [ ] Integrate biometric authentication (fingerprint and face recognition)
-- [x] Remove hardcoded environment variables `EXPO_PUBLIC_PASSWORD` and `EXPO_PUBLIC_SALT`
+- [x] Remove hardcoded environment variables and use dynamic key generation so each user has their own unique key.
 - [x] Implement secure key generation and storage unique to each user
   - Utilizes advanced encryption methods for key derivation
   - Ensures each user has a unique, securely stored encryption key
