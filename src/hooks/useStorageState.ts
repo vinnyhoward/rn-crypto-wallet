@@ -1,3 +1,4 @@
+import { useState, useEffect, useCallback } from "react";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 import {
@@ -62,4 +63,47 @@ export async function clearStorage(): Promise<void> {
 export async function phraseExists(): Promise<boolean> {
   const phrase = await SecureStore.getItemAsync("phrase");
   return phrase !== null;
+}
+
+type StorageValue = string | null;
+
+export function useStorage(
+  key: string
+): [StorageValue, (value: string | null) => Promise<void>, boolean] {
+  const [storageValue, setStorageValue] = useState<StorageValue>(null);
+  const [loading, setLoading] = useState(true);
+
+  const getStorageValue = useCallback(async () => {
+    try {
+      const value = await SecureStore.getItemAsync(key);
+      setStorageValue(value ? JSON.parse(value) : null);
+    } catch (error) {
+      console.error(`Failed to get storage value for key "${key}":`, error);
+      setStorageValue(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [key]);
+
+  useEffect(() => {
+    getStorageValue();
+  }, [getStorageValue]);
+
+  const setStorageItem = useCallback(
+    async (value: string | null) => {
+      try {
+        if (value === null) {
+          await SecureStore.deleteItemAsync(key);
+        } else {
+          await SecureStore.setItemAsync(key, JSON.stringify(value));
+        }
+        setStorageValue(value);
+      } catch (error) {
+        console.error(`Failed to set storage value for key "${key}":`, error);
+      }
+    },
+    [key]
+  );
+
+  return [storageValue, setStorageItem, loading];
 }

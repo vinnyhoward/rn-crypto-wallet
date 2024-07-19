@@ -13,14 +13,6 @@ export enum ConfirmationState {
   Failed = "failed",
 }
 
-// export interface AccountState {
-//   activeAddress: AddressState;
-//   inactiveAddresses: AddressState[];
-//   failedNetworkRequest: boolean;
-//   status: GeneralStatus;
-//   transactionConfirmations: TransactionConfirmation[];
-// }
-
 export interface AddressState {
   accountName: string;
   derivationPath: string;

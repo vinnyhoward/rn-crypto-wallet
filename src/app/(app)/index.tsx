@@ -27,6 +27,7 @@ import { capitalizeFirstLetter } from "../../utils/capitalizeFirstLetter";
 import { truncateWalletAddress } from "../../utils/truncateWalletAddress";
 import { formatDollar, formatDollarRaw } from "../../utils/formatDollars";
 import { placeholderArr } from "../../utils/placeholder";
+import { useStorage } from "../../hooks/useStorageState";
 import PrimaryButton from "../../components/PrimaryButton/PrimaryButton";
 import SendIcon from "../../assets/svg/send.svg";
 import ReceiveIcon from "../../assets/svg/receive.svg";
@@ -39,6 +40,7 @@ import { FETCH_PRICES_INTERVAL } from "../../constants/price";
 import { TICKERS } from "../../constants/tickers";
 import { SafeAreaContainer } from "../../components/Styles/Layout.styles";
 import InfoBanner from "../../components/InfoBanner/InfoBanner";
+import { SNAP_POINTS } from "../../constants/storage";
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
@@ -179,6 +181,8 @@ export default function Index() {
   const [solUsd, setSolUsd] = useState(0);
   const [ethUsd, setEthUsd] = useState(0);
   const [transactions, setTransactions] = useState([]);
+  const [bottomSheetIndex, setBottomSheetIndex, bottomSheetIndexLoading] =
+    useStorage(SNAP_POINTS);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -315,6 +319,10 @@ export default function Index() {
     }
   };
 
+  const handleSheetChange = (index: number) => {
+    setBottomSheetIndex(JSON.stringify(index));
+  };
+
   useEffect(() => {
     fetchAndUpdatePrices();
   }, [dispatch, ethWalletAddress, solWalletAddress]);
@@ -411,64 +419,67 @@ export default function Index() {
           }
         />
       </ContentContainer>
-      <BottomSheet
-        ref={sheetRef}
-        index={1}
-        snapPoints={snapPoints}
-        backgroundStyle={{
-          borderTopLeftRadius: 30,
-          borderTopRightRadius: 30,
-          backgroundColor: theme.colors.lightDark,
-          opacity: 0.98,
-          shadowColor: "#000",
-          shadowOffset: {
-            width: 0,
-            height: 12,
-          },
-          shadowOpacity: 0.58,
-          shadowRadius: 16.0,
+      {!bottomSheetIndexLoading && (
+        <BottomSheet
+          ref={sheetRef}
+          index={parseInt(bottomSheetIndex)}
+          onChange={handleSheetChange}
+          snapPoints={snapPoints}
+          backgroundStyle={{
+            borderTopLeftRadius: 30,
+            borderTopRightRadius: 30,
+            backgroundColor: theme.colors.lightDark,
+            opacity: 0.98,
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 12,
+            },
+            shadowOpacity: 0.58,
+            shadowRadius: 16.0,
 
-          elevation: 24,
-        }}
-        handleIndicatorStyle={{
-          backgroundColor: theme.colors.white,
-        }}
-        handleStyle={{
-          marginTop: 6,
-        }}
-      >
-        <BottomScrollView>
-          <BottomSectionTitle>Assets</BottomSectionTitle>
-          <CryptoInfoCardContainer>
-            <CardView>
-              <CryptoInfoCard
-                onPress={() => router.push(ROUTES.ethDetails)}
-                title="Ethereum"
-                caption={`${ethBalance} ETH`}
-                details={formatDollar(ethUsd)}
-                icon={
-                  <EthereumIcon
-                    width={35}
-                    height={35}
-                    fill={theme.colors.white}
-                  />
-                }
-                hideBackground
-              />
-            </CardView>
-            <CardView>
-              <CryptoInfoCard
-                onPress={() => router.push(ROUTES.solDetails)}
-                title="Solana"
-                caption={`${solBalance} SOL`}
-                details={formatDollar(solUsd)}
-                icon={<SolanaIcon width={25} height={25} fill="#14F195" />}
-                hideBackground
-              />
-            </CardView>
-          </CryptoInfoCardContainer>
-        </BottomScrollView>
-      </BottomSheet>
+            elevation: 24,
+          }}
+          handleIndicatorStyle={{
+            backgroundColor: theme.colors.white,
+          }}
+          handleStyle={{
+            marginTop: 6,
+          }}
+        >
+          <BottomScrollView>
+            <BottomSectionTitle>Assets</BottomSectionTitle>
+            <CryptoInfoCardContainer>
+              <CardView>
+                <CryptoInfoCard
+                  onPress={() => router.push(ROUTES.ethDetails)}
+                  title="Ethereum"
+                  caption={`${ethBalance} ETH`}
+                  details={formatDollar(ethUsd)}
+                  icon={
+                    <EthereumIcon
+                      width={35}
+                      height={35}
+                      fill={theme.colors.white}
+                    />
+                  }
+                  hideBackground
+                />
+              </CardView>
+              <CardView>
+                <CryptoInfoCard
+                  onPress={() => router.push(ROUTES.solDetails)}
+                  title="Solana"
+                  caption={`${solBalance} SOL`}
+                  details={formatDollar(solUsd)}
+                  icon={<SolanaIcon width={25} height={25} fill="#14F195" />}
+                  hideBackground
+                />
+              </CardView>
+            </CryptoInfoCardContainer>
+          </BottomScrollView>
+        </BottomSheet>
+      )}
     </SafeAreaContainer>
   );
 }
