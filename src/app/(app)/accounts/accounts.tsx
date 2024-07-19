@@ -335,10 +335,10 @@ const AccountsIndex = () => {
       );
       return (
         <WalletContainer
-          onPress={() =>
-            // TODO: Refactor. This is an tech debt from redux refactor
-            setNextActiveAccounts(index)
-          }
+          onPress={() => {
+            setNextActiveAccounts(index);
+            router.back();
+          }}
           isActiveAccount={item.isActiveAccount}
           isLast={index === accounts.length - 1}
         >

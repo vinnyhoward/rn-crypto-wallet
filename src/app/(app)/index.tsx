@@ -230,7 +230,7 @@ export default function Index() {
     if (asset.toLowerCase() === TICKERS.ethereum.toLowerCase()) {
       url = `https://sepolia.etherscan.io/tx/${hash}`;
     } else {
-      url = `https://explorer.solana.com/tx/${hash}`;
+      url = `https://explorer.solana.com/?cluster=testnet/tx/${hash}`;
     }
     return url;
   };
