@@ -422,7 +422,7 @@ export default function Index() {
       {!bottomSheetIndexLoading && (
         <BottomSheet
           ref={sheetRef}
-          index={parseInt(bottomSheetIndex)}
+          index={bottomSheetIndex !== null ? parseInt(bottomSheetIndex) : 1}
           onChange={handleSheetChange}
           snapPoints={snapPoints}
           backgroundStyle={{
