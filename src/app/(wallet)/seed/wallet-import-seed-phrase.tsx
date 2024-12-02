@@ -210,7 +210,6 @@ export default function Page() {
             transactionConfirmations: [],
           };
         });
-
       await savePhrase(JSON.stringify(phraseTextValue));
 
       dispatch(saveEthereumAddresses(transformedActiveEthAddresses));
