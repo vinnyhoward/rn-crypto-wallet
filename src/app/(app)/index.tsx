@@ -41,6 +41,7 @@ import { TICKERS } from "../../constants/tickers";
 import { SafeAreaContainer } from "../../components/Styles/Layout.styles";
 import InfoBanner from "../../components/InfoBanner/InfoBanner";
 import { SNAP_POINTS } from "../../constants/storage";
+import Didcomm from "../../../native-modules/didcomm";
 
 const ContentContainer = styled.View<{ theme: ThemeType }>`
   flex: 1;
@@ -348,6 +349,19 @@ export default function Index() {
     ].sort((a, b) => b.blockTime - a.blockTime);
     setTransactions(mergedAndSortedTransactions);
   }, [solTransactions, ethTransactions, ethWalletAddress, solWalletAddress]);
+
+  useEffect(() => {
+    const initDidcomm = async () => {
+      try {
+        const result = await Didcomm.helloWorld();
+        console.log("result:", result);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    initDidcomm();
+  }, []); // Empty dependency array means this runs once on mount
 
   return (
     <SafeAreaContainer>
