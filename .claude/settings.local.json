@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx expo:*)",
+      "Bash(npm view:*)",
+      "Bash(node:*)",
+      "Bash(npx tsc:*)"
+    ],
+    "deny": []
+  }
+}

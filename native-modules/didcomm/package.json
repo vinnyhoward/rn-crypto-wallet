@@ -1,0 +1,12 @@
+{
+    "name": "didcomm-sdk",
+    "version": "0.1.0",
+    "description": "DIDComm SDK for React Native",
+    "main": "index.ts",
+    "author": "Vince Howard",
+    "license": "MIT",
+    "peerDependencies": {
+      "react": "*",
+      "react-native": "*"
+    }
+  }

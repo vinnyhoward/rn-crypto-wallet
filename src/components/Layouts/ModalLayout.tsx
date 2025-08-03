@@ -30,6 +30,7 @@ const ModalLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <IconTouch onPress={() => router.back()}>
           <CloseIcon width={25} height={25} fill={theme.colors.white} />
         </IconTouch>
+      </TopBar>
       {children}
     </ModalView>
   );

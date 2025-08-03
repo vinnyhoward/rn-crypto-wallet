@@ -61,7 +61,7 @@ interface ButtonProps {
   color?: string;
   backgroundColor?: string;
   loading?: boolean;
-  linearGradient?: string[];
+  linearGradient?: readonly [string, string, ...string[]];
 }
 
 const Button: React.FC<ButtonProps> = ({

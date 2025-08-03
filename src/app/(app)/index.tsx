@@ -361,7 +361,7 @@ export default function Index() {
     };
 
     initDidcomm();
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
   return (
     <SafeAreaContainer>
