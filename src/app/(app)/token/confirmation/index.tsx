@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import styled, { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
 import { View } from "moti";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../../../../hooks/redux";
 import { ThemeType } from "../../../../styles/theme";
 import { LinearGradientBackground } from "../../../../components/Styles/Gradient";
 import Loader from "../../../../components/Loader/CleanArcSpinner";
@@ -74,7 +74,7 @@ const LoaderContainer = styled.View<{ theme: ThemeType }>`
 
 export default function Confirmation() {
   const theme = useTheme();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const { txHash, blockchain } = useLocalSearchParams();
 

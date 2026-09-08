@@ -435,6 +435,7 @@ export default function Index() {
       </ContentContainer>
       {!bottomSheetIndexLoading && (
         <BottomSheet
+        enableDynamicSizing={false}
           ref={sheetRef}
           index={bottomSheetIndex !== null ? parseInt(bottomSheetIndex) : 1}
           onChange={handleSheetChange}

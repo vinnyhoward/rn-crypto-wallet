@@ -113,7 +113,7 @@ export default function AppLayout() {
               headerTransparent: true,
               headerTitle: "",
               gestureEnabled: true,
-              headerRight: null,
+              headerRight: () => null,
               headerLeft: () => (
                 <IconTouchContainer onPress={() => router.back()}>
                   <LeftIcon
@@ -132,7 +132,7 @@ export default function AppLayout() {
               headerTransparent: true,
               gestureEnabled: true,
               presentation: "modal",
-              headerRight: null,
+              headerRight: () => null,
               headerLeft: () => (
                 <IconTouchContainer onPress={() => router.back()}>
                   <CloseIcon
@@ -152,8 +152,8 @@ export default function AppLayout() {
               headerTitle: "",
               gestureEnabled: true,
               presentation: "modal",
-              headerLeft: null,
-              headerRight: null,
+              headerLeft: () => null,
+              headerRight: () => null,
               header: () => null,
             }}
           />
@@ -168,7 +168,7 @@ export default function AppLayout() {
                 color: theme.colors.white,
               },
               presentation: "modal",
-              headerRight: null,
+              headerRight: () => null,
               headerLeft: () => (
                 <IconTouchContainer onPress={() => router.back()}>
                   <LeftIcon width={25} height={25} fill={theme.colors.white} />
@@ -184,7 +184,7 @@ export default function AppLayout() {
               headerTitle: "",
               gestureEnabled: true,
               presentation: "modal",
-              headerRight: null,
+              headerRight: () => null,
               headerLeft: () => (
                 <IconTouchContainer onPress={() => router.back()}>
                   <LeftIcon
@@ -204,7 +204,7 @@ export default function AppLayout() {
               headerTitle: "",
               gestureEnabled: true,
               presentation: "modal",
-              headerRight: null,
+              headerRight: () => null,
               headerLeft: () => (
                 <IconTouchContainer onPress={() => router.back()}>
                   <CloseIcon
@@ -223,7 +223,7 @@ export default function AppLayout() {
               headerTransparent: true,
               headerTitle: "",
               gestureEnabled: true,
-              headerRight: null,
+              headerRight: () => null,
               headerLeft: () => (
                 <IconTouchContainer onPress={() => router.back()}>
                   <CloseIcon width={25} height={25} fill={theme.colors.white} />
@@ -238,8 +238,8 @@ export default function AppLayout() {
               headerTransparent: true,
               gestureEnabled: true,
               presentation: "modal",
-              headerLeft: null,
-              headerRight: null,
+              headerLeft: () => null,
+              headerRight: () => null,
             }}
           />
           <Stack.Screen
@@ -253,7 +253,7 @@ export default function AppLayout() {
                 fontSize: 18,
               },
               gestureEnabled: true,
-              headerRight: null,
+              headerRight: () => null,
               headerLeft: () => (
                 <IconTouchContainer onPress={() => router.back()}>
                   <LeftIcon

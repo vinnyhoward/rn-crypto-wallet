@@ -12,8 +12,8 @@ export type ThemeType = {
     error: string;
     ethereum: string;
     solana: string;
-    primaryLinearGradient: string[];
-    secondaryLinearGradient: string[];
+    primaryLinearGradient: [string, string, ...string[]];
+    secondaryLinearGradient: [string, string, ...string[]];
   };
   fonts: {
     families: {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import styled, { useTheme } from "styled-components/native";

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Platform } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { useLocalSearchParams, router, useNavigation } from "expo-router";
-import { StackActions } from "@react-navigation/native";
+import { StackActions } from "expo-router/react-navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { Chains } from "../../../../types";

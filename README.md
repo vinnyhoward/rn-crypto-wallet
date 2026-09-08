@@ -154,9 +154,9 @@ This project leverages a modern tech stack for building and managing a cross-pla
 ### Prerequisites
 
 Before you begin, ensure you have the following installed:
-- Node.js (v14.x or later)
-- Yarn (v1.22.x or later)
-- Expo CLI (`npm install -g expo-cli`)
+- Node.js 22 LTS (22.13 or later; `.nvmrc` selects Node 22)
+- Yarn 4.18.0, selected by `packageManager` through Corepack
+- Use the project-local Expo CLI through `yarn expo` or `yarn start`
 
 ### Getting Started
 
@@ -172,10 +172,12 @@ cd react-native-crypto-wallet
 2. Install dependencies:
 
 ```bash
-yarn install
+nvm use
+corepack enable
+yarn install --immutable
 ```
 
-3. Set up environment variables. Rename .env.example to .env and update the following keys with appropriate values:
+3. Set up environment variables. Copy .env.example to .env and update the following keys with appropriate values:
 
 ```bash
 EXPO_PUBLIC_ALCHEMY_ETH_KEY=YOUR_ALCHEMY_KEY
@@ -191,8 +193,10 @@ EXPO_PUBLIC_ENVIRONMENT=development
 4. Start the development server:
 
 ```bash
-expo start
+yarn start
 ```
+
+Run `yarn typecheck`, `yarn test`, and `yarn doctor` to validate changes. See [the dependency migration report](DEPENDENCY_UPGRADE.md) for the Expo 57 migration, remaining audit advisories, and native device checks.
 
 ### Environment Variables
 

@@ -68,3 +68,7 @@ android/local.properties
 .cxx/
 *.keystore
 !debug.keystore
+
+# Yarn
+# Machine-local Yarn installation state
+.yarn/install-state.gz

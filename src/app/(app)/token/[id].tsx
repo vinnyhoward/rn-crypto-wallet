@@ -433,6 +433,7 @@ export default function Index() {
         </ContentContainer>
       </ScrollView>
       <BottomSheet
+        enableDynamicSizing={false}
         ref={sheetRef}
         index={0}
         snapPoints={snapPoints}

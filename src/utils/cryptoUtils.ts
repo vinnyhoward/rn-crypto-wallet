@@ -1,4 +1,5 @@
-import CryptoES from "crypto-es";
+import { AES, PBKDF2, WordArray, Hex, Utf8 } from "crypto-es";
+import { Buffer } from "buffer";
 import * as Crypto from "expo-crypto";
 import { PBKDF2_ITERATIONS } from "../constants/crypto";
 
@@ -24,14 +25,14 @@ export const encryptData = async (
   const salt = await Crypto.getRandomBytesAsync(16);
   const iterations = PBKDF2_ITERATIONS;
 
-  const derivedKey = CryptoES.PBKDF2(key, CryptoES.lib.WordArray.create(salt), {
+  const derivedKey = PBKDF2(key, WordArray.create(salt), {
     keySize: 256 / 32,
     iterations,
   });
 
   const iv = await Crypto.getRandomBytesAsync(16);
-  const encrypted = CryptoES.AES.encrypt(text, derivedKey, {
-    iv: CryptoES.lib.WordArray.create(iv),
+  const encrypted = AES.encrypt(text, derivedKey, {
+    iv: WordArray.create(iv),
   });
 
   return {
@@ -48,16 +49,16 @@ export const decryptData = async (
 ): Promise<string> => {
   const { cipher, iv, salt, iterations } = encryptedData;
 
-  const derivedKey = CryptoES.PBKDF2(key, CryptoES.enc.Hex.parse(salt), {
+  const derivedKey = PBKDF2(key, Hex.parse(salt), {
     keySize: 256 / 32,
     iterations,
   });
 
-  const decrypted = CryptoES.AES.decrypt(cipher, derivedKey, {
-    iv: CryptoES.enc.Hex.parse(iv),
+  const decrypted = AES.decrypt(cipher, derivedKey, {
+    iv: Hex.parse(iv),
   });
 
-  return decrypted.toString(CryptoES.enc.Utf8);
+  return decrypted.toString(Utf8);
 };
 
 export const generateKeyAndEncryptData = async (

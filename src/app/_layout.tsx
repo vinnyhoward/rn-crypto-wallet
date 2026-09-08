@@ -1,11 +1,3 @@
-// Inject node globals into React Native global scope.
-global.Buffer = require("buffer").Buffer;
-
-// @ts-ignore
-global.location = {
-  protocol: "file:",
-};
-
 import "react-native-reanimated";
 import "react-native-gesture-handler";
 
@@ -105,7 +97,7 @@ export default function RootLayout() {
                   headerTitleStyle: {
                     color: "transparent",
                   },
-                  headerLeft: null,
+                  headerLeft: () => null,
                 }}
               />
               <Stack.Screen

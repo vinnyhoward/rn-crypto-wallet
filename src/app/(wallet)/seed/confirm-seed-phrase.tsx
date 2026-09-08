@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Dimensions, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import styled from "styled-components/native";
 import { useTheme } from "styled-components";
