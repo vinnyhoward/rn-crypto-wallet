@@ -46,7 +46,7 @@ the repository. Yarn's generated installation state is no longer tracked.
   typed thunk dispatch. Fixed an existing unclosed TopBar JSX element.
 - Merged onto the SDK 52 line already on `main`: kept its `expo run:*` scripts,
   app identifiers, Android permissions, dev-launcher plugin, committed native
-  project folders, and the `native-modules/didcomm` sources, and added
+  project folders, and added
   `expo-dev-client` at the SDK 57 version. Dropped `newArchEnabled` from app.json
   because the SDK 57 config schema rejects it (the New Architecture is always on).
 - Kept the project's previous non-strict TypeScript behavior explicitly because
@@ -94,9 +94,7 @@ The audit is not clean, and this dependency audit is not a full wallet security 
 Native Xcode/Gradle compilation and simulator/device interaction were not run.
 The committed `ios/` and `android/` projects and `ios/Podfile.lock` still reflect
 the SDK 52 / React Native 0.76 prebuild, so run `npx expo prebuild --clean`
-before building. The `native-modules/didcomm` sources are not referenced by
-either native project, so the home screen's `Didcomm.helloWorld()` call currently
-rejects with its linking error, which is caught and logged.
+before building.
 Create a fresh native development build for this SDK, then verify wallet import
 and unlock with existing data, biometrics, camera permissions and QR scanning,
 bottom-sheet gestures/snap positions, safe areas, and transaction confirmation
