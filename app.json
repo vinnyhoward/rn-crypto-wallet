@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "rn-crypto-wallet",
+    "name": "Otto Wallet",
     "slug": "rn-crypto-wallet",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -35,15 +35,15 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "cameraPermission": "Allow Otto Wallet to access your camera",
+          "microphonePermission": "Allow Otto Wallet to access your microphone",
           "recordAudioAndroid": true
         }
       ],
       [
         "expo-local-authentication",
         {
-          "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID."
+          "faceIDPermission": "Allow Otto Wallet to use Face ID."
         }
       ],
       [

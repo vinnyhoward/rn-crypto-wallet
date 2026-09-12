@@ -8,7 +8,7 @@
 
   <div style="margin-top:20px; margin-bottom:20px;">
   <img width="100" height="100" src="assets/mascot_head.png">
-    <h1 align="center">BMO Wallet</h1>
+    <h1 align="center">Otto Wallet</h1>
   </div>
 
   <p align="center">
@@ -24,7 +24,7 @@
 
 ## Introduction[![](assets/pin.svg)](#introduction)
 
-BMO Wallet is a multi-chain cryptocurrency wallet built with React Native. This robust mobile application offers a comprehensive suite of features for managing digital assets across multiple blockchains, with a current focus on Ethereum and Solana networks.
+Otto Wallet is a multi-chain cryptocurrency wallet built with React Native. This robust mobile application offers a comprehensive suite of features for managing digital assets across multiple blockchains, with a current focus on Ethereum and Solana networks.
 
 ### Key Features:
 - **Multi-Chain Support**: Seamlessly manage Ethereum and Solana assets within a single, user-friendly interface.
@@ -34,19 +34,19 @@ BMO Wallet is a multi-chain cryptocurrency wallet built with React Native. This 
 - **Security**: Implements encryption and secure storage techniques to protect your digital assets.
 - **QR Code Integration**: Simplify address sharing and transaction processes with built-in QR code functionality.
 
-Leveraging the power of Expo framework and Alchemy API, BMO Wallet provides a smooth, responsive user experience while ensuring reliable blockchain interactions. Whether you're a crypto enthusiast or a developer looking to explore mobile wallet implementation, BMO Wallet offers a feature-rich platform for managing digital currencies.
+Leveraging the power of Expo framework and Alchemy API, Otto Wallet provides a smooth, responsive user experience while ensuring reliable blockchain interactions. Whether you're a crypto enthusiast or a developer looking to explore mobile wallet implementation, Otto Wallet offers a feature-rich platform for managing digital currencies.
 
 ### Testnet-Only Application
-**Important**: BMO Wallet is currently designed for use with the Ethereum Sepolia testnet and Solana Devnet only. It is not intended for use with real cryptocurrencies or on mainnet networks. This testnet focus allows for safe experimentation and development without risking actual digital assets.
+**Important**: Otto Wallet is currently designed for use with the Ethereum Sepolia testnet and Solana Devnet only. It is not intended for use with real cryptocurrencies or on mainnet networks. This testnet focus allows for safe experimentation and development without risking actual digital assets.
 
 #### Testnet Resources:
 - **Ethereum (Sepolia Testnet)**: Obtain free test ETH from the [Sepolia Faucet](https://www.infura.io/faucet/sepolia).
 - **Solana (Devnet)**: Acquire free test SOL from the [Solana Devnet Faucet](https://faucet.solana.com/).
 
 ### Development Focus
-BMO Wallet serves as both a functional crypto wallet and a showcase of modern mobile development practices. It demonstrates the integration of blockchain technologies with React Native, emphasizing clean code architecture, robust state management with Redux, and a strong focus on security.
+Otto Wallet serves as both a functional crypto wallet and a showcase of modern mobile development practices. It demonstrates the integration of blockchain technologies with React Native, emphasizing clean code architecture, robust state management with Redux, and a strong focus on security.
 
-As I continue to evolve BMO Wallet, I'm committed to expanding its capabilities, enhancing security features, and potentially supporting additional blockchain networks in the future. This project represents my ongoing effort to create a robust, user-friendly cryptocurrency wallet that adapts to the ever-changing landscape of blockchain technology.
+As I continue to evolve Otto Wallet, I'm committed to expanding its capabilities, enhancing security features, and potentially supporting additional blockchain networks in the future. This project represents my ongoing effort to create a robust, user-friendly cryptocurrency wallet that adapts to the ever-changing landscape of blockchain technology.
 
 ## Table of Contents[![](assets/pin.svg)](#table-of-contents)
 - [Tech Stack](#tech-stack)
@@ -219,7 +219,7 @@ Run `yarn typecheck`, `yarn test`, and `yarn doctor` to validate changes. See [t
 
 ## Roadmap [![](assets/pin.svg)](#roadmap)
 
-BMO Wallet is continuously evolving. Here's our exciting roadmap for future developments:
+Otto Wallet is continuously evolving. Here's our exciting roadmap for future developments:
 
 ### Near Term Goals
 
@@ -263,7 +263,7 @@ BMO Wallet is continuously evolving. Here's our exciting roadmap for future deve
 
 This roadmap is a living document and will evolve based on technological advancements, user feedback, and market trends.
 
-Your feedback and suggestions are always welcome as I continue to improve and expand BMO Wallet!
+Your feedback and suggestions are always welcome as I continue to improve and expand Otto Wallet!
 
 <div align="right">[ <a href="#introduction">↑ Back to top ↑</a> ]</div>
 
